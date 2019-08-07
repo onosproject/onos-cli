@@ -41,8 +41,8 @@ func getCompletionCommand() *cobra.Command {
 		Short:     "Generated bash or zsh auto-completion script",
 		Args:      cobra.ExactArgs(1),
 		ValidArgs: []string{"bash", "zsh"},
-		Example: `For bash run the following command from the shell: eval $(onit completion bash).
-For zsh run the following command from the shell: source <(onit completion zsh).`,
+		Example: `For bash run the following command from the shell: eval $(onos completion bash).
+For zsh run the following command from the shell: source <(onos completion zsh).`,
 		Run: runCompletionCommand,
 	}
 }
@@ -67,7 +67,7 @@ func runCompletionBash(out io.Writer, cmd *cobra.Command) error {
 }
 
 func runCompletionZsh(out io.Writer, cmd *cobra.Command) error {
-	header := "#compdef onit\n"
+	header := "#compdef onos\n"
 
 	_, err := out.Write([]byte(header))
 	if err != nil {
@@ -75,7 +75,7 @@ func runCompletionZsh(out io.Writer, cmd *cobra.Command) error {
 	}
 
 	init := `
-__onit_bash_source() {
+__onos_bash_source() {
 	alias shopt=':'
 	alias _expand=_bash_expand
 	alias _complete=_bash_comp
@@ -83,7 +83,7 @@ __onit_bash_source() {
 	setopt kshglob noshglob braceexpand
 	source "$@"
 }
-__onit_type() {
+__onos_type() {
 	# -t is not supported by zsh
 	if [ "$1" == "-t" ]; then
 		shift
@@ -91,14 +91,14 @@ __onit_type() {
 		# "compopt +-o nospace" is used in the code to toggle trailing
 		# spaces. We don't support that, but leave trailing spaces on
 		# all the time
-		if [ "$1" = "__onit_compopt" ]; then
+		if [ "$1" = "__onos_compopt" ]; then
 			echo builtin
 			return 0
 		fi
 	fi
 	type "$@"
 }
-__onit_compgen() {
+__onos_compgen() {
 	local completions w
 	completions=( $(compgen "$@") ) || return $?
 	# filter by given word as prefix
@@ -115,10 +115,10 @@ __onit_compgen() {
 		fi
 	done
 }
-__onit_compopt() {
+__onos_compopt() {
 	true # don't do anything. Not supported by bashcompinit in zsh
 }
-__onit_ltrim_colon_completions()
+__onos_ltrim_colon_completions()
 {
 	if [[ "$1" == *:* && "$COMP_WORDBREAKS" == *:* ]]; then
 		# Remove colon-word prefix from COMPREPLY items
@@ -129,13 +129,13 @@ __onit_ltrim_colon_completions()
 		done
 	fi
 }
-__onit_get_comp_words_by_ref() {
+__onos_get_comp_words_by_ref() {
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[${COMP_CWORD}-1]}"
 	words=("${COMP_WORDS[@]}")
 	cword=("${COMP_CWORD[@]}")
 }
-__onit_filedir() {
+__onos_filedir() {
 	local RET OLD_IFS w qw
 	__debug "_filedir $@ cur=$cur"
 	if [[ "$1" = \~* ]]; then
@@ -158,7 +158,7 @@ __onit_filedir() {
 			continue
 		fi
 		if eval "[[ \"\${w}\" = *.$1 || -d \"\${w}\" ]]"; then
-			qw="$(__onit_quote "${w}")"
+			qw="$(__onos_quote "${w}")"
 			if [ -d "${w}" ]; then
 				COMPREPLY+=("${qw}/")
 			else
@@ -167,7 +167,7 @@ __onit_filedir() {
 		fi
 	done
 }
-__onit_quote() {
+__onos_quote() {
     if [[ $1 == \'* || $1 == \"* ]]; then
         # Leave out first character
         printf %q "${1:1}"
@@ -183,20 +183,20 @@ if sed --help 2>&1 | grep -q GNU; then
 	LWORD='\<'
 	RWORD='\>'
 fi
-__onit_convert_bash_to_zsh() {
+__onos_convert_bash_to_zsh() {
 	sed \
 	-e 's/declare -F/whence -w/' \
 	-e 's/_get_comp_words_by_ref "\$@"/_get_comp_words_by_ref "\$*"/' \
 	-e 's/local \([a-zA-Z0-9_]*\)=/local \1; \1=/' \
 	-e 's/flags+=("\(--.*\)=")/flags+=("\1"); two_word_flags+=("\1")/' \
 	-e 's/must_have_one_flag+=("\(--.*\)=")/must_have_one_flag+=("\1")/' \
-	-e "s/${LWORD}_filedir${RWORD}/__onit_filedir/g" \
-	-e "s/${LWORD}_get_comp_words_by_ref${RWORD}/__onit_get_comp_words_by_ref/g" \
-	-e "s/${LWORD}__ltrim_colon_completions${RWORD}/__onit_ltrim_colon_completions/g" \
-	-e "s/${LWORD}compgen${RWORD}/__onit_compgen/g" \
-	-e "s/${LWORD}compopt${RWORD}/__onit_compopt/g" \
+	-e "s/${LWORD}_filedir${RWORD}/__onos_filedir/g" \
+	-e "s/${LWORD}_get_comp_words_by_ref${RWORD}/__onos_get_comp_words_by_ref/g" \
+	-e "s/${LWORD}__ltrim_colon_completions${RWORD}/__onos_ltrim_colon_completions/g" \
+	-e "s/${LWORD}compgen${RWORD}/__onos_compgen/g" \
+	-e "s/${LWORD}compopt${RWORD}/__onos_compopt/g" \
 	-e "s/${LWORD}declare${RWORD}/builtin declare/g" \
-	-e "s/\\\$(type${RWORD}/\$(__onit_type/g" \
+	-e "s/\\\$(type${RWORD}/\$(__onos_type/g" \
 	<<'BASH_COMPLETION_EOF'
 `
 	_, err = out.Write([]byte(init))
@@ -217,8 +217,8 @@ __onit_convert_bash_to_zsh() {
 	tail := `
 BASH_COMPLETION_EOF
 }
-__onit_bash_source <(__onit_convert_bash_to_zsh)
-_complete onit 2>/dev/null
+__onos_bash_source <(__onos_convert_bash_to_zsh)
+_complete onos 2>/dev/null
 `
 	_, err = out.Write([]byte(tail))
 	if err != nil {
