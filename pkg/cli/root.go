@@ -16,7 +16,9 @@ package cli
 
 import (
 	"fmt"
+	//config "github.com/onosproject/onos-config/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
+	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -38,6 +40,8 @@ func GetRootCommand() *cobra.Command {
 		BashCompletionFunction: getBashCompletions(),
 	}
 	cmd.AddCommand(topo.GetCommand())
+	//cmd.AddCommand(config.GetCommand())
+	cmd.AddCommand(ztp.GetCommand())
 	cmd.AddCommand(getCompletionCommand())
 	return cmd
 }
