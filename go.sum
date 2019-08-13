@@ -112,6 +112,7 @@ github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFB
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1 h1:ZC2Vc7/ZFkGmsVC9KvOjumD+G5lXy2RtTKyzRKO2BQ4=
@@ -134,8 +135,9 @@ github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRW
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/onosproject/onos-config v0.0.0-20190715180819-079d3a8dc433/go.mod h1:1G4gt12sBESqda8mrmAmOjqfV7PT0CLle9VVm8Qtfp8=
-github.com/onosproject/onos-config v0.0.0-20190730183719-5ea03688cbcb h1:hyUecWjGSmZYTBfvqVDXRcNV/sExZQRBNe/FHt2msNk=
 github.com/onosproject/onos-config v0.0.0-20190730183719-5ea03688cbcb/go.mod h1:1G4gt12sBESqda8mrmAmOjqfV7PT0CLle9VVm8Qtfp8=
+github.com/onosproject/onos-config v0.0.0-20190813184213-3f8105f6a4a2 h1:i9KFRyzQMlAJzXglsRhlXoR10bl53zf/yRq8bxAkq7A=
+github.com/onosproject/onos-config v0.0.0-20190813184213-3f8105f6a4a2/go.mod h1:o2zuFjCHWQ7SP63Dnn7uEYaGqxKzUwM7Ke0nQumu1Aw=
 github.com/onosproject/onos-control v0.0.0-20190715190020-706a2ee0d37b/go.mod h1:pHxuBLlYpyZbiaBDKFkO+O9RixBd/qMPR8t5mizwbQY=
 github.com/onosproject/onos-control v0.0.0-20190718162623-f272f08a2798/go.mod h1:pHxuBLlYpyZbiaBDKFkO+O9RixBd/qMPR8t5mizwbQY=
 github.com/onosproject/onos-topo v0.0.0-20190809180402-2931d9c31bf5 h1:tKu/NnNxCT2RdBtMKgrocYCEpsRIUnR9o8gvt8qoT20=
@@ -147,8 +149,11 @@ github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+W
 github.com/onsi/ginkgo v1.8.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
 github.com/onsi/gomega v1.5.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+github.com/openconfig/gnmi v0.0.0-20180912164834-33a1865c3029 h1:lXQqyLroROhwR2Yq/kXbLzVecgmVeZh2TFLg6OxCd+w=
 github.com/openconfig/gnmi v0.0.0-20180912164834-33a1865c3029/go.mod h1:t+O9It+LKzfOAhKTT5O0ehDix+MTqbtT0T9t+7zzOvc=
+github.com/openconfig/goyang v0.0.0-20190408185115-e8b0ed2cbb0c h1:M+m/ANuoQIchodCd7MGIsCUsY11bg4+trly6OAzk4N0=
 github.com/openconfig/goyang v0.0.0-20190408185115-e8b0ed2cbb0c/go.mod h1:dhXaV0JgHJzdrHi2l+w0fZrwArtXL7jEFoiqLEdmkvU=
+github.com/openconfig/ygot v0.5.1-0.20190427030428-68346f97239f h1:n9faHvjckXtfBO1TIRTrMwGLi2BumEc9gnG0nt2SWlE=
 github.com/openconfig/ygot v0.5.1-0.20190427030428-68346f97239f/go.mod h1:o30svNf7O0xK+R35tlx95odkDmZWS9JyWWQSmIhqwAs=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
