@@ -99,6 +99,7 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
 github.com/imdario/mergo v0.3.5/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.7/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
+github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/json-iterator/go v0.0.0-20180612202835-f2b4162afba3/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
@@ -138,9 +139,13 @@ github.com/onosproject/onos-config v0.0.0-20190715180819-079d3a8dc433/go.mod h1:
 github.com/onosproject/onos-config v0.0.0-20190730183719-5ea03688cbcb/go.mod h1:1G4gt12sBESqda8mrmAmOjqfV7PT0CLle9VVm8Qtfp8=
 github.com/onosproject/onos-config v0.0.0-20190814172855-a409c187fd4c h1:yo/HFBdZWglWG5K/Er5UnKFPWxTMvTG5+4omgrb+CvE=
 github.com/onosproject/onos-config v0.0.0-20190814172855-a409c187fd4c/go.mod h1:1laCgrJ91+ftIFP4JIgAV67yZkiaDOzRf2Nn2keIdgE=
+github.com/onosproject/onos-config v0.0.0-20190814180123-83f894a89d33 h1:u1rcMfA4G4p4v1ukRTieSwBUpp4bTqT5H4LNGPNpWrc=
+github.com/onosproject/onos-config v0.0.0-20190814180123-83f894a89d33/go.mod h1:1laCgrJ91+ftIFP4JIgAV67yZkiaDOzRf2Nn2keIdgE=
 github.com/onosproject/onos-control v0.0.0-20190715190020-706a2ee0d37b/go.mod h1:pHxuBLlYpyZbiaBDKFkO+O9RixBd/qMPR8t5mizwbQY=
 github.com/onosproject/onos-topo v0.0.0-20190814014816-a44dbe8fa445 h1:8wBC+NtVMZD5guAN10/7RYdnpZHIMMdYXYow7tFbpAI=
 github.com/onosproject/onos-topo v0.0.0-20190814014816-a44dbe8fa445/go.mod h1:Ul5CDW2WwSa7VjA0RkhVuK1AA3GzM5D+sS7+/xrHPRA=
+github.com/onosproject/onos-topo v0.0.0-20190814174820-6e8c01d57fba h1:2rAC9HBAMotvDAdZnDyVzau+yhg2KvUF04raeaHMUhE=
+github.com/onosproject/onos-topo v0.0.0-20190814174820-6e8c01d57fba/go.mod h1:Ul5CDW2WwSa7VjA0RkhVuK1AA3GzM5D+sS7+/xrHPRA=
 github.com/onosproject/onos-ztp v0.0.0-20190813221448-29b667e334a4 h1:yyOjybNSsN1QYyYuGn9HwroaGMffBgWHogMH4e6L9v0=
 github.com/onosproject/onos-ztp v0.0.0-20190813221448-29b667e334a4/go.mod h1:sGAEu755ZkiI+lAtKZlLYy0h2kuRvS+BR7CEhOlUWbs=
 github.com/onsi/ginkgo v0.0.0-20170829012221-11459a886d9c/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
