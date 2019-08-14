@@ -17,6 +17,7 @@ package cli
 import (
 	"bytes"
 	"errors"
+	config "github.com/onosproject/onos-config/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"io"
@@ -29,6 +30,7 @@ import (
 // getBashCompletions returns a bash completion script from all dependencies
 func getBashCompletions() string {
 	completions := []string{
+		config.GetBashCompletion(),
 		topo.GetBashCompletion(),
 		ztp.GetBashCompletion(),
 	}

@@ -1,4 +1,19 @@
 # onos-cli
-Command-line interface for ONOS (µONOS Architecture)
+This is the implementation of a consolidated `onos` command-line interface for ONOS (µONOS Architecture)
 
-Presently, the `onos-config` repository holds the implementation of the `onos` CLI. That portion of the project will be migrated from `onos-config` into this repository in September 2019. Until then, please see the `onos-config` repo.
+The goal is to provide a single CLI executable that can be used as a means to access CLI functionality
+of a number of different ONOS subsystems, e.g. topo, config, control, ztp.
+
+### Bash or Zsh Auto-Completion
+The `onos` client supports shell auto-completion for its various
+commands, sub-commands and flags. To enable this, run the following from the shell:
+```bash
+> eval "$(onos completion bash)"
+```
+After that, you should be able to use the `TAB` key to obtain suggestions for 
+valid options.
+
+### Subsystem-specific Commands
+... 
+
+
