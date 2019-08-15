@@ -7,7 +7,7 @@ ONOS_CLI_VERSION := latest
 ONOS_BUILD_VERSION := stable
 
 build: # @HELP build the Go binaries and run all validations (default)
-build:
+build: pull-deps
 	go build -o build/_output/onos ./cmd/onos
 
 test: # @HELP run the unit tests and source code validation
@@ -30,13 +30,13 @@ linters: # @HELP examines Go source code and reports coding problems
 license_check: # @HELP examine and ensure license headers exist
 	./build/licensing/boilerplate.py -v
 
-update-deps: # @HELP pull updated CLI dependencies
-	go get github.com/onosproject/onos-topo
-	go get github.com/onosproject/onos-config
-	go get github.com/onosproject/onos-ztp
+pull-deps: # @HELP pull updated CLI dependencies
+	-go get github.com/onosproject/onos-topo
+	-go get github.com/onosproject/onos-config
+	-go get github.com/onosproject/onos-ztp
 
 onos-cli-docker: # @HELP build onos CLI Docker image
-onos-cli-docker: update-deps
+onos-cli-docker: pull-deps
 	@go mod vendor
 	docker build . -f build/onos/Dockerfile \
 		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
