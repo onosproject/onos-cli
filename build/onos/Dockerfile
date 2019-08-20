@@ -2,6 +2,7 @@ ARG ONOS_BUILD_VERSION=stable
 
 FROM onosproject/golang-build:$ONOS_BUILD_VERSION AS build
 ENV GO111MODULE=on
+RUN go get -u github.com/openconfig/gnmi/cmd/gnmi_cli
 COPY . /go/src/github.com/onosproject/onos-cli
 RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
 
@@ -13,6 +14,8 @@ USER onos
 WORKDIR /home/onos
 
 COPY --from=build /go/src/github.com/onosproject/onos-cli/build/_output/onos /usr/local/bin/onos
+COPY --from=build /go/bin/gnmi_cli /usr/local/bin/gnmi_cli
+COPY --from=build /go/src/github.com/onosproject/onos-cli/pkg/certs/* /etc/ssl/certs/
 
 RUN mkdir /home/onos/.onos && \
     cp /etc/profile /home/onos/.bashrc && \
