@@ -25,6 +25,7 @@ RUN mkdir /home/onos/.onos && \
     echo "source /home/onos/.onos/bash_completion.sh" >> /home/onos/.bashrc && \
     mkdir /home/onos/.atomix && \
     atomix completion bash > /home/onos/.atomix/bash_completion.sh && \
-    echo "source /home/onos/.atomix/bash_completion.sh" >> /home/onos/.bashrc
+    echo "source /home/onos/.atomix/bash_completion.sh" >> /home/onos/.bashrc && \
+    echo "eval \$(resize)" >> /home/onos/.bashrc
 
 ENTRYPOINT ["/bin/bash"]
