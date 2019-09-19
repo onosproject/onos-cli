@@ -28,3 +28,7 @@ jobs:
       script:
         - make coverage
         - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./build/bin/push-images; fi'
+    - stage: docs build
+      if: type != pull_request
+      script:
+        - sh build/bin/trigger-docs-travis $TRAVIS_ACCESS_TOKEN
