@@ -38,6 +38,8 @@ func GetRootCommand() *cobra.Command {
 		Use:                    "onos",
 		Short:                  "ONOS command line client",
 		BashCompletionFunction: getBashCompletions(),
+		SilenceUsage:           true,
+		SilenceErrors:          true,
 	}
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(topo.GetCommand())
