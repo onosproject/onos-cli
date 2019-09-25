@@ -47,7 +47,7 @@ images: # @HELP build all Docker images
 images: build onos-cli-docker
 
 kind: images
-	@if [ `kind get clusters` = '' ]; then echo "no kind cluster found" && exit 1; fi
+	@if [ "`kind get clusters`" = '' ]; then echo "no kind cluster found" && exit 1; fi
 	kind load docker-image onosproject/onos-cli:${ONOS_CLI_VERSION}
 
 all: build images
