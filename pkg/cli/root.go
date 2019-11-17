@@ -16,11 +16,13 @@ package cli
 
 import (
 	"fmt"
+	"os"
+
 	config "github.com/onosproject/onos-config/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"github.com/spf13/cobra"
-	"os"
+	"github.com/spf13/cobra/doc"
 )
 
 // Execute runs the root command and any sub-commands.
@@ -30,6 +32,17 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+// GenerateCliDocs generate markdown files for onos-cli commands
+func GenerateCliDocs() {
+	cmd := GetRootCommand()
+	err := doc.GenMarkdownTree(cmd, "docs/cli")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 }
 
 // GetRootCommand returns the root onos command
@@ -45,5 +58,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(ztp.GetCommand())
 	cmd.AddCommand(getCompletionCommand())
+
 	return cmd
 }
