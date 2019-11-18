@@ -7,8 +7,9 @@ ONOS_CLI_VERSION := latest
 ONOS_BUILD_VERSION := stable
 
 build: # @HELP build the Go binaries and run all validations (default)
-build:
+build: 
 	go build -o build/_output/onos ./cmd/onos
+	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
