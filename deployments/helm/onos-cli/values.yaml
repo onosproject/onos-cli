@@ -18,7 +18,8 @@ namespace: default
 
 store:
   enabled: true
-  controller: atomix-controller.default.svc.cluster.local:5679
+  namespace: kube-system
+  controller: atomix-controller.kube-system.svc.cluster.local:5679
   group: raft
   raft:
     partitions: 3
