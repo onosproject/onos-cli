@@ -8,5 +8,5 @@ metadata:
 data:
   controller: {{ .Values.store.controller }}
   namespace: {{ .Values.store.namespace }}
-  group: {{ .Values.store.group }}
+  group: {{ .Values.store.raftgroup }}
   app: {{ .Values.store.namespace }}

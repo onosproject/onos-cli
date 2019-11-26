@@ -17,13 +17,9 @@ fullnameOverride: ""
 namespace: default
 
 store:
-  enabled: true
   namespace: default
+  raftgroup: onos-cli
   controller: atomix-controller.default.svc.cluster.local:5679
-  group: raft
-  raft:
-    partitions: 3
-    partitionSize: 3
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
