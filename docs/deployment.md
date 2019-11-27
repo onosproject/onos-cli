@@ -1,6 +1,6 @@
 # Deploying onos-cli with Helm
 
-This guide deploys `onos-cli` through it's [Helm] chart assumes you have a [Kubernets] cluster running 
+This guide deploys `onos-cli` through it's [Helm] chart assumes you have a [Kubernetes] cluster running 
 with an atomix controller deployed in a namespace.  
 `onos-cli` Helm chart is based on Helm 3.0 version, with no need for the Tiller pod to be present. 
 If you don't have a cluster running and want to try on your local machine please follow first 
