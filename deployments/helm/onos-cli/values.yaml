@@ -14,12 +14,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-namespace: default
-
 store:
-  namespace: default
   raftgroup: onos-cli
-  controller: atomix-controller.default.svc.cluster.local:5679
+  controller: atomix-controller.kube-system.svc.cluster.local:5679
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
