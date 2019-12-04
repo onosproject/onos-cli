@@ -25,6 +25,10 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
+func init() {
+	cobra.OnInitialize(topo.Init)
+}
+
 // Execute runs the root command and any sub-commands.
 func Execute() {
 	rootCmd := GetRootCommand()

@@ -27,6 +27,7 @@ github.com/atomix/atomix-go-client v0.0.0-20191007173732-5328130c1310/go.mod h1:
 github.com/atomix/atomix-go-client v0.0.0-20191015003555-98ae5ccbe7bd/go.mod h1:jV1V8j+zo30xhC+hufKM/1XIiJKA3ODjwuMA/rBHu8g=
 github.com/atomix/atomix-go-client v0.0.0-20191018192841-3644d110cbec/go.mod h1:bM51i8VXdxw3+vN5spPJWllkfsfpakHYo2bOkNj1xC4=
 github.com/atomix/atomix-go-client v0.0.0-20191022230401-78955a5abbef/go.mod h1:3VrFe1rCx3N6puiQOS0L9XoReGSaapaSH9pVZ3vW614=
+github.com/atomix/atomix-go-client v0.0.0-20191127222459-36981d701c6e/go.mod h1:3VrFe1rCx3N6puiQOS0L9XoReGSaapaSH9pVZ3vW614=
 github.com/atomix/atomix-go-local v0.0.0-20190827233944-938e35b06834/go.mod h1:qLBTOiVKoEqzYOjgxIgWFa+Hfa3SR+VexA6jGBcv0HA=
 github.com/atomix/atomix-go-local v0.0.0-20190828183508-3db728c0fc3b/go.mod h1:VnwyXJvHzUHuVzzTmPhZ6/ktbBnz3CZk3aKMX7VlTmY=
 github.com/atomix/atomix-go-local v0.0.0-20190830183800-73f964b0f75a/go.mod h1:lt/qUsFF29yT2ofmxOXfFzIz0poN22/Qa5SPdalgTKw=
@@ -221,6 +222,8 @@ github.com/onosproject/onos-topo v0.0.0-20190821193159-507346a0476a/go.mod h1:Od
 github.com/onosproject/onos-topo v0.0.0-20191107000708-af85b82cfca3/go.mod h1:oPGdJnMHy5UGx4slrbf84DEFqcKXuGMv36N+EBc3QwM=
 github.com/onosproject/onos-topo v0.0.0-20191113170912-88eeee89f4eb h1:jcQhZMMGue2jeAs0A2HVTGpybxywHjyRoyd+b0R96B8=
 github.com/onosproject/onos-topo v0.0.0-20191113170912-88eeee89f4eb/go.mod h1:oPGdJnMHy5UGx4slrbf84DEFqcKXuGMv36N+EBc3QwM=
+github.com/onosproject/onos-topo v0.0.0-20191204193109-2d65da138dfb h1:e3dcfTsvsemVMT394oV4/SM0CmjKjFczMbgmrSnUIEk=
+github.com/onosproject/onos-topo v0.0.0-20191204193109-2d65da138dfb/go.mod h1:uiwR+rC5YVpSK4UlK2WxPHLlhmbp7weicc/M9YFOwjk=
 github.com/onosproject/onos-ztp v0.0.0-20190813221448-29b667e334a4 h1:yyOjybNSsN1QYyYuGn9HwroaGMffBgWHogMH4e6L9v0=
 github.com/onosproject/onos-ztp v0.0.0-20190813221448-29b667e334a4/go.mod h1:sGAEu755ZkiI+lAtKZlLYy0h2kuRvS+BR7CEhOlUWbs=
 github.com/onosproject/onos-ztp v0.0.0-20190821221748-a103d417e2c3 h1:vUynSaGnBtOTgvHBFk4MTcSDGf2oILnyDYKFGZC46W4=
