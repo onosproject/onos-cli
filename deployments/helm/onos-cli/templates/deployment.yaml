@@ -8,10 +8,18 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
+      name: {{ template "onos-cli.fullname" . }}
+      app: onos
+      type: cli
+      resource: {{ template "onos-cli.fullname" . }}
       {{- include "onos-cli.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
+        name: {{ template "onos-cli.fullname" . }}
+        app: onos
+        type: cli
+        resource: {{ template "onos-cli.fullname" . }}
         {{- include "onos-cli.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
