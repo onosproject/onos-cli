@@ -8,11 +8,12 @@ the [Kubernetes] setup steps outlined in [deploy with Helm](https://docs.onospro
 The following steps assume you have the setup outlined in that page, including the `micro-onos` namespace configured. 
 ## Installing the Chart
 
-To install the chart in the `micro-onos` namespace, simply run `helm install -n micro-onos onos-cli deployments/helm/onos-cli` from
-the root directory of this project:
-
+To install the chart in the `micro-onos` namespace run from the root directory of the `onos-helm-charts` repo the command:
 ```bash
-helm install -n micro-onos onos-cli deployments/helm/onos-cli
+helm install -n micro-onos onos-cli onos-cli
+```
+The output should be:
+```bash
 NAME: onos-cli
 LAST DEPLOYED: Tue Nov 26 13:31:42 2019
 NAMESPACE: default
@@ -35,13 +36,13 @@ onos-cli	1       	Tue May 14 18:56:39 2019	DEPLOYED	onos-cli-0.0.1	        0.0.1
 
 Issue the `helm install` command substituting `micro-onos` with your namespace.
 ```bash
-helm install -n <your_name_space> onos-cli deployments/helm/onos-cli
+helm install -n <your_name_space> onos-cli onos-cli
 ```
 ### Installing the chart with debug. 
 `onos-cli` offers the capability to open a debug port (4000) to the image.
 To enable the debug capabilities please set the debug flag to true in `values.yaml` or pass it to `helm install`
 ```bash
-helm install -n micro-onos onos-cli deployments/helm/onos-cli --set debug=true
+helm install -n micro-onos onos-cli onos-cli --set debug=true
 ```
 ### Troubleshoot
 
@@ -52,8 +53,13 @@ debug your chart:
 * `--debug` prints out more information about your chart
 
 ```bash
-helm install -n micro-onos onos-cli --debug --dry-run ./deployments/helm/onos-cli/
+helm install -n micro-onos onos-cli --debug --dry-run onos-cli/
 ```
+Also to verify how template values are expanded, run:
+```bash
+helm install template onos-gui
+```
+
 ## Uninstalling the chart.
 
 To remove the `onos-cli` pod issue
