@@ -64,7 +64,7 @@ helm install template onos-gui
 
 To remove the `onos-cli` pod issue
 ```bash
- helm delete -n micro-onos onos-cli
+helm delete -n micro-onos onos-cli
 ```
 ## Pod Information
 
@@ -74,7 +74,7 @@ To view the pods that are deployed, run `kubectl -n micro-onos get pods`.
 
 To gain acess to the `onos-cli` console and be able of issuing the different cli commands the following command is need:
 ```bash
-> kubectl -n micro-onos exec <cli_pod_name> -it -- /bin/sh
+kubectl -n micro-onos exec -it $(kubectl -n micro-onos get pods -l type=cli -o name) -- /bin/sh
 ```
 
 At this point you can execute `topo`, `config` and all the other commands. For example:
