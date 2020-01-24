@@ -3,7 +3,7 @@ ARG ONOS_BUILD_VERSION=stable
 FROM onosproject/golang-build:$ONOS_BUILD_VERSION AS build
 ENV GO111MODULE=on
 RUN go get github.com/opennetworkinglab/gnmi/cmd/gnmi_cli && \
-    go get github.com/atomix/atomix-cli/cmd/atomix
+    go get github.com/atomix/cli/cmd/atomix
 COPY . /go/src/github.com/onosproject/onos-cli
 RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
 
