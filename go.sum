@@ -243,6 +243,7 @@ github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8m
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
+github.com/onosproject/onos-cli v0.0.0-20200205222355-b174234b2ffa/go.mod h1:aUcsRKvZxiJOoT1KCUgp4iiDe71pvawPqPrXWoPmKjI=
 github.com/onosproject/onos-config v0.0.0-20191116095118-2ca4b5f98ae2/go.mod h1:KqXDEuf9d/uiHCL1iso0s8j3UUofZjCHUhs5pVWwJ0E=
 github.com/onosproject/onos-config v0.0.0-20191119175602-24b6cc22ca22/go.mod h1:KqXDEuf9d/uiHCL1iso0s8j3UUofZjCHUhs5pVWwJ0E=
 github.com/onosproject/onos-config v0.0.0-20200124182344-6c3f5eb1e6ed/go.mod h1:rQfBju27qOGvL7Qtvxo6H9TlvU0oEw91emQzS14hmnE=
@@ -255,6 +256,8 @@ github.com/onosproject/onos-ran v0.0.0-20200204214247-1c8cf30fcfe3 h1:Zs7nGx2iRO
 github.com/onosproject/onos-ran v0.0.0-20200204214247-1c8cf30fcfe3/go.mod h1:cOkg++r6boPx2kbLVaQvX3wU6AX8YWjyrND0zi+dgDI=
 github.com/onosproject/onos-ran v0.0.0-20200205211410-0667c7147453 h1:vdk5m/jwZeWJFIFEC/MxZu3dyb1PMlharREUGr4givI=
 github.com/onosproject/onos-ran v0.0.0-20200205211410-0667c7147453/go.mod h1:mDd/65obXVUsEGFSLmxokw6QaW/3YCYal+HV1Y08kf8=
+github.com/onosproject/onos-ran v0.0.0-20200207195557-0117ce496639 h1:YDRV9cj1pw+LNupDXsjbQEmLG4ehmlVLGm/CUmzEL/o=
+github.com/onosproject/onos-ran v0.0.0-20200207195557-0117ce496639/go.mod h1:mIi1jgByW+1Ns9vZg/lAXyTXDGi7wI6zWiqhnB9qiKU=
 github.com/onosproject/onos-test v0.0.0-20200124000609-2c23d699896e h1:kv4nCTX9hnw1LvpynvHtoHZOjhyhERn4zKxKUkkqJIY=
 github.com/onosproject/onos-test v0.0.0-20200124000609-2c23d699896e/go.mod h1:yL/WBZiJEjdBPtVRP7OkP6qdg9+kW1N+92c6xz12cSs=
 github.com/onosproject/onos-test v0.0.0-20200124030233-2ce11592f40b/go.mod h1:1LWbQObEmAY+C0jIQ2CPaD2vIoaMn5BfZ+39n5q9AAM=
