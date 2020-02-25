@@ -299,6 +299,8 @@ github.com/onosproject/onos-ran v0.0.0-20200210203428-df3953bf0fb1 h1:fXm7bKsrvh
 github.com/onosproject/onos-ran v0.0.0-20200210203428-df3953bf0fb1/go.mod h1:mIi1jgByW+1Ns9vZg/lAXyTXDGi7wI6zWiqhnB9qiKU=
 github.com/onosproject/onos-ran v0.0.0-20200221162003-7798745ab6c8 h1:H2ALBGAmWdweletyqR+aOY8ii2N+Bdp44lUVhCr8vW4=
 github.com/onosproject/onos-ran v0.0.0-20200221162003-7798745ab6c8/go.mod h1:x8bCsCAM6gXZKpu9XSVFB7t6fEnesgAYUa0/NN0CJQU=
+github.com/onosproject/onos-ric v0.0.0-20200225182040-dcf370614b8e h1:vPNS9RSPDnVSk8rNi+lGhG71zuLzkoiqbrpa+lNdRcY=
+github.com/onosproject/onos-ric v0.0.0-20200225182040-dcf370614b8e/go.mod h1:jIZgQQ7jmuAGM2UXaePWBPRf8pTWafJ3vsE39iE+TPk=
 github.com/onosproject/onos-test v0.0.0-20200124000609-2c23d699896e h1:kv4nCTX9hnw1LvpynvHtoHZOjhyhERn4zKxKUkkqJIY=
 github.com/onosproject/onos-test v0.0.0-20200124000609-2c23d699896e/go.mod h1:yL/WBZiJEjdBPtVRP7OkP6qdg9+kW1N+92c6xz12cSs=
 github.com/onosproject/onos-test v0.0.0-20200124030233-2ce11592f40b/go.mod h1:1LWbQObEmAY+C0jIQ2CPaD2vIoaMn5BfZ+39n5q9AAM=
