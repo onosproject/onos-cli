@@ -19,7 +19,7 @@ import (
 	"os"
 
 	config "github.com/onosproject/onos-config/pkg/cli"
-	ran "github.com/onosproject/onos-ran/pkg/cli"
+	ric "github.com/onosproject/onos-ric/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"github.com/spf13/cobra"
@@ -62,7 +62,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(ztp.GetCommand())
-	cmd.AddCommand(ran.GetCommand())
+	cmd.AddCommand(ric.GetCommand())
 	cmd.AddCommand(getCompletionCommand())
 
 	return cmd

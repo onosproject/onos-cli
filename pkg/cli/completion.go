@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"errors"
 	config "github.com/onosproject/onos-config/pkg/cli"
-	ran "github.com/onosproject/onos-ran/pkg/cli"
+	ric "github.com/onosproject/onos-ric/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"io"
@@ -34,7 +34,7 @@ func getBashCompletions() string {
 		config.GetBashCompletion(),
 		topo.GetBashCompletion(),
 		ztp.GetBashCompletion(),
-		ran.GetBashCompletion(),
+		ric.GetBashCompletion(),
 	}
 	return strings.Join(completions, "\n")
 }
