@@ -16,14 +16,18 @@ package cli
 
 import (
 	"fmt"
-	"os"
-
 	config "github.com/onosproject/onos-config/pkg/cli"
+
+	// Needed to keep ran-sim happy for the mo
+	_ "github.com/onosproject/onos-lib-go/pkg/cli"
+
 	ric "github.com/onosproject/onos-ric/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
+	ransim "github.com/onosproject/ran-simulator/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+	"os"
 )
 
 func init() {
@@ -63,6 +67,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(ztp.GetCommand())
 	cmd.AddCommand(ric.GetCommand())
+	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(getCompletionCommand())
 
 	return cmd
