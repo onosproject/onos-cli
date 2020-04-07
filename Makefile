@@ -35,7 +35,8 @@ license_check: # @HELP examine and ensure license headers exist
 update-deps: # @HELP pull updated CLI dependencies
 	go get github.com/onosproject/onos-topo
 	go get github.com/onosproject/onos-config
-	#go get github.com/onosproject/onos-ric
+	go get github.com/onosproject/onos-ric
+	go get github.com/onosproject/ran-simulator
 	go get github.com/onosproject/onos-ztp
 
 onos-cli-docker: # @HELP build onos CLI Docker image
