@@ -56,6 +56,9 @@ kind: images
 
 all: build images
 
+publish: # @HELP publish version on github and dockerhub
+	./../build-tools/publish-version ${VERSION} onosproject/onos-cli
+
 clean: # @HELP remove all the build artifacts
 	rm -rf ./build/_output ./vendor
 
