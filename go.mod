@@ -1,6 +1,6 @@
 module github.com/onosproject/onos-cli
 
-go 1.13
+go 1.14
 
 require (
 	github.com/onosproject/onos-config v0.5.0
