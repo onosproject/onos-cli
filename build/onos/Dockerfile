@@ -1,4 +1,4 @@
-ARG ONOS_BUILD_VERSION=stable
+ARG ONOS_BUILD_VERSION=undefined
 
 FROM onosproject/golang-build:$ONOS_BUILD_VERSION AS build
 ENV GO111MODULE=on
@@ -7,7 +7,7 @@ RUN go get github.com/opennetworkinglab/gnmi/cmd/gnmi_cli && \
 COPY . /go/src/github.com/onosproject/onos-cli
 RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
 
-FROM alpine:3.9
+FROM alpine:3.11
 RUN apk add bash bash-completion curl libc6-compat
 
 RUN addgroup -S onos && adduser -S -G onos onos
