@@ -22,6 +22,8 @@ import (
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
 	ric "github.com/onosproject/onos-ric/pkg/cli"
+	hocli "github.com/onosproject/onos-ric/pkg/apps/onos-ric-ho/cli"
+	mlbcli "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	ransim "github.com/onosproject/ran-simulator/pkg/cli"
@@ -67,6 +69,8 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(ztp.GetCommand())
 	cmd.AddCommand(ric.GetCommand())
+	cmd.AddCommand(hocli.GetCommand())
+	cmd.AddCommand(mlbcli.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(getCompletionCommand())
 
