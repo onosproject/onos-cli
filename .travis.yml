@@ -24,9 +24,9 @@ before_script:
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
 
 before_install:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-       bash ./build/bin/push-images &&
-       bash -x ../build-tools/release-merge-commit;
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
+       openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in .ssh/id_rsa.enc -out ~/.ssh/id_rsa -d &&
+       chmod 600 ~/.ssh/id_rsa;
      fi'
 
 jobs:
@@ -34,7 +34,10 @@ jobs:
     - stage: tests
       script:
         - make coverage
-        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./build/bin/push-images; fi'
+        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+             bash ./build/bin/push-images &&
+             bash -x ../build-tools/release-merge-commit;
+           fi'
     - stage: docs build
       if: type != pull_request
       script:
