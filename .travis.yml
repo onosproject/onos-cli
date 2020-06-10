@@ -38,7 +38,4 @@ jobs:
              bash ./build/bin/push-images &&
              bash -x ../build-tools/release-merge-commit;
            fi'
-    - stage: docs build
-      if: type != pull_request
-      script:
-        - sh ../build-tools/build/travis/trigger-travis onosproject onos-test master "`git rev-parse --short HEAD`" $TRAVIS_ACCESS_TOKEN
+
