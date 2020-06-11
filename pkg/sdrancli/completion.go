@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package sdrancli
 
 import (
 	"bytes"
 	"errors"
 	config "github.com/onosproject/onos-config/pkg/cli"
+	ric "github.com/onosproject/onos-ric/pkg/cli"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"io"
@@ -33,6 +34,7 @@ func getBashCompletions() string {
 		config.GetBashCompletion(),
 		topo.GetBashCompletion(),
 		ztp.GetBashCompletion(),
+		ric.GetBashCompletion(),
 	}
 	return strings.Join(completions, "\n")
 }
