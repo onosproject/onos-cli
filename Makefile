@@ -21,7 +21,7 @@ test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/cmd/...
 
 coverage: # @HELP generate unit test coverage data
-coverage: build deps linters license_check
+coverage: build build-sdran deps linters license_check
 	./build/bin/coveralls-coverage
 
 deps: # @HELP ensure that the required dependencies are in place
