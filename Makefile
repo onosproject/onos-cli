@@ -11,6 +11,10 @@ build:
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
+build: # @HELP build the Go binaries and run all validations (default)
+build-sdran:
+	go build -o build/_output/sdran ./cmd/sdran
+
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/pkg/...
