@@ -12,25 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package sdrancli
 
 import (
 	"fmt"
-	config "github.com/onosproject/onos-config/pkg/cli"
-
+	"github.com/onosproject/onos-cli/pkg/cli"
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
-	topo "github.com/onosproject/onos-topo/pkg/cli"
-	ztp "github.com/onosproject/onos-ztp/pkg/cli"
+	ric "github.com/onosproject/onos-ric/pkg/cli"
+	ransim "github.com/onosproject/ran-simulator/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
 )
-
-func init() {
-	cobra.OnInitialize(topo.Init)
-}
 
 // Execute runs the root command and any sub-commands.
 func Execute() {
@@ -54,17 +49,10 @@ func GenerateCliDocs() {
 
 // GetRootCommand returns the root onos command
 func GetRootCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:                    "onos",
-		Short:                  "ONOS command line client",
-		BashCompletionFunction: getBashCompletions(),
-		SilenceUsage:           true,
-		SilenceErrors:          true,
-	}
-	cmd.AddCommand(config.GetCommand())
-	cmd.AddCommand(topo.GetCommand())
-	cmd.AddCommand(ztp.GetCommand())
-	cmd.AddCommand(getCompletionCommand())
+	cmd := cli.GetRootCommand()
+	// Do something with completions
+	cmd.AddCommand(ric.GetCommand())
+	cmd.AddCommand(ransim.GetCommand())
 
 	return cmd
 }

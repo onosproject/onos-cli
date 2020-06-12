@@ -11,13 +11,17 @@ build:
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
+build-sdran: # @HELP build the Go binaries and run all validations (default)
+build-sdran:
+	go build -o build/_output/sdran ./cmd/sdran
+
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
 
 coverage: # @HELP generate unit test coverage data
-coverage: build deps linters license_check
+coverage: build build-sdran deps linters license_check
 	./build/bin/coveralls-coverage
 
 deps: # @HELP ensure that the required dependencies are in place
@@ -35,9 +39,11 @@ license_check: # @HELP examine and ensure license headers exist
 update-deps: # @HELP pull updated CLI dependencies
 	go get github.com/onosproject/onos-topo
 	go get github.com/onosproject/onos-config
+	go get github.com/onosproject/onos-ztp
+
+update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
 	go get github.com/onosproject/onos-ric
 	go get github.com/onosproject/ran-simulator
-	go get github.com/onosproject/onos-ztp
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker: update-deps
@@ -47,8 +53,16 @@ onos-cli-docker: update-deps
 		-t onosproject/onos-cli:${ONOS_CLI_VERSION}
 	@rm -rf vendor
 
+onos-sdran-cli-docker: # @HELP build onos CLI Docker image
+onos-sdran-cli-docker: update-deps update-sdran-deps
+	@go mod vendor
+	docker build . -f build/sdran/Dockerfile \
+		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
+		-t onosproject/onos-sdran-cli:${ONOS_CLI_VERSION}
+	@rm -rf vendor
+
 images: # @HELP build all Docker images
-images: build onos-cli-docker
+images: build onos-cli-docker onos-sdran-cli-docker
 
 kind: images
 	@if [ "`kind get clusters`" = '' ]; then echo "no kind cluster found" && exit 1; fi
