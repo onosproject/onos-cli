@@ -13,4 +13,4 @@ require (
 	github.com/spf13/cobra v0.0.6
 )
 
-replace github.com/onosproject/onos-cli/ => ../../cli
+replace github.com/onosproject/onos-cli/ => ../cli
