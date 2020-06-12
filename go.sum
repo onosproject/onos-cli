@@ -473,6 +473,7 @@ github.com/onosproject/config-models/modelplugin/testdevice-2.0.0 v0.0.0-2020030
 github.com/onosproject/helmit v0.6.0/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
 github.com/onosproject/helmit v0.6.3/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
 github.com/onosproject/helmit v0.6.4/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
+github.com/onosproject/onos-cli v0.6.6/go.mod h1:naiQ3PCwSuQ23nSFUASYOzfam/m3vYkCOSkSxLel8wI=
 github.com/onosproject/onos-config v0.6.0 h1:eVh6pjJPCYrSxxNxV8BYY9xhcYgJM+KXA7qXZdm9TcQ=
 github.com/onosproject/onos-config v0.6.0/go.mod h1:+DnY8IMoGGwytNzPLDOesnJFjJvtTgFAa0JWamzJNv8=
 github.com/onosproject/onos-config v0.6.3 h1:S7DVqXmhq4JxrCWwfK4Y+VmutgPS0NLf01wMNjXJBk8=
