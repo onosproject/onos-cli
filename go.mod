@@ -8,6 +8,7 @@ require (
 	github.com/onosproject/onos-lib-go v0.6.5
 	github.com/onosproject/onos-topo v0.6.9
 	github.com/onosproject/onos-ztp v0.6.0
+	github.com/onosproject/ran-simulator v0.6.6 // indirect
 	github.com/spf13/cobra v0.0.6
 )
 

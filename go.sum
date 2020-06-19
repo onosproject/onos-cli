@@ -501,6 +501,8 @@ github.com/onosproject/onos-ztp v0.6.0 h1:vAQEWoBiNtnioaWOOv9VMSaTRA/aBdHiHfHFNw
 github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOwtvY1HZnPkeag=
 github.com/onosproject/ran-simulator v0.6.5 h1:aozVwUxfLcZOxmHKrlPvmsL8FToTkH5ju7Ky4X3PFjg=
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
+github.com/onosproject/ran-simulator v0.6.6 h1:3wFGg4Rbo34yDt/a07zaH3ym2zdgLLtdZEegI+CIUew=
+github.com/onosproject/ran-simulator v0.6.6/go.mod h1:Uvcq6g9LuLUY3rDYDTU2o1nBzIV/zMUlHhBxKDchCv0=
 github.com/onsi/ginkgo v0.0.0-20170829012221-11459a886d9c/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.10.1/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
