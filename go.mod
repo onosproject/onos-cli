@@ -14,3 +14,4 @@ require (
 )
 
 replace github.com/onosproject/onos-cli/pkg/sdrancli => ./pkg/sdrancli
+replace github.com/onosproject/onos-ric => ./../onos-ric
