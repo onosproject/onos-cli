@@ -26,8 +26,8 @@ before_script:
 before_install:
   - echo -e "machine github.com\n  login onos-builder\n  password $CI_USER_PASSWORD" > ~/.netrc
   - git config -l
-  - pushd .. && git clone --progress --verbose git@github.com:onosproject/build-tools.git && popd
-  - pushd .. && git clone git@github.com:onosproject/onos-ric.git && popd
+  - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
+  - pushd .. && git clone https://github.com/onosproject/onos-ric.git && popd
   - git config --global url."ssh://git@github.com/".insteadOf "https://github.com/"
   - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
        openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in .ssh/id_rsa.enc -out ~/.ssh/id_rsa -d &&
