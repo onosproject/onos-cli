@@ -464,9 +464,11 @@ github.com/onosproject/onos-config v0.6.5/go.mod h1:brhhOiZW4y/X+Q/ci4EFSGcPrQNW
 github.com/onosproject/onos-lib-go v0.6.0/go.mod h1:MBoPR4BPGajt9CeBEPxdl5zi9R+q/JxLqBGGN7/mL7I=
 github.com/onosproject/onos-lib-go v0.6.3/go.mod h1:5YjAEEoqqZR0EYWkV1CxyP7XwOqDXFbeJpmGnYixG+I=
 github.com/onosproject/onos-lib-go v0.6.4/go.mod h1:CQV56xK6Djj9nG83OntLKMwZcVAMpUxhRXYDhNTMMbQ=
+github.com/onosproject/onos-lib-go v0.6.5/go.mod h1:CQV56xK6Djj9nG83OntLKMwZcVAMpUxhRXYDhNTMMbQ=
 github.com/onosproject/onos-lib-go v0.6.6 h1:ffL4tzf2L/kNoZmQ4Gs3x/njnyL5ypMB4uleyxRFaaM=
 github.com/onosproject/onos-lib-go v0.6.6/go.mod h1:GHn/+TqNK8g/wjYmwm+dCmPpPJFuWVNdrxHm9ELKnDg=
 github.com/onosproject/onos-ric v0.6.5/go.mod h1:xizInyDV8XR39CxcbnqeB0DQvgvkl1sb5Fe6ajHy84k=
+github.com/onosproject/onos-ric v0.6.7/go.mod h1:bmifnyJZ98WDzoqqBNrXVVZ+Q8tZL1FJuEO5qeFHsso=
 github.com/onosproject/onos-ric v0.6.9 h1:3kvzQcjliiuE+DLG0+y0fIPDaPZaUULiNyTQXhWVCiU=
 github.com/onosproject/onos-ric v0.6.9/go.mod h1:jY02XRS3t0ng0t4AW0ImX7+OPfkQR2Ht8SnJatQ5jng=
 github.com/onosproject/onos-topo v0.6.0/go.mod h1:wcWSoimPCYyqqqxKUmEea4kpp7b/0RBJ30r3LlEwEXM=
@@ -477,6 +479,8 @@ github.com/onosproject/onos-ztp v0.6.0 h1:vAQEWoBiNtnioaWOOv9VMSaTRA/aBdHiHfHFNw
 github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOwtvY1HZnPkeag=
 github.com/onosproject/ran-simulator v0.6.5 h1:aozVwUxfLcZOxmHKrlPvmsL8FToTkH5ju7Ky4X3PFjg=
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
+github.com/onosproject/ran-simulator v0.6.6 h1:3wFGg4Rbo34yDt/a07zaH3ym2zdgLLtdZEegI+CIUew=
+github.com/onosproject/ran-simulator v0.6.6/go.mod h1:Uvcq6g9LuLUY3rDYDTU2o1nBzIV/zMUlHhBxKDchCv0=
 github.com/onsi/ginkgo v0.0.0-20170829012221-11459a886d9c/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.10.1/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
