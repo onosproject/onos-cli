@@ -21,7 +21,7 @@ cache:
 
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin latest
-  - pushd .. && git clone git@github.com:onosproject/build-tools.git && popd 
+  - pushd .. && git clone --progress --verbose git@github.com:onosproject/build-tools.git && popd
   - pushd .. && git clone git@github.com:onosproject/onos-ric.git && popd
   - git config --global url."ssh://git@github.com/".insteadOf "https://github.com/"
   - export GOPRIVATE="github.com/onosproject/onos-ric"
