@@ -22,8 +22,10 @@ cache:
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin latest
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
+  - export GOPRIVATE="github.com/onosproject/onos-ric"
 
 before_install:
+  - git config --global url."https://onos-builder:${CI_TOKEN}@github.com".insteadOf "https://github.com"
   - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
        openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in .ssh/id_rsa.enc -out ~/.ssh/id_rsa -d &&
        chmod 600 ~/.ssh/id_rsa;
