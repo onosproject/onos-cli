@@ -24,6 +24,7 @@ before_script:
   - export GOPRIVATE="github.com/onosproject/onos-ric"
 
 before_install:
+  - git config --global url."https://onos-builder:${CI_TOKEN}@github.com".insteadOf "https://github.com"
   - echo -e "machine github.com\n  login onos-builder\n  password $CI_USER_PASSWORD" > ~/.netrc
   - git config -l
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
