@@ -21,6 +21,8 @@ import (
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
 	ric "github.com/onosproject/onos-ric/pkg/cli"
+	richo "github.com/onosproject/onos-ric/pkg/apps/onos-ric-ho/cli"
+	ricmlb "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
 	ransim "github.com/onosproject/ran-simulator/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -52,6 +54,8 @@ func GetRootCommand() *cobra.Command {
 	cmd := cli.GetRootCommand()
 	// Do something with completions
 	cmd.AddCommand(ric.GetCommand())
+	cmd.AddCommand(richo.GetCommand())
+	cmd.AddCommand(ricmlb.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 
 	return cmd
