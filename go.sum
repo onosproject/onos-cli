@@ -108,6 +108,8 @@ github.com/atomix/go-client v0.1.1/go.mod h1:Y3QjXcE6Sbb0QqMs1z9n0X3Mwafx26UYZAY
 github.com/atomix/go-client v0.2.0/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
 github.com/atomix/go-client v0.2.1 h1:vg0vyjTEvvDZhNis0rePw4Hjve3ayFqWOQ6qrKk/XkE=
 github.com/atomix/go-client v0.2.1/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
+github.com/atomix/go-client v0.2.3 h1:xa6bIPU4Yyud6uAs9vioejfNghVuh/Ftd0EnUKGipVM=
+github.com/atomix/go-client v0.2.3/go.mod h1:KxR4SPzNftASIN0tYFYBzT5lW8fLNvFGNW26tdZuTVU=
 github.com/atomix/go-framework v0.0.0-20200123235029-e29fc7d6e104/go.mod h1:Dn7tjt5LIRA/qr5afQZDh9hdtvK82uQpMrADYIlVtfQ=
 github.com/atomix/go-framework v0.0.0-20200124003840-f24758b13aa2/go.mod h1:vo5K/v+rc5mohoZIw9vbyj+Y/EGGaEdF6XVkEvM9CSM=
 github.com/atomix/go-framework v0.0.0-20200202102454-440bc2678f1c/go.mod h1:EJ/rV5Eea5cPJ7z8LR5Ql/6c6mZEceeH84d7yX5o8No=
@@ -467,15 +469,19 @@ github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn
 github.com/olekukonko/tablewriter v0.0.0-20170122224234-a0225b3f23b5/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
 github.com/onosproject/config-models/modelplugin/devicesim-1.0.0 v0.0.0-20200303111912-723f2289d4c2 h1:axUinnbVSkQL3mwiHo8quasbtX0tSND3HRgbCnPFq70=
 github.com/onosproject/config-models/modelplugin/devicesim-1.0.0 v0.0.0-20200303111912-723f2289d4c2/go.mod h1:fnlrrfeXk6J57vIQ329fnNiOVCCeja9JzTaldVUb1cg=
+github.com/onosproject/config-models/modelplugin/devicesim-1.0.0 v0.0.0-20200903015527-386223ad48bd/go.mod h1:cxwSMw6NWWlqONn11R3B55OZnycHrhxhNWFPZkK6Oog=
 github.com/onosproject/config-models/modelplugin/e2node-1.0.0 v0.0.0-20200511074107-7166e3a5247d/go.mod h1:407kda6Vngy5HedD29O0r/wznX+TFn+gvDwgWtV4XiM=
 github.com/onosproject/config-models/modelplugin/testdevice-1.0.0 v0.0.0-20200303111912-723f2289d4c2 h1:z885fAIiyK0nwhJcXzsLDa5eoLkQQMblj4KD5TVKVbg=
 github.com/onosproject/config-models/modelplugin/testdevice-1.0.0 v0.0.0-20200303111912-723f2289d4c2/go.mod h1:WNjaBJ0e2gl1y7uu45AXmKCI0oxgCqSftha+FGMJ2JE=
+github.com/onosproject/config-models/modelplugin/testdevice-1.0.0 v0.0.0-20200903015527-386223ad48bd/go.mod h1:qThkYqUIWekzl1Dr3PV0mGn5a5wqWhFFMl9axVHLUos=
 github.com/onosproject/config-models/modelplugin/testdevice-2.0.0 v0.0.0-20200304144136-6992f473b240 h1:sI0zCRmIsUjpYf0MpgEsK2YLBpXcB4ynPHamoFybRGU=
 github.com/onosproject/config-models/modelplugin/testdevice-2.0.0 v0.0.0-20200304144136-6992f473b240/go.mod h1:kHe1VPG+H+ow9IQYy5DW4qLxZsT3yVSc+3aGrO0KuVY=
+github.com/onosproject/config-models/modelplugin/testdevice-2.0.0 v0.0.0-20200903015527-386223ad48bd/go.mod h1:1IY6EUMr+1JRIEeTeBXL46rGJDwrm+IMDNZiGW8G6Zw=
 github.com/onosproject/helmit v0.6.0/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
 github.com/onosproject/helmit v0.6.3/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
 github.com/onosproject/helmit v0.6.4/go.mod h1:ZvjMu26Kd19hCHzkpnUH1Zgv/htt7iZbPG1EsFXBlhc=
 github.com/onosproject/helmit v0.6.6/go.mod h1:EorNGSNGWojXGxBEuiNmPScae+R2C5WYfg/13gKEPLw=
+github.com/onosproject/helmit v0.6.7/go.mod h1:EorNGSNGWojXGxBEuiNmPScae+R2C5WYfg/13gKEPLw=
 github.com/onosproject/onos-cli v0.6.6/go.mod h1:naiQ3PCwSuQ23nSFUASYOzfam/m3vYkCOSkSxLel8wI=
 github.com/onosproject/onos-config v0.6.0/go.mod h1:+DnY8IMoGGwytNzPLDOesnJFjJvtTgFAa0JWamzJNv8=
 github.com/onosproject/onos-config v0.6.3/go.mod h1:yn+R+mQ+sKzIE8nC8iy/uzj/GrKchZZZfaovzfBi768=
@@ -483,6 +489,8 @@ github.com/onosproject/onos-config v0.6.5 h1:NBRhQKZvzuJlHJ5AbSet5BulYtGcqRNAWe3
 github.com/onosproject/onos-config v0.6.5/go.mod h1:brhhOiZW4y/X+Q/ci4EFSGcPrQNWUgwmR+4BNR6xR+k=
 github.com/onosproject/onos-config v0.6.11 h1:7MHIhQ/JQxzeo1vnGhkTN+rDzSvauSIxRJe7RPKm9ug=
 github.com/onosproject/onos-config v0.6.11/go.mod h1:arKv5v2vS134U76+JCJe3OInsF8TaG4nLRcPA7Bw61c=
+github.com/onosproject/onos-config v0.6.14 h1:Rf1ZiIhoWx9U2QpC3KlKQOeSevVSxhC3YLALU0N8IG0=
+github.com/onosproject/onos-config v0.6.14/go.mod h1:pWr+xttCC6OzTC6KJWNugjghQjlbLxt6wZ3Xm96BEkw=
 github.com/onosproject/onos-lib-go v0.6.0/go.mod h1:MBoPR4BPGajt9CeBEPxdl5zi9R+q/JxLqBGGN7/mL7I=
 github.com/onosproject/onos-lib-go v0.6.3/go.mod h1:5YjAEEoqqZR0EYWkV1CxyP7XwOqDXFbeJpmGnYixG+I=
 github.com/onosproject/onos-lib-go v0.6.4/go.mod h1:CQV56xK6Djj9nG83OntLKMwZcVAMpUxhRXYDhNTMMbQ=
@@ -498,6 +506,9 @@ github.com/onosproject/onos-lib-go v0.6.11 h1:FSAUfleVPOFZL/Ag+7OKgYJQUysuT24+KY
 github.com/onosproject/onos-lib-go v0.6.11/go.mod h1:rziMWU6yQa93ZSUGRJIPNqxWtbK1R7dYjyjxUcNep6k=
 github.com/onosproject/onos-lib-go v0.6.15 h1:9UcxMZW9/718mLe2Plc7Myz1XvJJGShHTzSujpdXCKc=
 github.com/onosproject/onos-lib-go v0.6.15/go.mod h1:WrNXx2u9DeKuAtOwcZJjrZeyNOfoyEyHepRXK3xH94E=
+github.com/onosproject/onos-lib-go v0.6.18/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
+github.com/onosproject/onos-lib-go v0.6.19 h1:9hV67s/4Qnx1DUtbr6glcOzC2XdxgeoiqZ8B4FIhHAQ=
+github.com/onosproject/onos-lib-go v0.6.19/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
 github.com/onosproject/onos-ric v0.6.5/go.mod h1:xizInyDV8XR39CxcbnqeB0DQvgvkl1sb5Fe6ajHy84k=
 github.com/onosproject/onos-ric v0.6.7/go.mod h1:bmifnyJZ98WDzoqqBNrXVVZ+Q8tZL1FJuEO5qeFHsso=
 github.com/onosproject/onos-ric v0.6.9 h1:3kvzQcjliiuE+DLG0+y0fIPDaPZaUULiNyTQXhWVCiU=
@@ -506,6 +517,8 @@ github.com/onosproject/onos-ric v0.6.10 h1:FROvshq6FYuAcQ500gqYScL10PY6KobRffUPk
 github.com/onosproject/onos-ric v0.6.10/go.mod h1:FSOdicsLdoW/1id8ZQ5Yw7zDSSH0JTs3ax80JgnZ4ew=
 github.com/onosproject/onos-ric v0.6.14 h1:EMSxf1AtR2/RabM4gHhGjySo9uYiHLoU6o1K1AUdxtU=
 github.com/onosproject/onos-ric v0.6.14/go.mod h1:SMmXavnjEcyx37n1zRp0hVW7TdDOn+EIDGIwXYdULe4=
+github.com/onosproject/onos-ric v0.6.19 h1:ST5m5rgt6AIsbaL4EP0f1d68pmOyFOxcU/qe+mjFVUE=
+github.com/onosproject/onos-ric v0.6.19/go.mod h1:dBFUOxbTEaaEvX2Vg93/JpiykBisOfkpkgRQrRq+ilw=
 github.com/onosproject/onos-test v0.6.2/go.mod h1:Ugb1OKR2bJhZjqpSMm9F5o6Ma2iwbtswhSlNyXXPgrg=
 github.com/onosproject/onos-topo v0.6.0/go.mod h1:wcWSoimPCYyqqqxKUmEea4kpp7b/0RBJ30r3LlEwEXM=
 github.com/onosproject/onos-topo v0.6.3/go.mod h1:YUxOPZz32u2QseaNa7UuHFHl1ivs+kG4a9ntR2/cYQ0=
@@ -519,6 +532,9 @@ github.com/onosproject/onos-topo v0.6.12/go.mod h1:KbgwUk0CHIWM/VWMbQj+NiELmD9PU
 github.com/onosproject/onos-topo v0.6.14/go.mod h1:KbgwUk0CHIWM/VWMbQj+NiELmD9PUipxIPPNigI4s2o=
 github.com/onosproject/onos-topo v0.6.15 h1:tg//f+ln9xsnj42zAXIcQsIFxoOMRk7oSI6H454QA24=
 github.com/onosproject/onos-topo v0.6.15/go.mod h1:3GTaJ6cI4RZYnpEgREse96mo/esHsK3cKOYX/MiUis4=
+github.com/onosproject/onos-topo v0.6.17/go.mod h1:wAMpzkMzyThUFlz8dwzJLbyXGRgRUaAgFSuy87tGaSM=
+github.com/onosproject/onos-topo v0.6.18 h1:mSLHioO3YwtyA+HCTrg32L3zfBUT9PTrMoebfw1ooMo=
+github.com/onosproject/onos-topo v0.6.18/go.mod h1:wAMpzkMzyThUFlz8dwzJLbyXGRgRUaAgFSuy87tGaSM=
 github.com/onosproject/onos-ztp v0.6.0 h1:vAQEWoBiNtnioaWOOv9VMSaTRA/aBdHiHfHFNwvA4O4=
 github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOwtvY1HZnPkeag=
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
@@ -889,6 +905,8 @@ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8
 google.golang.org/grpc v1.27.1/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
 google.golang.org/grpc v1.29.1 h1:EC2SB8S04d2r73uptxphDSUG+kTKVgjRPF+N3xpxRB4=
 google.golang.org/grpc v1.29.1/go.mod h1:itym6AZVZYACWQqET3MqgPpjcuV5QH3BxFS3IjizoKk=
+google.golang.org/grpc v1.31.1 h1:SfXqXS5hkufcdZ/mHtYCh53P2b+92WQq/DZcKLgsFRs=
+google.golang.org/grpc v1.31.1/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM8pak=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
