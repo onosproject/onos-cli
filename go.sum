@@ -27,6 +27,7 @@ github.com/Microsoft/go-winio v0.4.15-0.20190919025122-fc70bd9a86b5/go.mod h1:tT
 github.com/Microsoft/hcsshim v0.8.7/go.mod h1:OHd7sQqRFrYd3RmSgbgji+ctCwkbq2wbEYNSzOYtcBQ=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+github.com/Pallinder/go-randomdata v1.2.0/go.mod h1:yHmJgulpD2Nfrm0cR9tI/+oAgRqCQQixsA8HyRZfV9Y=
 github.com/PuerkitoBio/purell v1.0.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/purell v1.1.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
@@ -57,6 +58,8 @@ github.com/atomix/api v0.0.0-20200211005812-591fe8b07ea8/go.mod h1:N+Jv8qV9klP+/
 github.com/atomix/api v0.1.0/go.mod h1:G8fCdKYiPhZMYTgfz7QAtw6JqIfY2szigiz/gILNY50=
 github.com/atomix/api v0.2.0 h1:0e6xR8tNh71/4Ts05HHTMNCl2SXEqLXfg8gjehBxoSg=
 github.com/atomix/api v0.2.0/go.mod h1:G8fCdKYiPhZMYTgfz7QAtw6JqIfY2szigiz/gILNY50=
+github.com/atomix/api v0.3.1 h1:5InzXfR/4LwPqEWBddDl4JJ9nZSx2Izgdx4B0D3v2YM=
+github.com/atomix/api v0.3.1/go.mod h1:G8fCdKYiPhZMYTgfz7QAtw6JqIfY2szigiz/gILNY50=
 github.com/atomix/atomix-api v0.0.0-20190826211343-dd8f4db3bf77/go.mod h1:joWKUd0zIeYbAQ0vmYHGsnV03ZgRalhceHgnJ3EN0mI=
 github.com/atomix/atomix-api v0.0.0-20191002225141-1ee9c98c7dfd/go.mod h1:joWKUd0zIeYbAQ0vmYHGsnV03ZgRalhceHgnJ3EN0mI=
 github.com/atomix/atomix-api v0.0.0-20191005223910-aa620357faa0/go.mod h1:joWKUd0zIeYbAQ0vmYHGsnV03ZgRalhceHgnJ3EN0mI=
@@ -110,6 +113,8 @@ github.com/atomix/go-client v0.2.1 h1:vg0vyjTEvvDZhNis0rePw4Hjve3ayFqWOQ6qrKk/Xk
 github.com/atomix/go-client v0.2.1/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
 github.com/atomix/go-client v0.2.3 h1:xa6bIPU4Yyud6uAs9vioejfNghVuh/Ftd0EnUKGipVM=
 github.com/atomix/go-client v0.2.3/go.mod h1:KxR4SPzNftASIN0tYFYBzT5lW8fLNvFGNW26tdZuTVU=
+github.com/atomix/go-client v0.3.0 h1:cg3UgDxAY7NLn2lLcxvn4h7d2RdYk9mGU3OidSx5q5M=
+github.com/atomix/go-client v0.3.0/go.mod h1:0QZK03OEWIeWTvszo24FggPDqhgUYFZU73dBPS1O12k=
 github.com/atomix/go-framework v0.0.0-20200123235029-e29fc7d6e104/go.mod h1:Dn7tjt5LIRA/qr5afQZDh9hdtvK82uQpMrADYIlVtfQ=
 github.com/atomix/go-framework v0.0.0-20200124003840-f24758b13aa2/go.mod h1:vo5K/v+rc5mohoZIw9vbyj+Y/EGGaEdF6XVkEvM9CSM=
 github.com/atomix/go-framework v0.0.0-20200202102454-440bc2678f1c/go.mod h1:EJ/rV5Eea5cPJ7z8LR5Ql/6c6mZEceeH84d7yX5o8No=
@@ -122,6 +127,8 @@ github.com/atomix/go-framework v0.1.0/go.mod h1:XsChdgPlcojYG8BgpyZc9KPG0ykthPev
 github.com/atomix/go-framework v0.1.1/go.mod h1:G7+oWIJUlx5Z8ohAzpIon6BAUPUo9VDx7w9AeQ6g3Wo=
 github.com/atomix/go-framework v0.2.0 h1:YppUrCL2D5FmovmK6FjP+XmNnO/IoSyQhLx48inIu8M=
 github.com/atomix/go-framework v0.2.0/go.mod h1:fRMu6i8RQUR2XGHnC4csasmAsDd3CPv3yAEK/9NYzZo=
+github.com/atomix/go-framework v0.4.0 h1:s15QseC3sYAe0ChuUMf2fFJoPPpEsPAlHxeHNP2KX0w=
+github.com/atomix/go-framework v0.4.0/go.mod h1:5NbPMg2E536xfFBCJWKQ7d3vg/C9crngRCJVVqLObwg=
 github.com/atomix/go-local v0.0.0-20200124003802-357f6682b2f4/go.mod h1:MabPkX/j2bN399GVAYGigyvDaAslu7omZoujEfzdKDg=
 github.com/atomix/go-local v0.0.0-20200202105028-743d224c66eb/go.mod h1:r+i7K/PMo9+0J0vQM7f7gjSsr8uZj6iiqkc8xLOIR/U=
 github.com/atomix/go-local v0.0.0-20200206051159-e57333bb7aab/go.mod h1:HjrFb/fmsvpa1NweW8VBvapv6/Ih9K6RboocUJ0JtD0=
@@ -132,6 +139,8 @@ github.com/atomix/go-local v0.1.0/go.mod h1:jLFrhThMmUn+42OErqCnXwIn3vhKUAufACAB
 github.com/atomix/go-local v0.1.1/go.mod h1:nx3J3Xzu2K9t/7EdCc6rhW4AjGQ/cauhETTyoVZk+6k=
 github.com/atomix/go-local v0.2.0 h1:R5Iy1+lBdIHO9wPN5mawpnl+PIqGsvPbDZd+6uhQavM=
 github.com/atomix/go-local v0.2.0/go.mod h1:nbbobMfxgeseJcxihY9yfN+6F2LIRYAGvOBb7jrrb80=
+github.com/atomix/go-local v0.4.0 h1:CDfwoR2soLZoZz4OXTF7W+MHWP5KsX91mP+CiczKRUk=
+github.com/atomix/go-local v0.4.0/go.mod h1:aZJ3dG8HPOZWo/o6lFd2orJ8hnvm3EKqOqMDkvOgnzU=
 github.com/aws/aws-sdk-go v1.15.11/go.mod h1:mFuSZ37Z9YOHbQEwBWztmVzqXrEkub65tZoCYDt7FT0=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
@@ -491,6 +500,8 @@ github.com/onosproject/onos-config v0.6.11 h1:7MHIhQ/JQxzeo1vnGhkTN+rDzSvauSIxRJ
 github.com/onosproject/onos-config v0.6.11/go.mod h1:arKv5v2vS134U76+JCJe3OInsF8TaG4nLRcPA7Bw61c=
 github.com/onosproject/onos-config v0.6.14 h1:Rf1ZiIhoWx9U2QpC3KlKQOeSevVSxhC3YLALU0N8IG0=
 github.com/onosproject/onos-config v0.6.14/go.mod h1:pWr+xttCC6OzTC6KJWNugjghQjlbLxt6wZ3Xm96BEkw=
+github.com/onosproject/onos-config v0.6.16 h1:8pqx5TpA1awqOID3a2xGysVzDbAn+TabgIiQcXFHyAo=
+github.com/onosproject/onos-config v0.6.16/go.mod h1:hD5F/C36u6z4NPavca6bncg/8nDka3OP3ZRmCmA2AwI=
 github.com/onosproject/onos-lib-go v0.6.0/go.mod h1:MBoPR4BPGajt9CeBEPxdl5zi9R+q/JxLqBGGN7/mL7I=
 github.com/onosproject/onos-lib-go v0.6.3/go.mod h1:5YjAEEoqqZR0EYWkV1CxyP7XwOqDXFbeJpmGnYixG+I=
 github.com/onosproject/onos-lib-go v0.6.4/go.mod h1:CQV56xK6Djj9nG83OntLKMwZcVAMpUxhRXYDhNTMMbQ=
@@ -509,6 +520,8 @@ github.com/onosproject/onos-lib-go v0.6.15/go.mod h1:WrNXx2u9DeKuAtOwcZJjrZeyNOf
 github.com/onosproject/onos-lib-go v0.6.18/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
 github.com/onosproject/onos-lib-go v0.6.19 h1:9hV67s/4Qnx1DUtbr6glcOzC2XdxgeoiqZ8B4FIhHAQ=
 github.com/onosproject/onos-lib-go v0.6.19/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
+github.com/onosproject/onos-lib-go v0.6.21 h1:ZKPCi5s8+76Zu8LKJ0VNwdhTbF5udFCw9DddHAC6qGg=
+github.com/onosproject/onos-lib-go v0.6.21/go.mod h1:Ntoc4aWD496bF2xoPG1jA/sVRFyw1zNrDpacCaslkfM=
 github.com/onosproject/onos-ric v0.6.5/go.mod h1:xizInyDV8XR39CxcbnqeB0DQvgvkl1sb5Fe6ajHy84k=
 github.com/onosproject/onos-ric v0.6.7/go.mod h1:bmifnyJZ98WDzoqqBNrXVVZ+Q8tZL1FJuEO5qeFHsso=
 github.com/onosproject/onos-ric v0.6.9 h1:3kvzQcjliiuE+DLG0+y0fIPDaPZaUULiNyTQXhWVCiU=
@@ -519,6 +532,8 @@ github.com/onosproject/onos-ric v0.6.14 h1:EMSxf1AtR2/RabM4gHhGjySo9uYiHLoU6o1K1
 github.com/onosproject/onos-ric v0.6.14/go.mod h1:SMmXavnjEcyx37n1zRp0hVW7TdDOn+EIDGIwXYdULe4=
 github.com/onosproject/onos-ric v0.6.19 h1:ST5m5rgt6AIsbaL4EP0f1d68pmOyFOxcU/qe+mjFVUE=
 github.com/onosproject/onos-ric v0.6.19/go.mod h1:dBFUOxbTEaaEvX2Vg93/JpiykBisOfkpkgRQrRq+ilw=
+github.com/onosproject/onos-ric v0.6.20 h1:6oKI7KAvGodD1SOydNl/yPaYp38jhe5IUCtjztrm47o=
+github.com/onosproject/onos-ric v0.6.20/go.mod h1:gKmLVE9IOKxud963V4FAciyiB5C2wlGo7yLJM2eIfcc=
 github.com/onosproject/onos-test v0.6.2/go.mod h1:Ugb1OKR2bJhZjqpSMm9F5o6Ma2iwbtswhSlNyXXPgrg=
 github.com/onosproject/onos-topo v0.6.0/go.mod h1:wcWSoimPCYyqqqxKUmEea4kpp7b/0RBJ30r3LlEwEXM=
 github.com/onosproject/onos-topo v0.6.3/go.mod h1:YUxOPZz32u2QseaNa7UuHFHl1ivs+kG4a9ntR2/cYQ0=
@@ -535,6 +550,8 @@ github.com/onosproject/onos-topo v0.6.15/go.mod h1:3GTaJ6cI4RZYnpEgREse96mo/esHs
 github.com/onosproject/onos-topo v0.6.17/go.mod h1:wAMpzkMzyThUFlz8dwzJLbyXGRgRUaAgFSuy87tGaSM=
 github.com/onosproject/onos-topo v0.6.18 h1:mSLHioO3YwtyA+HCTrg32L3zfBUT9PTrMoebfw1ooMo=
 github.com/onosproject/onos-topo v0.6.18/go.mod h1:wAMpzkMzyThUFlz8dwzJLbyXGRgRUaAgFSuy87tGaSM=
+github.com/onosproject/onos-topo v0.6.19 h1:ujZ55w1YlhJyI+mdot0MlOuIurMo53rjvBRv4mm9Va4=
+github.com/onosproject/onos-topo v0.6.19/go.mod h1:KHy3sZzbQGc16b2KK+Em1sxxbwd0SaPATcKg2IwkHCQ=
 github.com/onosproject/onos-ztp v0.6.0 h1:vAQEWoBiNtnioaWOOv9VMSaTRA/aBdHiHfHFNwvA4O4=
 github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOwtvY1HZnPkeag=
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
