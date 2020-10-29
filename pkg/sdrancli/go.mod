@@ -10,7 +10,7 @@ require (
 	github.com/onosproject/onos-e2t v0.6.2
 	github.com/onosproject/onos-topo v0.6.11
 	github.com/onosproject/onos-ztp v0.6.0
-	github.com/onosproject/ran-simulator v0.6.5
+	github.com/onosproject/ran-simulator v0.6.12
 	github.com/spf13/cobra v0.0.6
 )
 
