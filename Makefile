@@ -22,7 +22,7 @@ test: build deps license_check linters
 
 coverage: # @HELP generate unit test coverage data
 coverage: build build-sdran deps linters license_check
-	GOPRIVATE="github.com/onosproject/onos-ric" ./../build-tools/build/coveralls/coveralls-coverage onos-cli
+	GOPRIVATE="github.com/onosproject/*" ./../build-tools/build/coveralls/coveralls-coverage onos-cli
 
 deps: # @HELP ensure that the required dependencies are in place
 	go build -v ./...
