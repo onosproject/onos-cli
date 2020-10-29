@@ -32,7 +32,7 @@ jobs:
     - stage: tests
       if: type == pull_request || fork == false
       script:
-        - make license_check linters
+        - make license_check
     - stage: release
       if: type != pull_request && fork == false
       script:
