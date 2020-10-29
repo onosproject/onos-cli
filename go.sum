@@ -516,6 +516,7 @@ github.com/onosproject/onos-lib-go v0.6.6 h1:ffL4tzf2L/kNoZmQ4Gs3x/njnyL5ypMB4ul
 github.com/onosproject/onos-lib-go v0.6.6/go.mod h1:GHn/+TqNK8g/wjYmwm+dCmPpPJFuWVNdrxHm9ELKnDg=
 github.com/onosproject/onos-lib-go v0.6.10 h1:cRSgYYV/IzRg/ttahv13C0KS3g9Ur7vLQ04CDZn6Pbk=
 github.com/onosproject/onos-lib-go v0.6.10/go.mod h1:rziMWU6yQa93ZSUGRJIPNqxWtbK1R7dYjyjxUcNep6k=
+github.com/onosproject/onos-lib-go v0.6.15/go.mod h1:WrNXx2u9DeKuAtOwcZJjrZeyNOfoyEyHepRXK3xH94E=
 github.com/onosproject/onos-lib-go v0.6.17/go.mod h1:iU1kl2scI+4cKL5UhrT/yGehE0n9NfqYdYytnt6B45M=
 github.com/onosproject/onos-lib-go v0.6.18/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
 github.com/onosproject/onos-lib-go v0.6.21 h1:ZKPCi5s8+76Zu8LKJ0VNwdhTbF5udFCw9DddHAC6qGg=
@@ -542,6 +543,8 @@ github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOw
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
 github.com/onosproject/ran-simulator v0.6.6 h1:3wFGg4Rbo34yDt/a07zaH3ym2zdgLLtdZEegI+CIUew=
 github.com/onosproject/ran-simulator v0.6.6/go.mod h1:Uvcq6g9LuLUY3rDYDTU2o1nBzIV/zMUlHhBxKDchCv0=
+github.com/onosproject/ran-simulator v0.6.12 h1:zayW0uh4UF2FKc4o69AiDL2PQFmQsKzQMdj7AgrmHbQ=
+github.com/onosproject/ran-simulator v0.6.12/go.mod h1:bnJeYAzseAeRDt3uYPm8RtCOjA3t6BRyeIQXcJT7SOA=
 github.com/onsi/ginkgo v0.0.0-20170829012221-11459a886d9c/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.10.1/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -920,6 +923,7 @@ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQ
 google.golang.org/protobuf v1.20.1-0.20200309200217-e05f789c0967/go.mod h1:A+miEFZTKqfCUM6K7xSMQL9OKL/b6hQv+e19PK+JZNE=
 google.golang.org/protobuf v1.21.0/go.mod h1:47Nbq4nVaFHyn7ilMalzfO3qCViNmqZ2kzikPIcrTAo=
 google.golang.org/protobuf v1.22.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
+google.golang.org/protobuf v1.23.0 h1:4MY060fB1DLGMB/7MBTLnwQUY6+F09GEiz6SsrNqyzM=
 google.golang.org/protobuf v1.23.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
 google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
 google.golang.org/protobuf v1.25.0 h1:Ejskq+SyPohKW+1uil0JJMtmHCgJPJ/qWTxr8qp+R4c=
