@@ -20,7 +20,7 @@ branches:
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin latest
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
-  - export GOPRIVATE="*"
+  - export GOPRIVATE="github.com/onosproject/onos-e2t"
 
 before_install:
   - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" && $TRAVIS_SECURE_ENV_VARS == "true" ]] ; then
