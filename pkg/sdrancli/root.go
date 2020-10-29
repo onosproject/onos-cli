@@ -20,11 +20,11 @@ import (
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
-	ric "github.com/onosproject/onos-ric/pkg/cli"
+	et2 "github.com/onosproject/onos-e2t/pkg/cli"
 	richo "github.com/onosproject/onos-ric/pkg/apps/onos-ric-ho/cli"
 	ricmlb "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
+	ric "github.com/onosproject/onos-ric/pkg/cli"
 	ransim "github.com/onosproject/ran-simulator/pkg/cli"
-	et2 "github.com/onosproject/onos-e2t/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
