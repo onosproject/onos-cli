@@ -15,14 +15,10 @@ branches:
   only:
     - master
 
-cache:
-  directories:
-    - $HOME/gopath/pkg/mod         # Cache the Go modules
-
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin latest
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
-  - export GOPRIVATE="github.com/onosproject/onos-ric"
+  - export GOPRIVATE="github.com/onosproject/*"
 
 before_install:
   - git config --global url."https://onos-builder:${CI_TOKEN}@github.com".insteadOf "https://github.com"
@@ -36,10 +32,11 @@ jobs:
     - stage: tests
       if: type == pull_request || fork == false
       script:
-        - make coverage
+        - make license_check linters
     - stage: release
       if: type != pull_request && fork == false
       script:
+        - make coverage
         - bash ./build/bin/push-images
         - bash ../build-tools/release-merge-commit
 
