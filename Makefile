@@ -13,7 +13,7 @@ build:
 
 build-sdran: # @HELP build the Go binaries and run all validations (default)
 build-sdran:
-	GOPRIVATE="github.com/onosproject/onos-ric" go build -o build/_output/sdran ./cmd/sdran
+	GOPRIVATE="github.com/onosproject/*" go build -o build/_output/sdran ./cmd/sdran
 
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
@@ -42,8 +42,8 @@ update-deps: # @HELP pull updated CLI dependencies
 	go get github.com/onosproject/onos-ztp
 
 update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
-	GOPRIVATE="github.com/onosproject/onos-ric" go get github.com/onosproject/onos-ric
-	GOPRIVATE="github.com/onosproject/onos-ric" go get github.com/onosproject/ran-simulator
+	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric
+	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/ran-simulator
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker: update-deps
