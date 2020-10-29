@@ -22,7 +22,6 @@ branches:
 before_script:
   - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin latest
   - pushd .. && git clone https://github.com/onosproject/build-tools.git && popd
-  - pushd .. && git clone https://github.com/onosproject/onos-ric.git && popd
   - export GOPRIVATE="github.com/onosproject/onos-ric"
 
 before_install:
