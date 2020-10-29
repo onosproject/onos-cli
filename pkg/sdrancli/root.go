@@ -24,6 +24,7 @@ import (
 	richo "github.com/onosproject/onos-ric/pkg/apps/onos-ric-ho/cli"
 	ricmlb "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
 	ransim "github.com/onosproject/ran-simulator/pkg/cli"
+	et2 "github.com/onosproject/onos-e2t/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
@@ -57,6 +58,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(richo.GetCommand())
 	cmd.AddCommand(ricmlb.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
-
+	cmd.AddCommand(et2.GetCommand())
 	return cmd
 }
