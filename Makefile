@@ -25,7 +25,7 @@ coverage: build build-sdran deps linters license_check
 	GOPRIVATE="github.com/onosproject/*" ./../build-tools/build/coveralls/coveralls-coverage onos-cli
 
 deps: # @HELP ensure that the required dependencies are in place
-	go build -v ./...
+	GOPRIVATE="github.com/onosproject/*" go build -v ./...
 	bash -c "diff -u <(echo -n) <(git diff go.mod)"
 	bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
