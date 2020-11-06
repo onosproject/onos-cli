@@ -111,7 +111,6 @@ github.com/atomix/go-client v0.1.1/go.mod h1:Y3QjXcE6Sbb0QqMs1z9n0X3Mwafx26UYZAY
 github.com/atomix/go-client v0.2.0/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
 github.com/atomix/go-client v0.2.1 h1:vg0vyjTEvvDZhNis0rePw4Hjve3ayFqWOQ6qrKk/XkE=
 github.com/atomix/go-client v0.2.1/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
-github.com/atomix/go-client v0.2.2/go.mod h1:2vnbQIfU7NwfJo+HwB5oBYkK2Me2rPexTpC1vvhveF4=
 github.com/atomix/go-client v0.2.3 h1:xa6bIPU4Yyud6uAs9vioejfNghVuh/Ftd0EnUKGipVM=
 github.com/atomix/go-client v0.2.3/go.mod h1:KxR4SPzNftASIN0tYFYBzT5lW8fLNvFGNW26tdZuTVU=
 github.com/atomix/go-client v0.3.0 h1:cg3UgDxAY7NLn2lLcxvn4h7d2RdYk9mGU3OidSx5q5M=
@@ -502,8 +501,8 @@ github.com/onosproject/onos-config v0.6.5 h1:NBRhQKZvzuJlHJ5AbSet5BulYtGcqRNAWe3
 github.com/onosproject/onos-config v0.6.5/go.mod h1:brhhOiZW4y/X+Q/ci4EFSGcPrQNWUgwmR+4BNR6xR+k=
 github.com/onosproject/onos-config v0.6.16 h1:8pqx5TpA1awqOID3a2xGysVzDbAn+TabgIiQcXFHyAo=
 github.com/onosproject/onos-config v0.6.16/go.mod h1:hD5F/C36u6z4NPavca6bncg/8nDka3OP3ZRmCmA2AwI=
-github.com/onosproject/onos-e2t v0.6.3 h1:mAvsSzdYYPuKMYsUED6aBmdY1cqOOtN5O48+dNnt3nM=
-github.com/onosproject/onos-e2t v0.6.3/go.mod h1:RB5tE8qnuUpkbzHZH5ewqQ9TPrxBE1wR57A3JVeCZv8=
+github.com/onosproject/onos-e2t v0.6.4 h1:J/3zai36JV3xuO7NUMG5e6xi9dOsV2+3rj2pCrNGpxI=
+github.com/onosproject/onos-e2t v0.6.4/go.mod h1:iYv8MkxITVmv1jxkvLZ5zgg4p+KeayDS52VuZ1lT6tM=
 github.com/onosproject/onos-lib-go v0.6.0/go.mod h1:MBoPR4BPGajt9CeBEPxdl5zi9R+q/JxLqBGGN7/mL7I=
 github.com/onosproject/onos-lib-go v0.6.3/go.mod h1:5YjAEEoqqZR0EYWkV1CxyP7XwOqDXFbeJpmGnYixG+I=
 github.com/onosproject/onos-lib-go v0.6.4/go.mod h1:CQV56xK6Djj9nG83OntLKMwZcVAMpUxhRXYDhNTMMbQ=
@@ -513,7 +512,6 @@ github.com/onosproject/onos-lib-go v0.6.6/go.mod h1:GHn/+TqNK8g/wjYmwm+dCmPpPJFu
 github.com/onosproject/onos-lib-go v0.6.10 h1:cRSgYYV/IzRg/ttahv13C0KS3g9Ur7vLQ04CDZn6Pbk=
 github.com/onosproject/onos-lib-go v0.6.10/go.mod h1:rziMWU6yQa93ZSUGRJIPNqxWtbK1R7dYjyjxUcNep6k=
 github.com/onosproject/onos-lib-go v0.6.15/go.mod h1:WrNXx2u9DeKuAtOwcZJjrZeyNOfoyEyHepRXK3xH94E=
-github.com/onosproject/onos-lib-go v0.6.17/go.mod h1:iU1kl2scI+4cKL5UhrT/yGehE0n9NfqYdYytnt6B45M=
 github.com/onosproject/onos-lib-go v0.6.18/go.mod h1:x0vnsS7xhJVIHxtRFLmBW3sm9OdKnmTkCCVo8eGy8lU=
 github.com/onosproject/onos-lib-go v0.6.21 h1:ZKPCi5s8+76Zu8LKJ0VNwdhTbF5udFCw9DddHAC6qGg=
 github.com/onosproject/onos-lib-go v0.6.21/go.mod h1:Ntoc4aWD496bF2xoPG1jA/sVRFyw1zNrDpacCaslkfM=
