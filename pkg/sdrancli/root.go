@@ -20,7 +20,8 @@ import (
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
-	et2 "github.com/onosproject/onos-e2t/pkg/cli"
+	e2sub "github.com/onosproject/onos-e2sub/pkg/cli"
+	e2t "github.com/onosproject/onos-e2t/pkg/cli"
 	richo "github.com/onosproject/onos-ric/pkg/apps/onos-ric-ho/cli"
 	ricmlb "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
 	ric "github.com/onosproject/onos-ric/pkg/cli"
@@ -58,6 +59,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(richo.GetCommand())
 	cmd.AddCommand(ricmlb.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
-	cmd.AddCommand(et2.GetCommand())
+	cmd.AddCommand(e2t.GetCommand())
+	cmd.AddCommand(e2sub.GetCommand())
 	return cmd
 }
