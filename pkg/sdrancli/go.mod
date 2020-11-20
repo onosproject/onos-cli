@@ -6,7 +6,8 @@ require (
 	github.com/onosproject/onos-cli v0.6.6
 	github.com/onosproject/onos-config v0.6.5
 	github.com/onosproject/onos-e2t v0.6.6
-	github.com/onosproject/onos-e2sub v0.6.3
+	github.com/onosproject/onos-e2sub v0.6.5
+	github.com/onosproject/onos-ric-sdk-go v0.6.3
 	github.com/onosproject/onos-lib-go v0.6.21
 	github.com/onosproject/onos-ric v0.6.9
 	github.com/onosproject/onos-topo v0.6.12
