@@ -46,6 +46,7 @@ update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/ran-simulator
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-e2t
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-e2sub
+	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric-sdk-go
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker: update-deps
