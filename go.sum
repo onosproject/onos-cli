@@ -636,6 +636,8 @@ github.com/onosproject/onos-topo v0.6.12/go.mod h1:KbgwUk0CHIWM/VWMbQj+NiELmD9PU
 github.com/onosproject/onos-topo v0.6.17/go.mod h1:wAMpzkMzyThUFlz8dwzJLbyXGRgRUaAgFSuy87tGaSM=
 github.com/onosproject/onos-topo v0.6.20 h1:XbedC4i6Vhlqt73FEEq+uQDA1v6jbCvEokL3zdVTuDo=
 github.com/onosproject/onos-topo v0.6.20/go.mod h1:N/HfqeO4QKlBmFGH/koH/yEzcFOoCV5CMAUvxdcoE8o=
+github.com/onosproject/onos-topo v0.6.21 h1:L0IGPy6Mvlwv2FmENTeEacZ5f1PoGNB3kltfHEkU3gQ=
+github.com/onosproject/onos-topo v0.6.21/go.mod h1:yBHYWM4gp+TvXi1r4FHNxaHP6iPOTdxb5j2dpVU725c=
 github.com/onosproject/onos-ztp v0.6.0 h1:vAQEWoBiNtnioaWOOv9VMSaTRA/aBdHiHfHFNwvA4O4=
 github.com/onosproject/onos-ztp v0.6.0/go.mod h1:euLAPim10Z4XT/QOepYBZjcmIbHgkOwtvY1HZnPkeag=
 github.com/onosproject/ran-simulator v0.6.5/go.mod h1:bL1suekiAMdIVkFWdTwb2z1iRzI2TTRusuJGW/Ji8jY=
