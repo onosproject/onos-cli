@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/onosproject/onos-cli v0.6.6
-	github.com/onosproject/onos-config v0.6.5
+	github.com/onosproject/onos-config v0.6.18
 	github.com/onosproject/onos-e2t v0.6.9
 	github.com/onosproject/onos-e2sub v0.6.6
 	github.com/onosproject/onos-ric-sdk-go v0.6.6

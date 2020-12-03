@@ -591,13 +591,15 @@ github.com/onosproject/onos-api/go v0.6.1 h1:bWeL1l3BCUmJAMEOatyxKaowNsckyElHob4
 github.com/onosproject/onos-api/go v0.6.1/go.mod h1:12eyCEHm9gouF75HXauur8eLCzoAmoIFCrv+WExzVjo=
 github.com/onosproject/onos-api/go v0.6.5 h1:WbgrZL92aW/xm4pP+n/wCCb3vp/DYInk7NPmB+52XbU=
 github.com/onosproject/onos-api/go v0.6.5/go.mod h1:12eyCEHm9gouF75HXauur8eLCzoAmoIFCrv+WExzVjo=
+github.com/onosproject/onos-api/go v0.6.7 h1:OdB+0qteIAxjSWvbinJDNGi7mV0r90LKjRuRSR3xpLg=
+github.com/onosproject/onos-api/go v0.6.7/go.mod h1:U10eWq2WOS9OnACITIebGcFA8dSvekCcSi3rmLY/rPA=
 github.com/onosproject/onos-cli v0.6.6/go.mod h1:naiQ3PCwSuQ23nSFUASYOzfam/m3vYkCOSkSxLel8wI=
 github.com/onosproject/onos-config v0.6.0/go.mod h1:+DnY8IMoGGwytNzPLDOesnJFjJvtTgFAa0JWamzJNv8=
 github.com/onosproject/onos-config v0.6.3/go.mod h1:yn+R+mQ+sKzIE8nC8iy/uzj/GrKchZZZfaovzfBi768=
 github.com/onosproject/onos-config v0.6.5 h1:NBRhQKZvzuJlHJ5AbSet5BulYtGcqRNAWe3stViau1Y=
 github.com/onosproject/onos-config v0.6.5/go.mod h1:brhhOiZW4y/X+Q/ci4EFSGcPrQNWUgwmR+4BNR6xR+k=
-github.com/onosproject/onos-config v0.6.17 h1:7T4CZnsO4yhD+ZCS9Y6xNBGat2Pnyggh8sMpl1SvGLs=
-github.com/onosproject/onos-config v0.6.17/go.mod h1:13kEZt80y09bKnP5rXqkE88bf6mv+oEYDsPjZc16OXY=
+github.com/onosproject/onos-config v0.6.18 h1:DoulRRqa8dh/IahUKU5lKjfYtMt4J88RBZxfmFlhqdI=
+github.com/onosproject/onos-config v0.6.18/go.mod h1:vNYBN6L3gLQKg+Iw2kxcyrIodKlDTIaHosJhaqOsfQQ=
 github.com/onosproject/onos-e2sub v0.6.6 h1:OWYPQ8MPusWOOAeMNCfQqwinKnwI2J9q4eQzFSv56c0=
 github.com/onosproject/onos-e2sub v0.6.6/go.mod h1:U0w5FPXdVCkljaHq734iHmytrMBeb3gnE9l+xASmN4g=
 github.com/onosproject/onos-e2t v0.6.9 h1:Kj9d5I1/qaPac3TOdGGv4ZsllE79sv57zKGJTg3Jk+I=
