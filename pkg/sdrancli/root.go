@@ -26,6 +26,7 @@ import (
 	ricmlb "github.com/onosproject/onos-ric/pkg/apps/onos-ric-mlb/cli"
 	ric "github.com/onosproject/onos-ric/pkg/cli"
 	ransim "github.com/onosproject/ran-simulator/pkg/cli"
+	kpimon "github.com/onosproject/onos-kpimon/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
@@ -61,5 +62,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
 	cmd.AddCommand(e2sub.GetCommand())
+	cmd.AddCommand(kpimon.GetCommand())
 	return cmd
 }
