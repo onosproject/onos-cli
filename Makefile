@@ -11,10 +11,6 @@ build:
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
-build-sdran: # @HELP build the Go binaries and run all validations (default)
-build-sdran:
-	GOPRIVATE="github.com/onosproject/*" go build -o build/_output/sdran ./cmd/sdran
-
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/pkg/...
@@ -37,15 +33,12 @@ license_check: # @HELP examine and ensure license headers exist
 	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR}
 
 update-deps: # @HELP pull updated CLI dependencies
-	go get github.com/onosproject/onos-topo
 	go get github.com/onosproject/onos-config
 	go get github.com/onosproject/onos-ztp
 
 update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/ran-simulator
-	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-e2t
-	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-e2sub
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric-sdk-go
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-kpimon
 
@@ -57,16 +50,8 @@ onos-cli-docker: update-deps
 		-t onosproject/onos-cli:${ONOS_CLI_VERSION}
 	@rm -rf vendor
 
-onos-sdran-cli-docker: # @HELP build onos CLI Docker image
-onos-sdran-cli-docker: update-deps update-sdran-deps
-	@go mod vendor
-	docker build . -f build/sdran/Dockerfile \
-		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
-		-t onosproject/onos-sdran-cli:${ONOS_CLI_VERSION}
-	@rm -rf vendor
-
 images: # @HELP build all Docker images
-images: build onos-cli-docker onos-sdran-cli-docker
+images: build onos-cli-docker
 
 kind: images
 	@if [ "`kind get clusters`" = '' ]; then echo "no kind cluster found" && exit 1; fi
@@ -75,7 +60,7 @@ kind: images
 all: build images
 
 publish: # @HELP publish version on github and dockerhub
-	./../build-tools/publish-version ${VERSION} onosproject/onos-cli onosproject/onos-sdran-cli
+	./../build-tools/publish-version ${VERSION} onosproject/onos-cli
 
 bumponosdeps: # @HELP update "onosproject" go dependencies and push patch to git.
 	./../build-tools/bump-onos-deps ${VERSION}

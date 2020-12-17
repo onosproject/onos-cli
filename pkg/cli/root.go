@@ -17,11 +17,12 @@ package cli
 import (
 	"fmt"
 	config "github.com/onosproject/onos-config/pkg/cli"
+	e2t "github.com/onosproject/onos-cli/pkg/onos-e2t"
 
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
-	topo "github.com/onosproject/onos-topo/pkg/cli"
+	topo "github.com/onosproject/onos-cli/pkg/onos-topo"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -64,6 +65,8 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(ztp.GetCommand())
+	cmd.AddCommand(e2t.GetCommand())
+
 	cmd.AddCommand(getCompletionCommand())
 
 	return cmd
