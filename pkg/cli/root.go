@@ -16,8 +16,8 @@ package cli
 
 import (
 	"fmt"
-	e2sub "github.com/onosproject/onos-cli/pkg/onos-e2sub"
-	e2t "github.com/onosproject/onos-cli/pkg/onos-e2t"
+	e2sub "github.com/onosproject/onos-cli/pkg/e2sub"
+	e2t "github.com/onosproject/onos-cli/pkg/e2t"
 	config "github.com/onosproject/onos-config/pkg/cli"
 
 	// Needed to keep ran-sim happy for the mo
