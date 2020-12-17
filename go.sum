@@ -709,6 +709,8 @@ github.com/onosproject/onos-api/go v0.6.11/go.mod h1:HLfWE9aouIeOmi4soR6bxK2cZ33
 github.com/onosproject/onos-api/go v0.7.0 h1:BjfN78bE/TXadUODrkYbaDsb1hyiV90dNiLoIkl5eV0=
 github.com/onosproject/onos-api/go v0.7.0/go.mod h1:HLfWE9aouIeOmi4soR6bxK2cZ33NbnFMvdyv9fmjaSg=
 github.com/onosproject/onos-cli v0.6.6/go.mod h1:naiQ3PCwSuQ23nSFUASYOzfam/m3vYkCOSkSxLel8wI=
+github.com/onosproject/onos-cli/pkg/sdrancli v0.0.0-20201216175821-669fd62e6a3f h1:wKXeUglCGB6r1YYZJ1hjOrCnoiYv9JuqGuzpZAix674=
+github.com/onosproject/onos-cli/pkg/sdrancli v0.0.0-20201216175821-669fd62e6a3f/go.mod h1:erhs7cA6WVG/EA3qm31Fi9LFAhWzKjWGix/h4yvUneQ=
 github.com/onosproject/onos-config v0.6.0/go.mod h1:+DnY8IMoGGwytNzPLDOesnJFjJvtTgFAa0JWamzJNv8=
 github.com/onosproject/onos-config v0.6.3/go.mod h1:yn+R+mQ+sKzIE8nC8iy/uzj/GrKchZZZfaovzfBi768=
 github.com/onosproject/onos-config v0.6.16/go.mod h1:hD5F/C36u6z4NPavca6bncg/8nDka3OP3ZRmCmA2AwI=
