@@ -16,9 +16,9 @@ package cli
 
 import (
 	"fmt"
+	config "github.com/onosproject/onos-cli/pkg/config"
 	e2sub "github.com/onosproject/onos-cli/pkg/e2sub"
 	e2t "github.com/onosproject/onos-cli/pkg/e2t"
-	config "github.com/onosproject/onos-config/pkg/cli"
 
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"

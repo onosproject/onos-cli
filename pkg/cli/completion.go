@@ -17,7 +17,7 @@ package cli
 import (
 	"bytes"
 	"errors"
-	config "github.com/onosproject/onos-config/pkg/cli"
+	config "github.com/onosproject/onos-cli/pkg/config"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
 	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"io"

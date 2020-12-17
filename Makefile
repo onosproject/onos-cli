@@ -33,7 +33,6 @@ license_check: # @HELP examine and ensure license headers exist
 	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR}
 
 update-deps: # @HELP pull updated CLI dependencies
-	go get github.com/onosproject/onos-config
 	go get github.com/onosproject/onos-ztp
 
 update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
