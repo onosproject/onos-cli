@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	google.golang.org/grpc v1.33.2
+	gotest.tools v2.2.0+incompatible
 )
 
 replace github.com/docker/docker => github.com/docker/engine v1.4.2-0.20200229013735-71373c6105e3

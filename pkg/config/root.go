@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package cli holds ONOS command-line command implementations.
+// Package config holds ONOS command-line command implementations for onos-config
 package config
 
 import (
