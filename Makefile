@@ -35,10 +35,6 @@ license_check: # @HELP examine and ensure license headers exist
 update-deps: # @HELP pull updated CLI dependencies
 	go get github.com/onosproject/onos-ztp
 
-update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
-	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric-sdk-go
-	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-kpimon
-
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker: update-deps
 	@go mod vendor
