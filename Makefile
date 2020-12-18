@@ -36,7 +36,6 @@ update-deps: # @HELP pull updated CLI dependencies
 	go get github.com/onosproject/onos-ztp
 
 update-sdran-deps: # @HELP pull updated SDRAN CLI dependencies
-	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/ran-simulator
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-ric-sdk-go
 	GOPRIVATE="github.com/onosproject/*" go get github.com/onosproject/onos-kpimon

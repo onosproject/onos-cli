@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	configName     = "config"
+	configName     = "configABC"
 	defaultAddress = "onos-config:5150"
 )
 
