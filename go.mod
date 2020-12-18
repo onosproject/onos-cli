@@ -12,6 +12,7 @@ require (
 	github.com/onosproject/onos-ric-sdk-go v0.7.0
 	github.com/onosproject/onos-topo v0.7.0
 	github.com/onosproject/onos-ztp v0.6.0
+	github.com/onosproject/ran-simulator v0.7.0
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
