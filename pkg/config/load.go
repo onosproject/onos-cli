@@ -18,7 +18,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"github.com/onosproject/onos-config/pkg/config/load"
 	"github.com/onosproject/onos-config/pkg/northbound/gnmi"
 	"github.com/onosproject/onos-config/pkg/southbound"
@@ -28,6 +27,7 @@ import (
 	"github.com/openconfig/gnmi/proto/gnmi_ext"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"path/filepath"
 	"time"
@@ -190,7 +190,7 @@ func runLoadProtoCommand(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("unable to read protobuf file %s: %v", arg, err)
 		}
-		if err := proto.UnmarshalText(string(protobuf), gnmiSetRequest); err != nil {
+		if err := proto.Unmarshal(protobuf, gnmiSetRequest); err != nil {
 			return fmt.Errorf("unable to parse gnmi.GetRequest from %q : %v", arg, err)
 		}
 

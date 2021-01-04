@@ -3,7 +3,6 @@ module github.com/onosproject/onos-cli
 go 1.14
 
 require (
-	github.com/golang/protobuf v1.4.3
 	github.com/onosproject/onos-api/go v0.7.0
 	github.com/onosproject/onos-config v0.7.0
 	github.com/onosproject/onos-lib-go v0.7.0
@@ -16,6 +15,7 @@ require (
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
 	google.golang.org/grpc v1.33.2
+	google.golang.org/protobuf v1.25.0
 	gotest.tools v2.2.0+incompatible
 )
 

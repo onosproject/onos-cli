@@ -30,8 +30,6 @@ func Test_RootUsage(t *testing.T) {
 		description string
 		expected    string
 	}{
-		{description: "Change Num UEs", expected: `Change the number of UEs in the RAN simulation`},
-		{description: "Reset Metrics", expected: `Reset the metrics counters`},
 		{description: "Usage header", expected: `Usage:`},
 		{description: "Usage config command", expected: `ransim [command]`},
 	}
@@ -61,8 +59,6 @@ func Test_SubCommands(t *testing.T) {
 		expectedShort string
 	}{
 		{commandName: "config", expectedShort: "Manage the CLI configuration"},
-		{commandName: "setnumues", expectedShort: "Change the number of UEs in the RAN simulation"},
-		{commandName: "resetmetrics", expectedShort: "Reset the metrics counters"},
 		{commandName: "log", expectedShort: "logging api commands"},
 	}
 
