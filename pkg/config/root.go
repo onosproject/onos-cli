@@ -51,7 +51,6 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getRollbackCommand())
 	cmd.AddCommand(getCompactCommand())
 	cmd.AddCommand(getWatchCommand())
-	cmd.AddCommand(getLoadCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }
