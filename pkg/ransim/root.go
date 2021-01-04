@@ -44,8 +44,6 @@ func GetCommand() *cobra.Command {
 
 	clilib.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(clilib.GetConfigCommand())
-	cmd.AddCommand(getSetNumUEsCommand())
-	cmd.AddCommand(getResetMetricsCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }
