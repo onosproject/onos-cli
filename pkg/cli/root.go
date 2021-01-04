@@ -25,15 +25,10 @@ import (
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
 	"github.com/onosproject/onos-cli/pkg/ransim"
-	topo "github.com/onosproject/onos-topo/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
 )
-
-func init() {
-	cobra.OnInitialize(topo.Init)
-}
 
 // Execute runs the root command and any sub-commands.
 func Execute() {
@@ -65,7 +60,6 @@ func GetRootCommand() *cobra.Command {
 		SilenceErrors:          true,
 	}
 	cmd.AddCommand(config.GetCommand())
-	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())

@@ -17,8 +17,7 @@ package cli
 import (
 	"bytes"
 	"errors"
-	config "github.com/onosproject/onos-cli/pkg/config"
-	topo "github.com/onosproject/onos-topo/pkg/cli"
+	"github.com/onosproject/onos-cli/pkg/config"
 	"io"
 	"os"
 	"strings"
@@ -30,7 +29,6 @@ import (
 func getBashCompletions() string {
 	completions := []string{
 		config.GetBashCompletion(),
-		topo.GetBashCompletion(),
 	}
 	return strings.Join(completions, "\n")
 }

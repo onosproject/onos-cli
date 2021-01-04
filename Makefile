@@ -17,11 +17,11 @@ test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/cmd/...
 
 coverage: # @HELP generate unit test coverage data
-coverage: build build-sdran deps linters license_check
-	GOPRIVATE="github.com/onosproject/*" ./../build-tools/build/coveralls/coveralls-coverage onos-cli
+coverage: build deps linters license_check
+	./../build-tools/build/coveralls/coveralls-coverage onos-cli
 
 deps: # @HELP ensure that the required dependencies are in place
-	GOPRIVATE="github.com/onosproject/*" go build -v ./...
+	go build -v ./...
 	bash -c "diff -u <(echo -n) <(git diff go.mod)"
 	bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
@@ -32,11 +32,8 @@ license_check: # @HELP examine and ensure license headers exist
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
 	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR}
 
-update-deps: # @HELP pull updated CLI dependencies
-	go get github.com/onosproject/onos-ztp
-
 onos-cli-docker: # @HELP build onos CLI Docker image
-onos-cli-docker: update-deps
+onos-cli-docker:
 	@go mod vendor
 	docker build . -f build/onos/Dockerfile \
 		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
