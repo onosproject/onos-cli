@@ -19,7 +19,6 @@ import (
 	"errors"
 	config "github.com/onosproject/onos-cli/pkg/config"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
-	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"io"
 	"os"
 	"strings"
@@ -32,7 +31,6 @@ func getBashCompletions() string {
 	completions := []string{
 		config.GetBashCompletion(),
 		topo.GetBashCompletion(),
-		ztp.GetBashCompletion(),
 	}
 	return strings.Join(completions, "\n")
 }

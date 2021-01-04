@@ -26,7 +26,6 @@ import (
 
 	"github.com/onosproject/onos-cli/pkg/ransim"
 	topo "github.com/onosproject/onos-topo/pkg/cli"
-	ztp "github.com/onosproject/onos-ztp/pkg/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"os"
@@ -67,7 +66,6 @@ func GetRootCommand() *cobra.Command {
 	}
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(topo.GetCommand())
-	cmd.AddCommand(ztp.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
