@@ -2,5 +2,4 @@
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 make images
 docker push onosproject/onos-cli:latest
-docker push onosproject/onos-sdran-cli:latest
 
