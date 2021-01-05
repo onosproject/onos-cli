@@ -12,12 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+// Unit tests for rollback CLI
+package config
 
 import (
-	"github.com/onosproject/onos-cli/pkg/sdrancli"
+	"bytes"
+	"github.com/onosproject/onos-lib-go/pkg/cli"
+	"gotest.tools/assert"
+	"strings"
+	"testing"
 )
 
-func main() {
-	sdrancli.Execute()
+func Test_rollback(t *testing.T) {
+	outputBuffer := bytes.NewBufferString("")
+	cli.CaptureOutput(outputBuffer)
+
+	setUpMockClients(MockClientsConfig{})
+	rollback := getRollbackCommand()
+	args := make([]string, 1)
+	args[0] = "ABCD1234"
+	err := rollback.RunE(rollback, args)
+	assert.NilError(t, err)
+	assert.Equal(t, LastCreatedClient.rollBackID, "ABCD1234")
+	output := outputBuffer.String()
+	assert.Assert(t, strings.Contains(output, "Rollback was successful"))
 }
