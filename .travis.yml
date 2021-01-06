@@ -32,7 +32,7 @@ jobs:
     - stage: tests
       if: type == pull_request || fork == false
       script:
-        - make license_check
+        - make coverage
     - stage: release
       if: type != pull_request && fork == false
       script:
