@@ -8,6 +8,7 @@ ONOS_BUILD_VERSION := v0.6.3
 
 build: # @HELP build the Go binaries and run all validations (default)
 build:
+	export GOPRIVATE="github.com/onosproject/onos-ric-sdk-go"
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
