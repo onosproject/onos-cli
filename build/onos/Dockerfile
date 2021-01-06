@@ -18,7 +18,6 @@ COPY --from=build /go/src/github.com/onosproject/onos-cli/build/_output/onos /us
 COPY --from=build /go/bin/atomix /usr/local/bin/atomix
 COPY --from=build /go/bin/gnmi_cli /usr/local/bin/gnmi_cli
 COPY --from=build /go/src/github.com/onosproject/onos-cli/pkg/certs/* /etc/ssl/certs/
-COPY vendor/ /go/src/github.com/onosproject/onos-cli/vendor/
 
 RUN mkdir /home/onos/.onos && \
     cp /etc/profile /home/onos/.bashrc && \
