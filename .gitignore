@@ -1,5 +1,4 @@
 cmd/onos/onos
-vendor
 build/_output
 *.DS_Store
 coverage.txt

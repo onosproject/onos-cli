@@ -8,6 +8,7 @@ ONOS_BUILD_VERSION := v0.6.3
 
 build: # @HELP build the Go binaries and run all validations (default)
 build:
+	export GOPRIVATE="github.com/onosproject/*"
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 
@@ -34,11 +35,9 @@ license_check: # @HELP examine and ensure license headers exist
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker:
-	@go mod vendor
 	docker build . -f build/onos/Dockerfile \
 		--build-arg ONOS_BUILD_VERSION=${ONOS_BUILD_VERSION} \
 		-t onosproject/onos-cli:${ONOS_CLI_VERSION}
-	@rm -rf vendor
 
 images: # @HELP build all Docker images
 images: build onos-cli-docker
