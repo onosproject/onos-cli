@@ -38,12 +38,13 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "kpimon {get} [args]",
+		Use:   "kpimon {get/set} [args]",
 		Short: "ONOS KPIMON subsystem commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(getListCommand())
+	cmd.AddCommand(getSetCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 
