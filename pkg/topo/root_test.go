@@ -35,7 +35,6 @@ func Test_RootUsage(t *testing.T) {
 		{description: "Remove command", expected: `Remove a topology resource`},
 		{description: "Update command", expected: `Update a topology resource`},
 		{description: "Watch command", expected: `Watch for changes to a topology resource type`},
-		{description: "Load command", expected: `Bulk load topo data from a file`},
 		{description: "Usage header", expected: `Usage:`},
 		{description: "Usage config command", expected: `topo [command]`},
 	}
@@ -70,7 +69,6 @@ func Test_SubCommands(t *testing.T) {
 		{commandName: "remove", expectedShort: "Remove a topology resource"},
 		{commandName: "update", expectedShort: "Update a topology resource"},
 		{commandName: "watch", expectedShort: "Watch for changes to a topology resource type"},
-		{commandName: "load", expectedShort: "Bulk load topo data from a file"},
 		{commandName: "log", expectedShort: "logging api commands"},
 	}
 

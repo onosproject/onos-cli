@@ -80,14 +80,3 @@ func getWatchCommand() *cobra.Command {
 	cmd.AddCommand(getWatchAllCommand())
 	return cmd
 }
-
-func getLoadCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "load {topofile}",
-		Short: "Bulk load topo data from a file",
-	}
-
-	cmd.AddCommand(getLoadYamlEntitiesCommand())
-
-	return cmd
-}
