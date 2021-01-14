@@ -34,7 +34,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/certs"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	gclient "github.com/openconfig/gnmi/client/gnmi"
-	pb "github.com/openconfig/gnmi/proto/gnmi"
+	gnmi "github.com/openconfig/gnmi/proto/gnmi"
 	"github.com/spf13/cobra"
 )
 
@@ -104,12 +104,13 @@ func runSetReportIntervalCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	val := pb.TypedValue_UintVal{interval}
+	val := gnmi.TypedValue_UintVal{
+		UintVal: interval}
 
-	update := &pb.Update{}
+	update := &gnmi.Update{}
 	update.Path = pbPath
 	update.Path.Target = "onos-kpimon"
-	update.Val = &pb.TypedValue{
+	update.Val = &gnmi.TypedValue{
 		Value: &val,
 	}
 	extVersion := gnmi_ext.Extension_RegisteredExt{
@@ -127,8 +128,8 @@ func runSetReportIntervalCommand(cmd *cobra.Command, args []string) error {
 
 	extensions := []*gnmi_ext.Extension{{Ext: &extVersion}, {Ext: &extModel}}
 
-	request := &pb.SetRequest{
-		Update:    []*pb.Update{update},
+	request := &gnmi.SetRequest{
+		Update:    []*gnmi.Update{update},
 		Extension: extensions,
 	}
 
