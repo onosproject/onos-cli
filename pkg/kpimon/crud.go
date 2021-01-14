@@ -24,3 +24,12 @@ func getListCommand() *cobra.Command {
 	cmd.AddCommand(getListNumActiveUEsCommand())
 	return cmd
 }
+
+func getSetCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set {report_interval} [args]",
+		Short: "Set KPIMON parameters",
+	}
+	cmd.AddCommand(setReportIntervalCommand())
+	return cmd
+}
