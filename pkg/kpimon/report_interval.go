@@ -138,7 +138,7 @@ func runSetReportIntervalCommand(cmd *cobra.Command, args []string) error {
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 	if err == nil {
-		_, _ = fmt.Fprintf(writer, "Report period interval is set to %d successfully\n", interval)
+		_, _ = fmt.Fprintf(writer, "Report period interval is set to %d ms successfully\n", interval)
 	} else {
 		_, _ = fmt.Fprintf(writer, "%v\n", err)
 	}
