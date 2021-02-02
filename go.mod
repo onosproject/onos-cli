@@ -3,7 +3,7 @@ module github.com/onosproject/onos-cli
 go 1.14
 
 require (
-	github.com/ghodss/yaml v1.0.0 // indirect
+	github.com/ghodss/yaml v1.0.0
 	github.com/go-playground/overalls v0.0.0-20191218162659-7df9f728c018 // indirect
 	github.com/mattn/goveralls v0.0.7 // indirect
 	github.com/onosproject/onos-api/go v0.7.0
