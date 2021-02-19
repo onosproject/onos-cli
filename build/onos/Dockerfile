@@ -1,6 +1,4 @@
-ARG ONOS_BUILD_VERSION=undefined
-
-FROM onosproject/golang-build:$ONOS_BUILD_VERSION AS build
+FROM onosproject/golang-build:v0.6.7 AS build
 ENV GO111MODULE=on
 RUN go get github.com/opennetworkinglab/gnmi/cmd/gnmi_cli && \
     go get github.com/atomix/cli/cmd/atomix
