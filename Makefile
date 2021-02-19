@@ -16,6 +16,10 @@ test: build deps license_check linters
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
 
+jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
+jenkins-test: build-tools deps license_check linters
+	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./../build-tools/build/jenkins/make-unit
+
 coverage: # @HELP generate unit test coverage data
 coverage: build deps linters license_check
 	./../build-tools/build/coveralls/coveralls-coverage onos-cli
@@ -27,6 +31,12 @@ deps: # @HELP ensure that the required dependencies are in place
 
 linters: # @HELP examines Go source code and reports coding problems
 	golangci-lint run
+
+build-tools: # @HELP install the ONOS build tools if needed
+	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
+
+jenkins-tools: # @HELP installs tooling needed for Jenkins
+	cd .. && go get -u github.com/jstemmer/go-junit-report && go get github.com/t-yuki/gocover-cobertura
 
 license_check: # @HELP examine and ensure license headers exist
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
@@ -51,6 +61,10 @@ all: build images
 
 publish: # @HELP publish version on github and dockerhub
 	./../build-tools/publish-version ${VERSION} onosproject/onos-cli
+
+jenkins-publish: build-tools jenkins-tools # @HELP Jenkins calls this to publish artifacts
+	./build/bin/push-images
+	../build-tools/release-merge-commit
 
 bumponosdeps: # @HELP update "onosproject" go dependencies and push patch to git.
 	./../build-tools/bump-onos-deps ${VERSION}
