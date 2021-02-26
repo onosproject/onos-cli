@@ -437,9 +437,12 @@ func printRow(object topoapi.Object, watch bool, noHeaders bool) {
 
 	switch object.Type {
 	case topoapi.Object_ENTITY:
-		e := object.GetEntity()
+		var kindID topoapi.ID
+		if e := object.GetEntity(); e != nil {
+			kindID = e.KindID
+		}
 		// printUpdateType()
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s%s\n", width, prec, object.Type, width, prec, object.ID, width, prec, e.KindID, attrsToString(object.Attributes))
+		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s%s\n", width, prec, object.Type, width, prec, object.ID, width, prec, kindID, attrsToString(object.Attributes))
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
 		// printUpdateType()

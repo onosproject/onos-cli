@@ -9,6 +9,7 @@ build: # @HELP build the Go binaries and run all validations (default)
 build:
 	go build -o build/_output/onos ./cmd/onos
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
+	go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
 
 test: # @HELP run the unit tests and source code validation
 test: build deps license_check linters
