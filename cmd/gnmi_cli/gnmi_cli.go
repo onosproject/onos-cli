@@ -43,6 +43,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"google.golang.org/grpc/metadata"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -72,7 +73,6 @@ var (
 		mu.Lock()
 		os.Stdout.Write(append(b, '\n'))
 	}}
-
 	clientTypes = flags.NewStringList(&cfg.ClientTypes, []string{gclient.Type})
 	queryFlag   = &flags.StringList{}
 	queryType   = flag.String("query_type", client.Once.String(), "Type of result, one of: (o, once, p, polling, s, streaming).")
@@ -92,6 +92,7 @@ var (
 	caCert     = flag.String("ca_crt", "", "CA certificate file. Used to verify server TLS certificate.")
 	clientCert = flag.String("client_crt", "", "Client certificate file. Used for client certificate-based authentication.")
 	clientKey  = flag.String("client_key", "", "Client private key file. Used for client certificate-based authentication.")
+	authHeader = flag.String("authheader", "", "Authorization header - e.g. 'Bearer <base64string>'")
 )
 
 func init() {
@@ -133,12 +134,19 @@ func init() {
 	flag.StringVar(reqProto, "p", *reqProto, "Short for request proto.")
 	flag.StringVar(encodingType, "en", *encodingType, "Short for encoding type")
 	flag.BoolVar(tlsDisabled, "tls", *tlsDisabled, "Short for disabling tls")
+	flag.StringVar(authHeader, "ah", *authHeader, "Short for authHeader")
 }
 
 func main() {
 	flag.Parse()
+	ctxBkg := context.Background()
+	if *authHeader != "" {
+		md := make(metadata.MD)
+		md.Set("authorization", *authHeader)
+		ctxBkg = metadata.NewOutgoingContext(ctxBkg, md)
+	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctxBkg)
 	// Terminate immediately on Ctrl+C, skipping lame-duck mode.
 	go func() {
 		c := make(chan os.Signal, 1)
