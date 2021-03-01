@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	devicechange "github.com/onosproject/onos-api/go/onos/config/change/device"
 	"github.com/onosproject/onos-api/go/onos/config/device"
@@ -83,7 +82,8 @@ func deviceChangesCommand(cmd *cobra.Command, subscribe bool, args []string) err
 	var tmplChanges *template.Template
 	tmplChanges, _ = template.New("device").Funcs(funcMapChanges).Parse(deviceChangeTemplate)
 
-	stream, err := client.ListDeviceChanges(context.Background(), &changesReq)
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	stream, err := client.ListDeviceChanges(ctx, &changesReq)
 	if err != nil {
 		return err
 	}

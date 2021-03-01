@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
@@ -44,8 +43,9 @@ func runRollbackCommand(cmd *cobra.Command, args []string) error {
 		changeID = args[0]
 	}
 
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
 	resp, err := client.RollbackNetworkChange(
-		context.Background(), &admin.RollbackRequest{Name: changeID})
+		ctx, &admin.RollbackRequest{Name: changeID})
 	if err != nil {
 		return err
 	}

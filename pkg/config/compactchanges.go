@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
@@ -45,7 +44,8 @@ func runCompactCommand(cmd *cobra.Command, args []string) error {
 	if retentionPeriod != 0 {
 		request.RetentionPeriod = &retentionPeriod
 	}
-	_, err := client.CompactChanges(context.Background(), request)
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	_, err := client.CompactChanges(ctx, request)
 	if err != nil {
 		return err
 	}
