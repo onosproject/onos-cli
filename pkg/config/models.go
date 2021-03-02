@@ -66,7 +66,8 @@ func runListPluginsCommand(cmd *cobra.Command, args []string) error {
 	}
 	client := admin.CreateConfigAdminServiceClient(clientConnection)
 
-	stream, err := client.ListRegisteredModels(context.Background(), &admin.ListModelsRequest{Verbose: verbose})
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	stream, err := client.ListRegisteredModels(ctx, &admin.ListModelsRequest{Verbose: verbose})
 	if err != nil {
 		return fmt.Errorf("Failed to send request: %v", err)
 	}

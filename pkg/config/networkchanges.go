@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	networkchange "github.com/onosproject/onos-api/go/onos/config/change/network"
 	"github.com/onosproject/onos-api/go/onos/config/diags"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -97,7 +96,8 @@ func networkChangesCommand(cmd *cobra.Command, subscribe bool, args []string) er
 		tmplChanges, _ = template.New("change").Funcs(funcMapChanges).Parse(networkChangeTemplateVerbose)
 	}
 
-	stream, err := client.ListNetworkChanges(context.Background(), &changesReq)
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	stream, err := client.ListNetworkChanges(ctx, &changesReq)
 	if err != nil {
 		return err
 	}

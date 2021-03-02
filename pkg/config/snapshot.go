@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	device_snapshot "github.com/onosproject/onos-api/go/onos/config/snapshot/device"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -92,8 +91,8 @@ func snapshotsCommand(cmd *cobra.Command, subscribe bool, args []string) error {
 	if verbose {
 		tmplSnapshots, _ = template.New("snapshots").Funcs(funcMapChanges).Parse(snapshotsTemplateVerbose)
 	}
-
-	stream, err := client.ListSnapshots(context.Background(), &snapshotsRequest)
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	stream, err := client.ListSnapshots(ctx, &snapshotsRequest)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"github.com/onosproject/onos-api/go/onos/config/diags"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -73,7 +72,8 @@ func opstateCommand(cmd *cobra.Command, subscribe bool, args []string) error {
 		cli.Output("%-82s|%-20s|\n", "PATH", "VALUE")
 	}
 
-	stream, err := client.GetOpState(context.Background(), &diags.OpStateRequest{DeviceId: deviceID, Subscribe: subscribe})
+	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
+	stream, err := client.GetOpState(ctx, &diags.OpStateRequest{DeviceId: deviceID, Subscribe: subscribe})
 	if err != nil {
 		return fmt.Errorf("failed to send request: %v", err)
 	}
