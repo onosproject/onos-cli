@@ -15,7 +15,7 @@
 package ransim
 
 import (
-	clilib "github.com/onosproject/onos-lib-go/pkg/cli"
+	"github.com/onosproject/onos-lib-go/pkg/cli"
 	loglib "github.com/onosproject/onos-lib-go/pkg/logging/cli"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,7 @@ const (
 
 // init initializes the command line
 func init() {
-	clilib.InitConfig(configName)
+	cli.InitConfig(configName)
 }
 
 // Init is a hook called after cobra initialization
@@ -38,12 +38,80 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "ransim {get|set|watch|setnumues|resetmetrics|log} [args]",
-		Short: "ONOS RAN Simulator subsystem commands",
+		Use:   "ransim {get|set|create|delete|start|stop} [args]",
+		Short: "ONOS RAN simulator commands",
 	}
 
-	clilib.AddConfigFlags(cmd, defaultAddress)
-	cmd.AddCommand(clilib.GetConfigCommand())
+	cli.AddConfigFlags(cmd, defaultAddress)
+	cmd.AddCommand(cli.GetConfigCommand())
+
+	cmd.AddCommand(getCreateCommand())
+	cmd.AddCommand(getDeleteCommand())
+	cmd.AddCommand(getGetCommand())
+	cmd.AddCommand(getSetCommand())
+
+	cmd.AddCommand(startNodeCommand())
+	cmd.AddCommand(stopNodeCommand())
+
 	cmd.AddCommand(loglib.GetCommand())
+	return cmd
+}
+
+func getCreateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create {node,cell} [args]",
+		Short: "Commands for creating simulated entities",
+	}
+
+	cmd.AddCommand(createNodeCommand())
+	cmd.AddCommand(createCellCommand())
+	return cmd
+}
+
+func getDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete {node,cell} [args]",
+		Short: "Commands for deleting simulated entities",
+	}
+	cmd.AddCommand(deleteNodeCommand())
+	cmd.AddCommand(deleteCellCommand())
+	cmd.AddCommand(deleteMetricCommand())
+	cmd.AddCommand(deleteMetricsCommand())
+	return cmd
+}
+
+func getGetCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "get {layout,cells,ues,ueCount} [args]",
+		Short: "Commands for retrieving RAN simulator model and other information",
+	}
+
+	cmd.AddCommand(getLayoutCommand())
+
+	cmd.AddCommand(getNodesCommand())
+	cmd.AddCommand(getNodeCommand())
+
+	cmd.AddCommand(getCellsCommand())
+	cmd.AddCommand(getCellCommand())
+
+	cmd.AddCommand(getUEsCommand())
+	//cmd.AddCommand(getUECommand())
+
+	cmd.AddCommand(getUECountCommand())
+
+	cmd.AddCommand(getMetricCommand())
+	cmd.AddCommand(getMetricsCommand())
+	return cmd
+}
+
+func getSetCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set {metric} [args]",
+		Short: "Commands for setting RAN simulator model metrics and other information",
+	}
+
+	cmd.AddCommand(updateNodeCommand())
+	cmd.AddCommand(updateCellCommand())
+	cmd.AddCommand(setMetricCommand())
 	return cmd
 }

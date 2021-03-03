@@ -60,6 +60,12 @@ func Test_SubCommands(t *testing.T) {
 	}{
 		{commandName: "config", expectedShort: "Manage the CLI configuration"},
 		{commandName: "log", expectedShort: "logging api commands"},
+		{commandName: "get", expectedShort: "Commands for retrieving RAN simulator model and other information"},
+		{commandName: "set", expectedShort: "Commands for setting RAN simulator model metrics and other information"},
+		{commandName: "create", expectedShort: "Commands for creating simulated entities"},
+		{commandName: "delete", expectedShort: "Commands for deleting simulated entities"},
+		{commandName: "start", expectedShort: "Start E2 node agent"},
+		{commandName: "stop", expectedShort: "Stop E2 node agent"},
 	}
 
 	var subCommandsFound = make(map[string]bool)
