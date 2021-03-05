@@ -15,7 +15,7 @@
 package modelregistry
 
 import (
-	"github.com/onosproject/onos-config-model/api/onos/configmodel"
+	"github.com/onosproject/onos-api/go/onos/configmodel"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"text/template"
@@ -54,7 +54,7 @@ func runListCommand(cmd *cobra.Command, args []string) error {
 	if clientConnectionError != nil {
 		return clientConnectionError
 	}
-	client := CreateConfigModelRegistryServiceClient(clientConnection)
+	client := configmodel.CreateConfigModelRegistryServiceClient(clientConnection)
 	request := &configmodel.ListModelsRequest{}
 	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
 	models, err := client.ListModels(ctx, request)
