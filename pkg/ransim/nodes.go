@@ -26,6 +26,15 @@ import (
 	"google.golang.org/grpc"
 )
 
+func getPlmnIDCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "plmnid",
+		Short: "Get the PLMNID",
+		RunE:  runGetPlmnIDCommand,
+	}
+	return cmd
+}
+
 func getNodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "nodes",
@@ -109,6 +118,20 @@ func getNodeClient(cmd *cobra.Command) (modelapi.NodeModelClient, *grpc.ClientCo
 		return nil, nil, err
 	}
 	return modelapi.NewNodeModelClient(conn), conn, nil
+}
+
+func runGetPlmnIDCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getNodeClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	resp, err := client.GetPlmnID(context.Background(), &modelapi.PlmnIDRequest{})
+	if err != nil {
+		return err
+	}
+	cli.Output("%d\n", resp.PlmnID)
+	return nil
 }
 
 func runGetNodesCommand(cmd *cobra.Command, args []string) error {

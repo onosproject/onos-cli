@@ -82,10 +82,11 @@ func getDeleteCommand() *cobra.Command {
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {layout,cells,ues,ueCount} [args]",
+		Use:   "get {plmnid,layout,cells,ues,ueCount} [args]",
 		Short: "Commands for retrieving RAN simulator model and other information",
 	}
 
+	cmd.AddCommand(getPlmnIDCommand())
 	cmd.AddCommand(getLayoutCommand())
 
 	cmd.AddCommand(getNodesCommand())
