@@ -20,6 +20,7 @@ import (
 	"github.com/onosproject/onos-cli/pkg/e2sub"
 	"github.com/onosproject/onos-cli/pkg/e2t"
 	"github.com/onosproject/onos-cli/pkg/kpimon"
+	"github.com/onosproject/onos-cli/pkg/modelregistry"
 	"github.com/onosproject/onos-cli/pkg/topo"
 
 	// Needed to keep ran-sim happy for the mo
@@ -66,6 +67,8 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
+	cmd.AddCommand(modelregistry.GetCommand())
+	cmd.AddCommand()
 
 	cmd.AddCommand(getCompletionCommand())
 

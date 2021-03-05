@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package modelregistry
 
 import (
 	"bytes"
@@ -30,9 +30,9 @@ func Test_RootUsage(t *testing.T) {
 		description string
 		expected    string
 	}{
-		{description: "Roll back command", expected: `Rolls-back a network change`},
+		{description: "Modelplugin command", expected: `List all models`},
 		{description: "Usage header", expected: `Usage:`},
-		{description: "Usage config command", expected: `config [command]`},
+		{description: "Usage modelregistry command", expected: `modelregistry [command]`},
 	}
 
 	cmd := GetCommand()
@@ -59,12 +59,8 @@ func Test_SubCommands(t *testing.T) {
 		commandName   string
 		expectedShort string
 	}{
-		{commandName: "Config", expectedShort: "Manage the CLI configuration"},
-		{commandName: "Rollback", expectedShort: "Rolls-back a network change"},
-		{commandName: "Get", expectedShort: "Get config resources"},
-		{commandName: "Compact-Changes", expectedShort: "Takes a snapshot of network and device changes"},
-		{commandName: "Watch", expectedShort: "Watch for updates to a config resource type"},
-		{commandName: "Log", expectedShort: "logging api commands"},
+		{commandName: "get", expectedShort: "Get a model in config model registry by name and version"},
+		{commandName: "list", expectedShort: "List all models in config model registry"},
 	}
 
 	var subCommandsFound = make(map[string]bool)
