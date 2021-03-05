@@ -17,7 +17,7 @@ package modelregistry
 import (
 	"bytes"
 	"fmt"
-	"github.com/onosproject/onos-config-model/api/onos/configmodel"
+	"github.com/onosproject/onos-api/go/onos/configmodel"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"gotest.tools/assert"
 	"strings"

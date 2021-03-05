@@ -16,7 +16,7 @@ package modelregistry
 
 import (
 	"context"
-	"github.com/onosproject/onos-config-model/api/onos/configmodel"
+	"github.com/onosproject/onos-api/go/onos/configmodel"
 	"google.golang.org/grpc"
 )
 
@@ -44,7 +44,7 @@ func (c *mockConfigModelRegistryServiceClient) DeleteModel(ctx context.Context, 
 }
 
 func setupMockClients() {
-	ConfigModelRegistryServiceClientFactory = func(cc *grpc.ClientConn) configmodel.ConfigModelRegistryServiceClient {
+	configmodel.RegistryServiceClientFactory = func(cc *grpc.ClientConn) configmodel.ConfigModelRegistryServiceClient {
 		LastCreatedClient = &mockConfigModelRegistryServiceClient{}
 		return LastCreatedClient
 	}
