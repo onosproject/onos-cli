@@ -26,18 +26,8 @@ func getGetCommand() *cobra.Command {
 	}
 	cmd.AddCommand(getListNetworkChangesCommand())
 	cmd.AddCommand(getListDeviceChangesCommand())
-	cmd.AddCommand(getGetPluginsCommand())
 	cmd.AddCommand(getGetOpstateCommand())
 	cmd.AddCommand(getListSnapshotsCommand())
-	return cmd
-}
-
-func getAddCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "add {plugin} [args]",
-		Short: "Add a config resource",
-	}
-	cmd.AddCommand(getAddPluginCommand())
 	return cmd
 }
 

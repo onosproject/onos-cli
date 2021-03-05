@@ -1,4 +1,4 @@
-// Copyright 2019-present Open Networking Foundation.
+// Copyright 2021-present Open Networking Foundation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package config holds ONOS command-line command implementations for onos-config
-package config
+// Package modelregistry holds ONOS command-line command implementations for onos-config
+package modelregistry
 
 import (
 	clilib "github.com/onosproject/onos-lib-go/pkg/cli"
-	loglib "github.com/onosproject/onos-lib-go/pkg/logging/cli"
 	"github.com/spf13/cobra"
 )
 
 const (
-	configName     = "config"
-	defaultAddress = "onos-config:5150"
+	configName     = "modelregistry"
+	defaultAddress = "onos-config:5151"
 )
 
 // init initializes the command line
@@ -39,17 +38,12 @@ func Init() {
 // GetCommand returns the root command for the config service.
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "config {get,add,rollback,snapshot,compact-changes,watch,load} [args]",
-		Short: "ONOS configuration subsystem commands",
+		Use:   "modelregistry {list|get} [args]",
+		Short: "ONOS Config Model Registry subsystem commands",
 	}
 
 	clilib.AddConfigFlags(cmd, defaultAddress)
-
-	cmd.AddCommand(clilib.GetConfigCommand())
+	cmd.AddCommand(getListCommand())
 	cmd.AddCommand(getGetCommand())
-	cmd.AddCommand(getRollbackCommand())
-	cmd.AddCommand(getCompactCommand())
-	cmd.AddCommand(getWatchCommand())
-	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }
