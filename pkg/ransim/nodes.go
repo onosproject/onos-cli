@@ -32,6 +32,8 @@ func getPlmnIDCommand() *cobra.Command {
 		Short: "Get the PLMNID",
 		RunE:  runGetPlmnIDCommand,
 	}
+
+	cmd.Flags().BoolP("string", "s", false, "string representation of plmnID")
 	return cmd
 }
 
@@ -129,6 +131,10 @@ func runGetPlmnIDCommand(cmd *cobra.Command, args []string) error {
 	resp, err := client.GetPlmnID(context.Background(), &modelapi.PlmnIDRequest{})
 	if err != nil {
 		return err
+	}
+	if stringRepresentation, _ := cmd.Flags().GetBool("string"); stringRepresentation {
+		cli.Output("%s\n", types.PlmnIDToString(resp.PlmnID))
+		return nil
 	}
 	cli.Output("%d\n", resp.PlmnID)
 	return nil
