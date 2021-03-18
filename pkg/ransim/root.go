@@ -38,7 +38,7 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "ransim {get|set|create|delete|start|stop} [args]",
+		Use:   "ransim {get,set,create,delete,starts,stop,load,clear} [args]",
 		Short: "ONOS RAN simulator commands",
 	}
 
@@ -52,6 +52,9 @@ func GetCommand() *cobra.Command {
 
 	cmd.AddCommand(startNodeCommand())
 	cmd.AddCommand(stopNodeCommand())
+
+	cmd.AddCommand(loadCommand())
+	cmd.AddCommand(clearCommand())
 
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
