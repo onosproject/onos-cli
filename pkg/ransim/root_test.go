@@ -66,6 +66,8 @@ func Test_SubCommands(t *testing.T) {
 		{commandName: "delete", expectedShort: "Commands for deleting simulated entities"},
 		{commandName: "start", expectedShort: "Start E2 node agent"},
 		{commandName: "stop", expectedShort: "Stop E2 node agent"},
+		{commandName: "load", expectedShort: "Load model and/or metric data"},
+		{commandName: "clear", expectedShort: "Clear the simulated nodes, cells and metrics"},
 	}
 
 	var subCommandsFound = make(map[string]bool)
