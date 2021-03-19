@@ -32,7 +32,7 @@ func getListNumConflicts() *cobra.Command {
 		RunE:  runListNumConflicts,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListNumConflictsAll() *cobra.Command {
@@ -42,7 +42,7 @@ func getListNumConflictsAll() *cobra.Command {
 		RunE:  runListNumConflictsAll,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListNeighbors() *cobra.Command {
@@ -52,7 +52,7 @@ func getListNeighbors() *cobra.Command {
 		RunE:  runListNeighbors,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListNeighborsAll() *cobra.Command {
@@ -62,7 +62,7 @@ func getListNeighborsAll() *cobra.Command {
 		RunE:  runListNeighborsAll,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListMetric() *cobra.Command {
@@ -72,7 +72,7 @@ func getListMetric() *cobra.Command {
 		RunE:  runListMetric,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListMetricAll() *cobra.Command {
@@ -82,7 +82,7 @@ func getListMetricAll() *cobra.Command {
 		RunE:  runListMetricAll,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListPci() *cobra.Command {
@@ -92,7 +92,7 @@ func getListPci() *cobra.Command {
 		RunE:  runListPci,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func getListPciAll() *cobra.Command {
@@ -102,7 +102,7 @@ func getListPciAll() *cobra.Command {
 		RunE:  runListPciAll,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return nil
+	return cmd
 }
 
 func runListNumConflicts(cmd *cobra.Command, args []string) error {
