@@ -117,7 +117,7 @@ func runListNumConflicts(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)")
+		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -157,7 +157,7 @@ func runListNumConflictsAll(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)")
+		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -197,7 +197,7 @@ func runListNeighbors(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tNeighbors")
+		_, _ = fmt.Fprintf(writer, "ID\tNeighbors\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -247,7 +247,7 @@ func runListNeighborsAll(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tNeighbors")
+		_, _ = fmt.Fprintf(writer, "ID\tNeighbors\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -297,7 +297,7 @@ func runListMetric(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize")
+		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -353,7 +353,7 @@ func runListMetricAll(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize")
+		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -409,7 +409,7 @@ func runListPci(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI")
+		_, _ = fmt.Fprintf(writer, "ID\tPCI\n")
 	}
 
 	request := pciapi.GetRequest{
@@ -449,7 +449,7 @@ func runListPciAll(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI")
+		_, _ = fmt.Fprintf(writer, "ID\tPCI\n")
 	}
 
 	request := pciapi.GetRequest{
