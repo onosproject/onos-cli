@@ -6,7 +6,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.3
-	github.com/onosproject/onos-api/go v0.7.17
+	github.com/onosproject/onos-api/go v0.7.18
 	github.com/onosproject/onos-lib-go v0.7.5
 	github.com/onosproject/onos-ric-sdk-go v0.7.10
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802
@@ -19,5 +19,3 @@ require (
 )
 
 replace github.com/docker/docker => github.com/docker/engine v1.4.2-0.20200229013735-71373c6105e3
-
-replace github.com/onosproject/onos-api/go => /Users/woojoong/workspace/onf/sd-ran/xapp/onos-api/go
