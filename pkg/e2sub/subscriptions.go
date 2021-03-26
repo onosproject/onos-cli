@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"text/tabwriter"
 
 	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
@@ -30,7 +31,7 @@ import (
 
 const (
 	subscriptionHeaders = "ID\tRevision\tApp ID\tService Model ID\tE2 NodeID\tStatus"
-	subscriptionFormat  = "%s\t%d\t%s\t%s\t%s\t%d\n"
+	subscriptionFormat  = "%s\t%d\t%s\t%s:%s\t%s\t%d\n"
 )
 
 func displaySubscriptionHeaders(writer io.Writer) {
@@ -39,7 +40,7 @@ func displaySubscriptionHeaders(writer io.Writer) {
 
 func displaySubscription(writer io.Writer, sub *subapi.Subscription) {
 	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		sub.ID, sub.Revision, sub.AppID, sub.Details.ServiceModel.ID, sub.Details.E2NodeID,
+		sub.ID, sub.Revision, sub.AppID, sub.Details.ServiceModel.Name, sub.Details.ServiceModel.Version, sub.Details.E2NodeID,
 		sub.Lifecycle.Status)
 }
 
@@ -135,7 +136,7 @@ func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	if e2NodeID == "" {
 		return errors.New("e2NodeID must be specified with --e2NodeID")
 	}
-	smID, _ := cmd.Flags().GetString("smId")
+	smIDString, _ := cmd.Flags().GetString("smId")
 	revision, _ := cmd.Flags().GetInt32("revision")
 
 	conn, err := cli.GetConnection(cmd)
@@ -151,14 +152,22 @@ func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	smID := strings.Split(smIDString, ":")
+	if len(smID) != 2 {
+		return errors.New("service model id must be of the form name:version")
+	}
+
 	sub := &subapi.Subscription{
 		ID:       subapi.ID(ID),
 		Revision: subapi.Revision(revision),
 		AppID:    subapi.AppID(appID),
 		Details: &subapi.SubscriptionDetails{
 			E2NodeID:     subapi.E2NodeID(e2NodeID),
-			ServiceModel: subapi.ServiceModel{ID: subapi.ServiceModelID(smID)},
-		},
+			ServiceModel: subapi.ServiceModel{
+				Name: subapi.ServiceModelName(smID[0]),
+				Version: subapi.ServiceModelVersion(smID[1])},
+
+	},
 		Lifecycle: subapi.Lifecycle{Status: subapi.Status_ACTIVE},
 	}
 
