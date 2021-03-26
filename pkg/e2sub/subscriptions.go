@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"text/tabwriter"
 
 	subapi "github.com/onosproject/onos-api/go/onos/e2sub/subscription"
@@ -64,6 +63,7 @@ func getAddSubscriptionCommand() *cobra.Command {
 	cmd.Flags().String("appID", "", "Application Identifier")
 	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
 	cmd.Flags().String("smID", "", "Identifier of the service model")
+	cmd.Flags().String("smVer", "", "Version of the service model")
 	cmd.Flags().Int32("revision", 0, "Revision")
 	return cmd
 }
@@ -136,7 +136,14 @@ func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	if e2NodeID == "" {
 		return errors.New("e2NodeID must be specified with --e2NodeID")
 	}
-	smIDString, _ := cmd.Flags().GetString("smId")
+	smID, _ := cmd.Flags().GetString("smID")
+	if smID == "" {
+		return errors.New("service model ID must be specified with --smID")
+	}
+	smVer, _ := cmd.Flags().GetString("smVer")
+	if smVer == "" {
+		return errors.New("service model version must be specified with --smVer")
+	}
 	revision, _ := cmd.Flags().GetInt32("revision")
 
 	conn, err := cli.GetConnection(cmd)
@@ -152,22 +159,16 @@ func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	smID := strings.Split(smIDString, ":")
-	if len(smID) != 2 {
-		return errors.New("service model id must be of the form name:version")
-	}
-
 	sub := &subapi.Subscription{
 		ID:       subapi.ID(ID),
 		Revision: subapi.Revision(revision),
 		AppID:    subapi.AppID(appID),
 		Details: &subapi.SubscriptionDetails{
-			E2NodeID:     subapi.E2NodeID(e2NodeID),
+			E2NodeID: subapi.E2NodeID(e2NodeID),
 			ServiceModel: subapi.ServiceModel{
-				Name: subapi.ServiceModelName(smID[0]),
-				Version: subapi.ServiceModelVersion(smID[1])},
-
-	},
+				Name:    subapi.ServiceModelName(smID),
+				Version: subapi.ServiceModelVersion(smVer)},
+		},
 		Lifecycle: subapi.Lifecycle{Status: subapi.Status_ACTIVE},
 	}
 

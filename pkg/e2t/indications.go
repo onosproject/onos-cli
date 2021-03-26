@@ -55,7 +55,7 @@ func createSubscriptionRequest(nodeID string) (subscription.SubscriptionDetails,
 	return subscription.SubscriptionDetails{
 		E2NodeID: subscription.E2NodeID(nodeID),
 		ServiceModel: subscription.ServiceModel{
-			Name: "oran-e2sm-kpm",
+			Name:    "oran-e2sm-kpm",
 			Version: "v1",
 		},
 		EventTrigger: subscription.EventTrigger{
