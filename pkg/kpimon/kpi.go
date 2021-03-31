@@ -17,6 +17,8 @@ package kpimon
 import (
 	"context"
 	"fmt"
+	"sort"
+	"strings"
 	"text/tabwriter"
 
 	kpimonapi "github.com/onosproject/onos-api/go/onos/kpimon"
@@ -24,17 +26,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getListNumActiveUEsCommand() *cobra.Command {
+func getListMetricsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "numues",
-		Short: "Get the number of active UEs",
-		RunE:  runListNumActiveUEsCommand,
+		Use:   "metrics",
+		Short: "Get metrics",
+		RunE:  runListMetricsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
-func runListNumActiveUEsCommand(cmd *cobra.Command, args []string) error {
+func runListMetricsCommand(cmd *cobra.Command, args []string) error {
+	results := make(map[string]map[string]string)
+	var types []string
+
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -45,24 +50,58 @@ func runListNumActiveUEsCommand(cmd *cobra.Command, args []string) error {
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
-	if !noHeaders {
-		_, _ = fmt.Fprintln(writer, "Key[PLMNID, nodeID]\tnum(Active UEs)")
-	}
-
 	request := kpimonapi.GetRequest{
 		Id: "kpimon",
 	}
-
 	client := kpimonapi.NewKpimonClient(conn)
-
-	response, err := client.GetNumActiveUEs(context.Background(), &request)
-
+	respGetHeader, err := client.GetMetricTypes(context.Background(), &request)
+	if err != nil {
+		return err
+	}
+	respGetMetrics, err := client.GetMetrics(context.Background(), &request)
 	if err != nil {
 		return err
 	}
 
-	for k, v := range response.GetObject().GetAttributes() {
-		_, _ = fmt.Fprintf(writer, "%s\t%v\n", k, v)
+	for k, v := range respGetMetrics.GetObject().GetAttributes() {
+		ids := strings.Split(k, ":")
+		cellID := fmt.Sprintf("%s:%s", ids[0], ids[1])
+		tmpMetricType := ids[2]
+		if _, ok := results[cellID]; !ok {
+			results[cellID] = make(map[string]string)
+		}
+		results[cellID][tmpMetricType] = v
+	}
+
+	for key := range respGetHeader.GetObject().Attributes {
+		types = append(types, key)
+	}
+	sort.Strings(types)
+
+	header := "Cell ID"
+
+	for _, key := range types {
+		tmpHeader := header
+		header = fmt.Sprintf("%s\t%s", tmpHeader, key)
+	}
+
+	if !noHeaders {
+		_, _ = fmt.Fprintln(writer, header)
+	}
+
+	for k1, v1 := range results {
+		resultLine := k1
+		for _, v2 := range types {
+			tmpResultLine := resultLine
+			var tmpValue string
+			if _, ok := v1[v2]; !ok {
+				tmpValue = "N/A"
+			} else {
+				tmpValue = v1[v2]
+			}
+			resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+		}
+		_, _ = fmt.Fprintln(writer, resultLine)
 	}
 
 	_ = writer.Flush()

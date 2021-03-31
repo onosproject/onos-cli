@@ -68,6 +68,8 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
+	cmd.AddCommand(kpimon.GetCommandV1())
+	cmd.AddCommand(kpimon.GetCommandV2())
 	cmd.AddCommand(pci.GetCommand())
 	cmd.AddCommand(modelregistry.GetCommand())
 	cmd.AddCommand()
