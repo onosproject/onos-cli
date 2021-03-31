@@ -65,12 +65,12 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 	for k, v := range respGetMetrics.GetObject().GetAttributes() {
 		ids := strings.Split(k, ":")
-		cellId := fmt.Sprintf("%s:%s", ids[0], ids[1])
+		cellID := fmt.Sprintf("%s:%s", ids[0], ids[1])
 		tmpMetricType := ids[2]
-		if _, ok := results[cellId]; !ok {
-			results[cellId] = make(map[string]string)
+		if _, ok := results[cellID]; !ok {
+			results[cellID] = make(map[string]string)
 		}
-		results[cellId][tmpMetricType] = v
+		results[cellID][tmpMetricType] = v
 	}
 
 	for key := range respGetHeader.GetObject().Attributes {
