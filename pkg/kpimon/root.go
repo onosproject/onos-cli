@@ -23,6 +23,8 @@ import (
 const (
 	configName     = "kpimon"
 	defaultAddress = "onos-kpimon:5150"
+	v1Address      = "onos-kpimon-v1:5150"
+	v2Address      = "onos-kpimon-v2:5150"
 )
 
 // init initializes the command line
@@ -47,5 +49,32 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getSetCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
+}
 
+// GetCommandV1 returns the root command for the RAN service
+func GetCommandV1() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "kpimonv1 {get/set} [args]",
+		Short: "ONOS KPIMON subsystem commands - for KPM V1",
+	}
+
+	cli.AddConfigFlags(cmd, v1Address)
+	cmd.AddCommand(getListCommand())
+	cmd.AddCommand(getSetCommand())
+	cmd.AddCommand(loglib.GetCommand())
+	return cmd
+}
+
+// GetCommandV2 returns the root command for the RAN service
+func GetCommandV2() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "kpimonv2 {get/set} [args]",
+		Short: "ONOS KPIMON subsystem commands - for KPM V2",
+	}
+
+	cli.AddConfigFlags(cmd, v2Address)
+	cmd.AddCommand(getListCommand())
+	cmd.AddCommand(getSetCommand())
+	cmd.AddCommand(loglib.GetCommand())
+	return cmd
 }

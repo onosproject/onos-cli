@@ -18,10 +18,10 @@ import "github.com/spf13/cobra"
 
 func getListCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list {connections} [args]",
+		Use:   "list {metrics} [args]",
 		Short: "List KPIMON resources",
 	}
-	cmd.AddCommand(getListNumActiveUEsCommand())
+	cmd.AddCommand(getListMetricsCommand())
 	return cmd
 }
 
