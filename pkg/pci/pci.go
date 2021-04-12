@@ -30,6 +30,7 @@ func getListNumConflicts() *cobra.Command {
 		Use:   "numconflicts",
 		Short: "Get the number of conflicts for a specific cell",
 		RunE:  runListNumConflicts,
+		Args:  cobra.ExactArgs(1),
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
@@ -50,6 +51,7 @@ func getListNeighbors() *cobra.Command {
 		Use:   "neighbors",
 		Short: "Get neighbors for a specific cell",
 		RunE:  runListNeighbors,
+		Args:  cobra.ExactArgs(1),
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
@@ -70,6 +72,7 @@ func getListMetric() *cobra.Command {
 		Use:   "metric",
 		Short: "Get the metric for a specific cell",
 		RunE:  runListMetric,
+		Args:  cobra.ExactArgs(1),
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
@@ -90,6 +93,7 @@ func getListPci() *cobra.Command {
 		Use:   "pci",
 		Short: "Get the PCI for a specific cell",
 		RunE:  runListPci,
+		Args:  cobra.ExactArgs(1),
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
