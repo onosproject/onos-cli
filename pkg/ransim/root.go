@@ -62,22 +62,24 @@ func GetCommand() *cobra.Command {
 
 func getCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create {node,cell} [args]",
+		Use:   "create {node,cell,route} [args]",
 		Short: "Commands for creating simulated entities",
 	}
 
 	cmd.AddCommand(createNodeCommand())
 	cmd.AddCommand(createCellCommand())
+	cmd.AddCommand(createRouteCommand())
 	return cmd
 }
 
 func getDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete {node,cell} [args]",
+		Use:   "delete {node,cell,route} [args]",
 		Short: "Commands for deleting simulated entities",
 	}
 	cmd.AddCommand(deleteNodeCommand())
 	cmd.AddCommand(deleteCellCommand())
+	cmd.AddCommand(deleteRouteCommand())
 	cmd.AddCommand(deleteMetricCommand())
 	cmd.AddCommand(deleteMetricsCommand())
 	return cmd
@@ -85,7 +87,7 @@ func getDeleteCommand() *cobra.Command {
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {plmnid,layout,cells,ues,ueCount} [args]",
+		Use:   "get {plmnid,layout,node(s),cell(s),ue(s),ueCount,route(s)} [args]",
 		Short: "Commands for retrieving RAN simulator model and other information",
 	}
 
@@ -99,9 +101,11 @@ func getGetCommand() *cobra.Command {
 	cmd.AddCommand(getCellCommand())
 
 	cmd.AddCommand(getUEsCommand())
-	//cmd.AddCommand(getUECommand())
-
+	cmd.AddCommand(getUECommand())
 	cmd.AddCommand(getUECountCommand())
+
+	cmd.AddCommand(getRouteCommand())
+	cmd.AddCommand(getRoutesCommand())
 
 	cmd.AddCommand(getMetricCommand())
 	cmd.AddCommand(getMetricsCommand())
@@ -116,6 +120,7 @@ func getSetCommand() *cobra.Command {
 
 	cmd.AddCommand(updateNodeCommand())
 	cmd.AddCommand(updateCellCommand())
+	cmd.AddCommand(updateUECommand())
 	cmd.AddCommand(setMetricCommand())
 	return cmd
 }
