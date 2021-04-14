@@ -101,7 +101,7 @@ func getGetCommand() *cobra.Command {
 	cmd.AddCommand(getCellCommand())
 
 	cmd.AddCommand(getUEsCommand())
-	//cmd.AddCommand(getUECommand())
+	cmd.AddCommand(getUECommand())
 	cmd.AddCommand(getUECountCommand())
 
 	cmd.AddCommand(getRouteCommand())
@@ -120,6 +120,7 @@ func getSetCommand() *cobra.Command {
 
 	cmd.AddCommand(updateNodeCommand())
 	cmd.AddCommand(updateCellCommand())
+	cmd.AddCommand(updateUECommand())
 	cmd.AddCommand(setMetricCommand())
 	return cmd
 }
