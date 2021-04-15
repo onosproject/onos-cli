@@ -66,16 +66,20 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 	for k, v := range respGetMetrics.GetObject().GetAttributes() {
 		ids := strings.Split(k, ":")
-		cellID := fmt.Sprintf("%s:%s", ids[0], ids[1])
-		tmpMetricType := ids[2]
+		tmpCid := ids[0]
+		tmpPlmnID := ids[1]
+		tmpEgnbID := ids[2]
+		tmpMetricType := ids[3]
+		tmpTimestamp := ids[4]
+		tmpKey := fmt.Sprintf("%s:%s:%s", tmpCid, tmpPlmnID, tmpEgnbID)
 
-		if _, ok1 := results[cellID]; !ok1 {
-			results[cellID] = make(map[string]map[string]string)
+		if _, ok1 := results[tmpKey]; !ok1 {
+			results[tmpKey] = make(map[string]map[string]string)
 		}
-		if _, ok2 := results[cellID][ids[3]]; !ok2 {
-			results[cellID][ids[3]] = make(map[string]string)
+		if _, ok2 := results[tmpKey][tmpTimestamp]; !ok2 {
+			results[tmpKey][tmpTimestamp] = make(map[string]string)
 		}
-		results[cellID][ids[3]][tmpMetricType] = v
+		results[tmpKey][tmpTimestamp][tmpMetricType] = v
 	}
 
 	for key := range respGetHeader.GetObject().Attributes {
@@ -83,7 +87,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	}
 	sort.Strings(types)
 
-	header := "Cell ID\tTime"
+	header := "PlmnID\tegNB ID\tCell ID\tTime"
 
 	for _, key := range types {
 		tmpHeader := header
@@ -109,7 +113,9 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 			}
 			timeObj := time.Unix(0, int64(timeStamp))
 			tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
-			resultLine := fmt.Sprintf("%s\t%s", keyID, tsFormat)
+			ids := strings.Split(keyID, ":")
+
+			resultLine := fmt.Sprintf("%s\t%s\t%s\t%s", ids[1], ids[2], ids[0], tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
 				var tmpValue string
