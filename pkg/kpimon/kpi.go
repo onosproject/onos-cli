@@ -17,13 +17,14 @@ package kpimon
 import (
 	"context"
 	"fmt"
-	"sort"
-	"strings"
-	"text/tabwriter"
-
 	kpimonapi "github.com/onosproject/onos-api/go/onos/kpimon"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
+	"sort"
+	"strconv"
+	"strings"
+	"text/tabwriter"
+	"time"
 )
 
 func getListMetricsCommand() *cobra.Command {
@@ -37,7 +38,7 @@ func getListMetricsCommand() *cobra.Command {
 }
 
 func runListMetricsCommand(cmd *cobra.Command, args []string) error {
-	results := make(map[string]map[string]string)
+	results := make(map[string]map[string]map[string]string)
 	var types []string
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
@@ -67,10 +68,14 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 		ids := strings.Split(k, ":")
 		cellID := fmt.Sprintf("%s:%s", ids[0], ids[1])
 		tmpMetricType := ids[2]
-		if _, ok := results[cellID]; !ok {
-			results[cellID] = make(map[string]string)
+
+		if _, ok1 := results[cellID]; !ok1 {
+			results[cellID] = make(map[string]map[string]string)
 		}
-		results[cellID][tmpMetricType] = v
+		if _, ok2 := results[cellID][ids[3]]; !ok2 {
+			results[cellID][ids[3]] = make(map[string]string)
+		}
+		results[cellID][ids[3]][tmpMetricType] = v
 	}
 
 	for key := range respGetHeader.GetObject().Attributes {
@@ -78,7 +83,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	}
 	sort.Strings(types)
 
-	header := "Cell ID"
+	header := "Cell ID\tTime"
 
 	for _, key := range types {
 		tmpHeader := header
@@ -89,20 +94,52 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 		_, _ = fmt.Fprintln(writer, header)
 	}
 
-	for k1, v1 := range results {
-		resultLine := k1
-		for _, v2 := range types {
-			tmpResultLine := resultLine
-			var tmpValue string
-			if _, ok := v1[v2]; !ok {
-				tmpValue = "N/A"
-			} else {
-				tmpValue = v1[v2]
-			}
-			resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+	for keyID, metrics := range results {
+		// sort 2nd map with timestamp
+		timeKeySlice := make([]string, 0, len(metrics))
+		for timeStampKey := range metrics {
+			timeKeySlice = append(timeKeySlice, timeStampKey)
 		}
-		_, _ = fmt.Fprintln(writer, resultLine)
+		sort.Strings(timeKeySlice)
+
+		for _, timeKey := range timeKeySlice {
+			timeStamp, err := strconv.ParseUint(timeKey, 10, 64)
+			if err != nil {
+				return err
+			}
+			timeObj := time.Unix(0, int64(timeStamp))
+			tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
+			resultLine := fmt.Sprintf("%s\t%s", keyID, tsFormat)
+			for _, typeValue := range types {
+				tmpResultLine := resultLine
+				var tmpValue string
+				if _, ok := metrics[timeKey][typeValue]; !ok {
+					tmpValue = "N/A"
+				} else {
+					tmpValue = metrics[timeKey][typeValue]
+				}
+				resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+			}
+			_, _ = fmt.Fprintln(writer, resultLine)
+		}
 	}
+
+
+
+	//for k1, v1 := range results {
+	//	resultLine := k1
+	//	for _, v2 := range types {
+	//		tmpResultLine := resultLine
+	//		var tmpValue string
+	//		if _, ok := v1[v2]; !ok {
+	//			tmpValue = "N/A"
+	//		} else {
+	//			tmpValue = v1[v2]
+	//		}
+	//		resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+	//	}
+	//	_, _ = fmt.Fprintln(writer, resultLine)
+	//}
 
 	_ = writer.Flush()
 
