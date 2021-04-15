@@ -130,23 +130,6 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-
-
-	//for k1, v1 := range results {
-	//	resultLine := k1
-	//	for _, v2 := range types {
-	//		tmpResultLine := resultLine
-	//		var tmpValue string
-	//		if _, ok := v1[v2]; !ok {
-	//			tmpValue = "N/A"
-	//		} else {
-	//			tmpValue = v1[v2]
-	//		}
-	//		resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
-	//	}
-	//	_, _ = fmt.Fprintln(writer, resultLine)
-	//}
-
 	_ = writer.Flush()
 
 	return nil
