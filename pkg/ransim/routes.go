@@ -46,6 +46,8 @@ func createRouteCommand() *cobra.Command {
 		RunE:  runCreateRouteCommand,
 	}
 	cmd.Flags().String("color", "gray", "route color")
+	cmd.Flags().Float64("speed-avg", 80.0, "average speed in km/h")
+	cmd.Flags().Float64("speed-stddev", 0.0, "speed std. deviation in km/h")
 	cmd.Flags().Float64Slice("lat", []float64{}, "waypoint latitude")
 	cmd.Flags().Float64Slice("lng", []float64{}, "waypoint longitude")
 	return cmd
@@ -98,7 +100,7 @@ func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %-8s %s\n", "IMSI", "Color", "Waypoints")
+		cli.Output("%-16s %-8s %-5s -%-5s %s\n", "IMSI", "Color", "µkm/h", "∂km/h", "Waypoints")
 	}
 
 	if watch, _ := cmd.Flags().GetBool("watch"); watch {
@@ -112,7 +114,8 @@ func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			route := r.Route
-			cli.Output("%-16d %-8s %s\n", route.RouteID, route.Color, waypointsToString(route.Waypoints))
+			cli.Output("%-16d %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
+				float64(route.SpeedAvg)/1000, float64(route.SpeedStdev)/1000, waypointsToString(route.Waypoints))
 		}
 
 	} else {
@@ -128,7 +131,8 @@ func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			route := r.Route
-			cli.Output("%-16d %-8s %s\n", route.RouteID, route.Color, waypointsToString(route.Waypoints))
+			cli.Output("%-16d %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
+				float64(route.SpeedAvg)/1000, float64(route.SpeedStdev)/1000, waypointsToString(route.Waypoints))
 		}
 	}
 
@@ -141,6 +145,8 @@ func runCreateRouteCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	color, _ := cmd.Flags().GetString("color")
+	speedAvg, _ := cmd.Flags().GetFloat64("speed-avg")
+	speedStddev, _ := cmd.Flags().GetFloat64("speed-stddev")
 	waypoints, err := waypointsFromOptions(cmd)
 	if err != nil {
 		return err
@@ -153,9 +159,11 @@ func runCreateRouteCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	route := &types.Route{
-		RouteID:   types.IMSI(imsi),
-		Color:     color,
-		Waypoints: waypoints,
+		RouteID:    types.IMSI(imsi),
+		Color:      color,
+		SpeedAvg:   uint32(speedAvg * 1000),
+		SpeedStdev: uint32(speedStddev * 1000),
+		Waypoints:  waypoints,
 	}
 
 	_, err = client.CreateRoute(context.Background(), &modelapi.CreateRouteRequest{Route: route})
@@ -182,7 +190,9 @@ func waypointsFromOptions(cmd *cobra.Command) ([]*types.Point, error) {
 }
 
 func outputRoute(route *types.Route) {
-	cli.Output("IMSI: %-16d\nColor: %s\nWaypoints: %s\n", route.RouteID, route.Color, waypointsToString(route.Waypoints))
+	cli.Output("IMSI: %-16d\nColor: %s\nAvg km/h: %5.1f\nStd. Dev km/h: %5.1f\nNextPoint: %d\nReverse: %t\nWaypoints: %s\n",
+		route.RouteID, route.Color, float64(route.SpeedAvg)/1000, float64(route.SpeedStdev)/1000, route.NextPoint, route.Reverse,
+		waypointsToString(route.Waypoints))
 }
 
 func runGetRouteCommand(cmd *cobra.Command, args []string) error {
