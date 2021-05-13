@@ -48,9 +48,9 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getGetCommand())
 	cmd.AddCommand(getAddCommand())
 	cmd.AddCommand(getUpdateCommand())
-	cmd.AddCommand(getRemoveCommand())
+	cmd.AddCommand(getDeleteCommand())
 	cmd.AddCommand(getWatchCommand())
-	cmd.AddCommand(getLoadYamlEntitiesCommand())
+	//cmd.AddCommand(getLoadYamlEntitiesCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }

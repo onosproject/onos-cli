@@ -30,9 +30,9 @@ func Test_RootUsage(t *testing.T) {
 		description string
 		expected    string
 	}{
-		{description: "Add command", expected: `Add a topology resource`},
+		{description: "Create command", expected: `Create a topology resource`},
 		{description: "Get command", expected: `Get topology resources`},
-		{description: "Remove command", expected: `Remove a topology resource`},
+		{description: "Delete command", expected: `Delete a topology resource`},
 		{description: "Update command", expected: `Update a topology resource`},
 		{description: "Watch command", expected: `Watch for changes to a topology resource type`},
 		{description: "Usage header", expected: `Usage:`},
@@ -64,9 +64,9 @@ func Test_SubCommands(t *testing.T) {
 		expectedShort string
 	}{
 		{commandName: "config", expectedShort: "Manage the CLI configuration"},
-		{commandName: "add", expectedShort: "Add a topology resource"},
+		{commandName: "create", expectedShort: "Create a topology resource"},
 		{commandName: "get", expectedShort: "Get topology resources"},
-		{commandName: "remove", expectedShort: "Remove a topology resource"},
+		{commandName: "delete", expectedShort: "Delete a topology resource"},
 		{commandName: "update", expectedShort: "Update a topology resource"},
 		{commandName: "watch", expectedShort: "Watch for changes to a topology resource type"},
 		{commandName: "log", expectedShort: "logging api commands"},
