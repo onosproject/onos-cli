@@ -3,10 +3,10 @@ module github.com/onosproject/onos-cli
 go 1.14
 
 require (
-	github.com/ghodss/yaml v1.0.0
+	github.com/gogo/protobuf v1.3.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.3
-	github.com/onosproject/onos-api/go v0.7.25
+	github.com/onosproject/onos-api/go v0.7.38
 	github.com/onosproject/onos-lib-go v0.7.5
 	github.com/onosproject/onos-ric-sdk-go v0.7.10
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802

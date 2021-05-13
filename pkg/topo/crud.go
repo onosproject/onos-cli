@@ -15,22 +15,14 @@
 package topo
 
 import (
-	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/spf13/cobra"
 )
 
-func setAttribute(o *topoapi.Object, k string, v string) {
-	if len(v) > 0 {
-		o.Attributes[k] = v
-	}
-}
-
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {device|entity|relation|kind} [args]",
+		Use:   "get {entity|relation|kind} [args]",
 		Short: "Get topology resources",
 	}
-	cmd.AddCommand(getGetDeviceCommand())
 	cmd.AddCommand(getGetEntityCommand())
 	cmd.AddCommand(getGetRelationCommand())
 	cmd.AddCommand(getGetKindCommand())
@@ -39,41 +31,42 @@ func getGetCommand() *cobra.Command {
 
 func getAddCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add {device|entity|relation|kind} [args]",
-		Short: "Add a topology resource",
+		Use:   "create {entity|relation|kind} [args]",
+		Short: "Create a topology resource",
 	}
-	cmd.AddCommand(getAddDeviceCommand())
-	cmd.AddCommand(getAddEntityCommand())
-	cmd.AddCommand(getAddRelationCommand())
-	cmd.AddCommand(getAddKindCommand())
+	cmd.AddCommand(getCreateEntityCommand())
+	cmd.AddCommand(getCreateRelationCommand())
+	cmd.AddCommand(getCreateKindCommand())
 	return cmd
 }
 
 func getUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update {device} [args]",
+		Use:   "update {entity|relation|kind} [args]",
 		Short: "Update a topology resource",
 	}
-	cmd.AddCommand(getUpdateDeviceCommand())
+	cmd.AddCommand(getUpdateEntityCommand())
+	cmd.AddCommand(getUpdateRelationCommand())
+	cmd.AddCommand(getUpdateKindCommand())
 	return cmd
 }
 
-func getRemoveCommand() *cobra.Command {
+func getDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove {device|object} [args]",
-		Short: "Remove a topology resource",
+		Use:   "delete {entity|relation|kind} [args]",
+		Short: "Delete a topology resource",
 	}
-	cmd.AddCommand(getRemoveDeviceCommand())
-	cmd.AddCommand(getRemoveObjectCommand())
+	cmd.AddCommand(getDeleteRelationCommand())
+	cmd.AddCommand(getDeleteEntityCommand())
+	cmd.AddCommand(getDeleteKindCommand())
 	return cmd
 }
 
 func getWatchCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "watch {device|entity|relation|kind|all} [args]",
+		Use:   "watch {entity|relation|kind|all} [args]",
 		Short: "Watch for changes to a topology resource type",
 	}
-	cmd.AddCommand(getWatchDeviceCommand())
 	cmd.AddCommand(getWatchEntityCommand())
 	cmd.AddCommand(getWatchRelationCommand())
 	cmd.AddCommand(getWatchKindCommand())
