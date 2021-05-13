@@ -15,14 +15,6 @@
 package topo
 
 import (
-	"context"
-	"fmt"
-	"github.com/onosproject/onos-cli/pkg/topo/load"
-	"strings"
-	"time"
-
-	topoapi "github.com/onosproject/onos-api/go/onos/topo"
-	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -38,112 +30,114 @@ func getLoadYamlEntitiesCommand() *cobra.Command {
 }
 
 func runLoadYamlEntitiesCommand(cmd *cobra.Command, args []string) error {
-	var filename string
-	if len(args) > 0 {
-		filename = args[0]
-	}
-
-	extraAttrs, err := cmd.Flags().GetStringArray("attr")
-	if err != nil {
-		return err
-	}
-	for _, x := range extraAttrs {
-		cli.Output("runLoadYamlEntitiesCommand %v", x)
-		split := strings.Split(x, "=")
-		if len(split) != 2 {
-			return fmt.Errorf("expect extra args to be in the format a=b. Rejected: %s", x)
-		}
-	}
-
-	topoConfig, err := load.GetTopoConfig(filename)
-	if err != nil {
-		return err
-	}
-
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	client := topoapi.CreateTopoClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-
-	for _, kind := range topoConfig.TopoKinds {
-		if kind.Attributes == nil {
-			a := make(map[string]string)
-			kind.Attributes = &a
-		}
-		for _, x := range extraAttrs {
-			split := strings.Split(x, "=")
-			(*kind.Attributes)[split[0]] = split[1]
+	/*
+		var filename string
+		if len(args) > 0 {
+			filename = args[0]
 		}
 
-		kind := kind // pin
-
-		object := load.TopoKindToTopoObject(&kind)
-		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+		extraAttrs, err := cmd.Flags().GetStringArray("attr")
 		if err != nil {
 			return err
 		}
-	}
-
-	for _, entity := range topoConfig.TopoEntities {
-		if entity.Attributes == nil {
-			a := make(map[string]string)
-			entity.Attributes = &a
-		}
 		for _, x := range extraAttrs {
+			cli.Output("runLoadYamlEntitiesCommand %v", x)
 			split := strings.Split(x, "=")
-			(*entity.Attributes)[split[0]] = split[1]
+			if len(split) != 2 {
+				return fmt.Errorf("expect extra args to be in the format a=b. Rejected: %s", x)
+			}
 		}
 
-		entity := entity // pin
-		object := load.TopoEntityToTopoObject(&entity)
-		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+		topoConfig, err := load.GetTopoConfig(filename)
 		if err != nil {
 			return err
 		}
-	}
 
-	for _, relation := range topoConfig.TopoRelations {
-		if relation.Attributes == nil {
-			a := make(map[string]string)
-			relation.Attributes = &a
-		}
-		for _, x := range extraAttrs {
-			split := strings.Split(x, "=")
-			(*relation.Attributes)[split[0]] = split[1]
-		}
-
-		relation := relation // pin
-		object := load.TopoRelationToTopoObject(&relation)
-		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+		conn, err := cli.GetConnection(cmd)
 		if err != nil {
 			return err
 		}
-	}
+		defer conn.Close()
+		client := topoapi.CreateTopoClient(conn)
 
-	for _, relation := range topoConfig.TopoRelations {
-		if relation.Attributes == nil {
-			a := make(map[string]string)
-			relation.Attributes = &a
-		}
-		for _, x := range extraAttrs {
-			split := strings.Split(x, "=")
-			(*relation.Attributes)[split[0]] = split[1]
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+
+		for _, kind := range topoConfig.TopoKinds {
+			if kind.Attributes == nil {
+				a := make(map[string]string)
+				kind.Attributes = &a
+			}
+			for _, x := range extraAttrs {
+				split := strings.Split(x, "=")
+				(*kind.Attributes)[split[0]] = split[1]
+			}
+
+			kind := kind // pin
+
+			object := load.TopoKindToTopoObject(&kind)
+			_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+			if err != nil {
+				return err
+			}
 		}
 
-		relation := relation // pin
-		object := load.TopoRelationToTopoObject(&relation)
-		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
-		if err != nil {
-			return err
-		}
-	}
+		for _, entity := range topoConfig.TopoEntities {
+			if entity.Attributes == nil {
+				a := make(map[string]string)
+				entity.Attributes = &a
+			}
+			for _, x := range extraAttrs {
+				split := strings.Split(x, "=")
+				(*entity.Attributes)[split[0]] = split[1]
+			}
 
-	fmt.Printf("Loaded %d topo devices from %s\n", len(topoConfig.TopoEntities), filename)
+			entity := entity // pin
+			object := load.TopoEntityToTopoObject(&entity)
+			_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+			if err != nil {
+				return err
+			}
+		}
+
+		for _, relation := range topoConfig.TopoRelations {
+			if relation.Attributes == nil {
+				a := make(map[string]string)
+				relation.Attributes = &a
+			}
+			for _, x := range extraAttrs {
+				split := strings.Split(x, "=")
+				(*relation.Attributes)[split[0]] = split[1]
+			}
+
+			relation := relation // pin
+			object := load.TopoRelationToTopoObject(&relation)
+			_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+			if err != nil {
+				return err
+			}
+		}
+
+		for _, relation := range topoConfig.TopoRelations {
+			if relation.Attributes == nil {
+				a := make(map[string]string)
+				relation.Attributes = &a
+			}
+			for _, x := range extraAttrs {
+				split := strings.Split(x, "=")
+				(*relation.Attributes)[split[0]] = split[1]
+			}
+
+			relation := relation // pin
+			object := load.TopoRelationToTopoObject(&relation)
+			_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+			if err != nil {
+				return err
+			}
+		}
+
+		fmt.Printf("Loaded %d topo devices from %s\n", len(topoConfig.TopoEntities), filename)
+	*/
 
 	return nil
 }

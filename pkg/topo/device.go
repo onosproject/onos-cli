@@ -41,6 +41,63 @@ func getGetDeviceCommand() *cobra.Command {
 	return cmd
 }
 
+func outputDeviceHeader(writer io.Writer, verbose bool) {
+	if verbose {
+		_, _ = fmt.Fprintln(writer, "ID\tDISPLAYNAME\tADDRESS\tVERSION\tTYPE\tSTATE\tATTRIBUTES")
+	} else {
+		_, _ = fmt.Fprintln(writer, "ID\tDISPLAYNAME\tADDRESS\tVERSION\tTYPE\tSTATE")
+	}
+}
+
+func outputDevice(obj topoapi.Object, writer io.Writer, verbose bool) {
+	ent := obj.GetEntity()
+	if ent != nil {
+		state := stateString(ent)
+		adhoc := obj.GetAspect(&topoapi.AdHoc{}).(*topoapi.AdHoc)
+		asset := obj.GetAspect(&topoapi.Asset{}).(*topoapi.Asset)
+		configurable := obj.GetAspect(&topoapi.Configurable{}).(*topoapi.Configurable)
+
+		if verbose {
+			attributesBuf := bytes.Buffer{}
+			for key, attribute := range adhoc.Properties {
+				attributesBuf.WriteString(key)
+				attributesBuf.WriteString(": ")
+				attributesBuf.WriteString(attribute)
+				attributesBuf.WriteString(", ")
+			}
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", obj.ID,
+				asset.Name, configurable.Address, configurable.Version, configurable.Type, state, attributesBuf.String())
+		} else {
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\n", obj.ID,
+				asset.Name, configurable.Address, configurable.Version, configurable.Type, state)
+		}
+
+	}
+}
+
+func outputDeviceFull(obj topoapi.Object, writer io.Writer, verbose bool) {
+	ent := obj.GetEntity()
+	if ent != nil {
+		state := stateString(ent)
+		asset := obj.GetAspect(&topoapi.Asset{}).(*topoapi.Asset)
+		configurable := obj.GetAspect(&topoapi.Configurable{}).(*topoapi.Configurable)
+
+		_, _ = fmt.Fprintf(writer, "ID\t%s\n", obj.ID)
+		_, _ = fmt.Fprintf(writer, "DisplayName\t%s\n", asset.Name)
+		_, _ = fmt.Fprintf(writer, "ADDRESS\t%s\n", configurable.Address)
+		_, _ = fmt.Fprintf(writer, "VERSION\t%s\n", configurable.Version)
+		_, _ = fmt.Fprintf(writer, "TYPE\t%s\n", configurable.Type)
+		_, _ = fmt.Fprintf(writer, "STATE\t%s\n", state)
+
+		if verbose {
+			adhoc := obj.GetAspect(&topoapi.AdHoc{}).(*topoapi.AdHoc)
+			for key, attribute := range adhoc.Properties {
+				_, _ = fmt.Fprintf(writer, "%s\t%s\n", strings.ToUpper(key), attribute)
+			}
+		}
+	}
+}
+
 func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
@@ -66,64 +123,19 @@ func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
 		}
 
 		if !noHeaders {
-			if verbose {
-				_, _ = fmt.Fprintln(writer, "ID\tDISPLAYNAME\tADDRESS\tVERSION\tTYPE\tSTATE\tUSER\tPASSWORD\tATTRIBUTES")
-			} else {
-				_, _ = fmt.Fprintln(writer, "ID\tDISPLAYNAME\tADDRESS\tVERSION\tTYPE\tSTATE")
-			}
+			outputDeviceHeader(writer, verbose)
 		}
 
 		for _, obj := range resp.Objects {
-			ent := obj.GetEntity()
-			if ent != nil {
-				state := stateString(ent)
-				attrs := obj.Attributes
-				if verbose {
-					attributesBuf := bytes.Buffer{}
-					for key, attribute := range attrs {
-						attributesBuf.WriteString(key)
-						attributesBuf.WriteString(": ")
-						attributesBuf.WriteString(attribute)
-						attributesBuf.WriteString(", ")
-					}
-					_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", obj.ID,
-						attrs[topoapi.Displayname], attrs[topoapi.Address], attrs[topoapi.Version], attrs[topoapi.Type], state,
-						attrs[topoapi.User], attrs[topoapi.Password], attributesBuf.String())
-				} else {
-					_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\n", obj.ID,
-						attrs[topoapi.Displayname], attrs[topoapi.Address], attrs[topoapi.Version], attrs[topoapi.Type], state)
-				}
-			}
+			outputDevice(obj, writer, verbose)
 		}
 	} else {
-		response, err := client.Get(ctx, &topoapi.GetRequest{
-			ID: topoapi.ID(args[0]),
-		})
+		response, err := client.Get(ctx, &topoapi.GetRequest{ID: topoapi.ID(args[0])})
 		if err != nil {
 			cli.Output("get error")
 			return err
 		}
-
-		obj := response.Object
-		ent := obj.GetEntity()
-		if ent != nil {
-			state := stateString(ent)
-			attrs := obj.Attributes
-
-			_, _ = fmt.Fprintf(writer, "ID\t%s\n", obj.ID)
-			_, _ = fmt.Fprintf(writer, "DisplayName\t%s\n", attrs[topoapi.Displayname])
-			_, _ = fmt.Fprintf(writer, "ADDRESS\t%s\n", attrs[topoapi.Address])
-			_, _ = fmt.Fprintf(writer, "VERSION\t%s\n", attrs[topoapi.Version])
-			_, _ = fmt.Fprintf(writer, "TYPE\t%s\n", attrs[topoapi.Type])
-			_, _ = fmt.Fprintf(writer, "STATE\t%s\n", state)
-			if verbose {
-				_, _ = fmt.Fprintf(writer, "USER\t%s\n", attrs[topoapi.User])
-				_, _ = fmt.Fprintf(writer, "PASSWORD\t%s\n", attrs[topoapi.Password])
-				for key, attribute := range attrs {
-					_, _ = fmt.Fprintf(writer, "%s\t%s\n", strings.ToUpper(key), attribute)
-				}
-			}
-		}
+		outputDeviceFull(*response.Object, writer, verbose)
 	}
 	return writer.Flush()
 }
@@ -213,25 +225,31 @@ func runAddDeviceCommand(cmd *cobra.Command, args []string) error {
 		Type: topoapi.Object_ENTITY,
 	}
 
-	if attributes != nil {
-		obj.Attributes = attributes
-	} else {
-		obj.Attributes = make(map[string]string)
-	}
-	setAttribute(obj, topoapi.Type, deviceType)
-	setAttribute(obj, topoapi.Role, deviceRole)
-	setAttribute(obj, topoapi.Target, deviceTarget)
-	setAttribute(obj, topoapi.Address, address)
-	setAttribute(obj, topoapi.User, user)
-	setAttribute(obj, topoapi.Password, password)
-	setAttribute(obj, topoapi.Version, version)
-	setAttribute(obj, topoapi.Displayname, displayName)
-	setAttribute(obj, topoapi.TLSKey, key)
-	setAttribute(obj, topoapi.TLSCert, cert)
-	setAttribute(obj, topoapi.TLSCaCert, caCert)
-	setAttribute(obj, topoapi.TLSPlain, fmt.Sprintf("%t", plain))
-	setAttribute(obj, topoapi.TLSInsecure, fmt.Sprintf("%t", insecure))
-	setAttribute(obj, topoapi.Timeout, fmt.Sprintf("%d", timeout))
+	_ = obj.SetAspect(&topoapi.Asset{
+		Name: displayName,
+		Role: deviceRole,
+	})
+
+	_ = obj.SetAspect(&topoapi.TLSOptions{
+		Plain:    plain,
+		Insecure: insecure,
+		Key:      key,
+		CaCert:   caCert,
+		Cert:     cert,
+	})
+
+	_ = obj.SetAspect(&topoapi.Configurable{
+		Type:    deviceType,
+		Address: address,
+		Target:  deviceTarget,
+		Version: version,
+		Timeout: uint64(timeout.Milliseconds()),
+	})
+
+	adhoc := &topoapi.AdHoc{Properties: attributes}
+	adhoc.Properties["user"] = user
+	adhoc.Properties["password"] = password
+	_ = obj.SetAspect(adhoc)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -295,70 +313,17 @@ func runUpdateDeviceCommand(cmd *cobra.Command, args []string) error {
 	cancel()
 	obj := response.Object
 
-	if cmd.Flags().Changed("attributes") {
-		attributes, _ := cmd.Flags().GetStringToString("attributes")
-		obj.Attributes = attributes
-	} else if obj.Attributes == nil {
-		obj.Attributes = make(map[string]string)
-	}
-	attrs := obj.Attributes
+	// Ad-hoc properties
+	updateAdHocAspect(cmd, obj)
 
-	if cmd.Flags().Changed("type") {
-		deviceType, _ := cmd.Flags().GetString("type")
-		attrs[topoapi.Type] = deviceType
-	}
-	if cmd.Flags().Changed("target") {
-		deviceTarget, _ := cmd.Flags().GetString("target")
-		attrs[topoapi.Target] = deviceTarget
-	}
-	if cmd.Flags().Changed("role") {
-		deviceRole, _ := cmd.Flags().GetString("role")
-		attrs[topoapi.Role] = deviceRole
-	}
-	if cmd.Flags().Changed("address") {
-		address, _ := cmd.Flags().GetString("address")
-		attrs[topoapi.Address] = address
-	}
-	if cmd.Flags().Changed("user") {
-		user, _ := cmd.Flags().GetString("user")
-		attrs[topoapi.User] = user
-	}
-	if cmd.Flags().Changed("password") {
-		password, _ := cmd.Flags().GetString("password")
-		attrs[topoapi.Password] = password
-	}
-	if cmd.Flags().Changed("version") {
-		version, _ := cmd.Flags().GetString("version")
-		attrs[topoapi.Version] = version
-	}
-	if cmd.Flags().Changed("displayname") {
-		displayName, _ := cmd.Flags().GetString("displayname")
-		attrs[topoapi.Displayname] = displayName
-	}
-	if cmd.Flags().Changed("key") {
-		key, _ := cmd.Flags().GetString("key")
-		attrs[topoapi.TLSKey] = key
-	}
-	if cmd.Flags().Changed("cert") {
-		cert, _ := cmd.Flags().GetString("cert")
-		attrs[topoapi.TLSCert] = cert
-	}
-	if cmd.Flags().Changed("ca-cert") {
-		caCert, _ := cmd.Flags().GetString("ca-cert")
-		attrs[topoapi.TLSCaCert] = caCert
-	}
-	if cmd.Flags().Changed("plain") {
-		plain, _ := cmd.Flags().GetBool("plain")
-		attrs[topoapi.TLSPlain] = fmt.Sprintf("%t", plain)
-	}
-	if cmd.Flags().Changed("insecure") {
-		insecure, _ := cmd.Flags().GetBool("insecure")
-		attrs[topoapi.TLSInsecure] = fmt.Sprintf("%t", insecure)
-	}
-	if cmd.Flags().Changed("timeout") {
-		timeout, _ := cmd.Flags().GetDuration("timeout")
-		attrs[topoapi.Timeout] = fmt.Sprintf("%d", timeout)
-	}
+	// Asset aspect properties
+	updateAssetAspect(cmd, obj)
+
+	// Configurable aspect properties
+	updateConfigurableAspect(cmd, obj)
+
+	// TLSInfo aspect properties
+	updateTLSOptions(cmd, obj)
 
 	ctx, cancel = context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -371,6 +336,152 @@ func runUpdateDeviceCommand(cmd *cobra.Command, args []string) error {
 	}
 	cli.Output("Updated device %s", id)
 	return nil
+}
+
+func updateAdHocAspect(cmd *cobra.Command, obj *topoapi.Object) {
+	defaultAdhoc := &topoapi.AdHoc{}
+	adhoc := obj.GetAspect(defaultAdhoc).(*topoapi.AdHoc)
+	if adhoc == nil {
+		adhoc = defaultAdhoc
+	}
+
+	if cmd.Flags().Changed("attributes") {
+		attributes, err := cmd.Flags().GetStringToString("attributes")
+		if err == nil {
+			adhoc.Properties = attributes
+			_ = obj.SetAspect(adhoc)
+		}
+	}
+
+	if adhoc.Properties == nil {
+		adhoc.Properties = make(map[string]string)
+	}
+
+	if cmd.Flags().Changed("user") {
+		user, err := cmd.Flags().GetString("user")
+		if err == nil {
+			adhoc.Properties["user"] = user
+			_ = obj.SetAspect(adhoc)
+		}
+	}
+	if cmd.Flags().Changed("password") {
+		password, err := cmd.Flags().GetString("password")
+		if err == nil {
+			adhoc.Properties["password"] = password
+			_ = obj.SetAspect(adhoc)
+		}
+	}
+}
+
+func updateAssetAspect(cmd *cobra.Command, obj *topoapi.Object) {
+	defaultAsset := &topoapi.Asset{}
+	asset := obj.GetAspect(defaultAsset).(*topoapi.Asset)
+	if asset == nil {
+		asset = defaultAsset
+	}
+
+	if cmd.Flags().Changed("role") {
+		deviceRole, err := cmd.Flags().GetString("role")
+		if err == nil {
+			asset.Role = deviceRole
+			_ = obj.SetAspect(asset)
+		}
+	}
+	if cmd.Flags().Changed("displayname") {
+		displayName, err := cmd.Flags().GetString("displayname")
+		if err == nil {
+			asset.Name = displayName
+			_ = obj.SetAspect(asset)
+		}
+	}
+}
+
+func updateConfigurableAspect(cmd *cobra.Command, obj *topoapi.Object) {
+	defaultCfg := &topoapi.Configurable{}
+	cfg := obj.GetAspect(defaultCfg).(*topoapi.Configurable)
+	if cfg == nil {
+		cfg = defaultCfg
+	}
+
+	if cmd.Flags().Changed("type") {
+		deviceType, err := cmd.Flags().GetString("type")
+		if err == nil {
+			cfg.Type = deviceType
+			_ = obj.SetAspect(cfg)
+		}
+	}
+	if cmd.Flags().Changed("target") {
+		deviceTarget, err := cmd.Flags().GetString("target")
+		if err == nil {
+			cfg.Target = deviceTarget
+			_ = obj.SetAspect(cfg)
+		}
+	}
+	if cmd.Flags().Changed("address") {
+		address, err := cmd.Flags().GetString("address")
+		if err == nil {
+			cfg.Address = address
+			_ = obj.SetAspect(cfg)
+		}
+	}
+	if cmd.Flags().Changed("version") {
+		version, err := cmd.Flags().GetString("version")
+		if err == nil {
+			cfg.Version = version
+			_ = obj.SetAspect(cfg)
+		}
+	}
+	if cmd.Flags().Changed("timeout") {
+		timeout, err := cmd.Flags().GetDuration("timeout")
+		if err == nil {
+			cfg.Timeout = uint64(timeout.Milliseconds())
+			_ = obj.SetAspect(cfg)
+		}
+	}
+}
+
+func updateTLSOptions(cmd *cobra.Command, obj *topoapi.Object) {
+	defaultTLS := &topoapi.TLSOptions{}
+	tls := obj.GetAspect(defaultTLS).(*topoapi.TLSOptions)
+	if tls == nil {
+		tls = defaultTLS
+	}
+
+	if cmd.Flags().Changed("key") {
+		key, err := cmd.Flags().GetString("key")
+		if err == nil {
+			tls.Key = key
+			_ = obj.SetAspect(tls)
+		}
+	}
+	if cmd.Flags().Changed("cert") {
+		cert, err := cmd.Flags().GetString("cert")
+		if err == nil {
+			tls.Cert = cert
+			_ = obj.SetAspect(tls)
+		}
+	}
+	if cmd.Flags().Changed("ca-cert") {
+		caCert, err := cmd.Flags().GetString("ca-cert")
+		if err == nil {
+			tls.CaCert = caCert
+			_ = obj.SetAspect(tls)
+		}
+	}
+	if cmd.Flags().Changed("plain") {
+		plain, err := cmd.Flags().GetBool("plain")
+		if err == nil {
+			tls.Plain = plain
+			_ = obj.SetAspect(tls)
+		}
+	}
+	if cmd.Flags().Changed("insecure") {
+		insecure, err := cmd.Flags().GetBool("insecure")
+		if err == nil {
+			tls.Insecure = insecure
+			_ = obj.SetAspect(tls)
+		}
+	}
 }
 
 func getRemoveDeviceCommand() *cobra.Command {
@@ -444,11 +555,8 @@ func runWatchDeviceCommand(cmd *cobra.Command, args []string) error {
 	writer.Init(cli.GetOutput(), 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		if verbose {
-			_, _ = fmt.Fprintln(writer, "EVENT\tID\tADDRESS\tVERSION\tUSER\tPASSWORD")
-		} else {
-			_, _ = fmt.Fprintln(writer, "EVENT\tID\tADDRESS\tVERSION")
-		}
+		_, _ = fmt.Fprintln(writer, "EVENT\t")
+		outputDeviceHeader(writer, verbose)
 		_ = writer.Flush()
 	}
 
@@ -465,15 +573,8 @@ func runWatchDeviceCommand(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		obj := event.Object
-		attrs := obj.Attributes
-		if verbose {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\n", event.Type, obj.ID,
-				attrs[topoapi.Address], attrs[topoapi.Version], attrs[topoapi.User], attrs[topoapi.Password])
-		} else {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\n", event.Type, obj.ID,
-				attrs[topoapi.Address], attrs[topoapi.Version])
-		}
+		_, _ = fmt.Fprintf(writer, "%s\t", event.Type)
+		outputDevice(event.Object, writer, verbose)
 		_ = writer.Flush()
 	}
 }

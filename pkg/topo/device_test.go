@@ -49,16 +49,23 @@ func generateDeviceData(count int) []*topoapi.Object {
 				},
 			},
 		}
-		o.GetEntity().KindID = topoapi.ID("legacy")
+		o.GetEntity().KindID = "legacy"
 		o.GetEntity().GetProtocols()
 
-		o.Attributes = make(map[string]string)
-		setAttribute(o, topoapi.Type, deviceType)
-		setAttribute(o, topoapi.Role, "leaf")
-		setAttribute(o, topoapi.Address, fmt.Sprintf("192.168.0.%d", devIdx))
-		setAttribute(o, topoapi.Target, "")
-		setAttribute(o, topoapi.Version, topoapi.Version)
-		setAttribute(o, topoapi.Timeout, "1")
+		_ = o.SetAspect(&topoapi.Asset{
+			Role: "leaf",
+		})
+
+		_ = o.SetAspect(&topoapi.Configurable{
+			Type:    deviceType,
+			Address: fmt.Sprintf("192.168.0.%d", devIdx),
+			Version: version,
+			Timeout: 1000,
+			Target:  "",
+		})
+
+		_ = o.SetAspect(&topoapi.AdHoc{Properties: make(map[string]string)})
+		_ = o.SetAspect(&topoapi.TLSOptions{Plain: true})
 
 		devices[devIdx] = o
 	}

@@ -15,15 +15,8 @@
 package topo
 
 import (
-	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/spf13/cobra"
 )
-
-func setAttribute(o *topoapi.Object, k string, v string) {
-	if len(v) > 0 {
-		o.Attributes[k] = v
-	}
-}
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{

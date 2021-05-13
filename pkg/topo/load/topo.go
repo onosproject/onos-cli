@@ -16,6 +16,7 @@ package load
 
 import (
 	"fmt"
+	"github.com/gogo/protobuf/types"
 
 	"github.com/onosproject/onos-api/go/onos/topo"
 	configlib "github.com/onosproject/onos-lib-go/pkg/config"
@@ -32,55 +33,55 @@ type TopoConfig struct {
 
 // TopoKind - required to get around the "oneof" Obj
 type TopoKind struct {
-	ID         topo.ID
-	Type       topo.Object_Type
-	Obj        *topo.Object_Kind
-	Attributes *map[string]string
+	ID      topo.ID
+	Type    topo.Object_Type
+	Obj     *topo.Object_Kind
+	Aspects *map[string]*types.Any
 }
 
 // TopoKindToTopoObject - convert to Object
 func TopoKindToTopoObject(topoKind *TopoKind) *topo.Object {
 	return &topo.Object{
-		ID:         topoKind.ID,
-		Type:       topoKind.Type,
-		Obj:        topoKind.Obj,
-		Attributes: *topoKind.Attributes,
+		ID:      topoKind.ID,
+		Type:    topoKind.Type,
+		Obj:     topoKind.Obj,
+		Aspects: *topoKind.Aspects,
 	}
 }
 
 // TopoEntity - required to get around the "oneof" Obj
 type TopoEntity struct {
-	ID         topo.ID
-	Type       topo.Object_Type
-	Obj        *topo.Object_Entity
-	Attributes *map[string]string
+	ID      topo.ID
+	Type    topo.Object_Type
+	Obj     *topo.Object_Entity
+	Aspects *map[string]*types.Any
 }
 
 // TopoEntityToTopoObject - convert to Object
 func TopoEntityToTopoObject(topoEntity *TopoEntity) *topo.Object {
 	return &topo.Object{
-		ID:         topoEntity.ID,
-		Type:       topoEntity.Type,
-		Obj:        topoEntity.Obj,
-		Attributes: *topoEntity.Attributes,
+		ID:      topoEntity.ID,
+		Type:    topoEntity.Type,
+		Obj:     topoEntity.Obj,
+		Aspects: *topoEntity.Aspects,
 	}
 }
 
 // TopoRelation - required to get around the "oneof" Obj
 type TopoRelation struct {
-	ID         topo.ID
-	Type       topo.Object_Type
-	Obj        *topo.Object_Relation
-	Attributes *map[string]string
+	ID      topo.ID
+	Type    topo.Object_Type
+	Obj     *topo.Object_Relation
+	Aspects *map[string]*types.Any
 }
 
 // TopoRelationToTopoObject - convert to Object
 func TopoRelationToTopoObject(topoRelation *TopoRelation) *topo.Object {
 	return &topo.Object{
-		ID:         topoRelation.ID,
-		Type:       topoRelation.Type,
-		Obj:        topoRelation.Obj,
-		Attributes: *topoRelation.Attributes,
+		ID:      topoRelation.ID,
+		Type:    topoRelation.Type,
+		Obj:     topoRelation.Obj,
+		Aspects: *topoRelation.Aspects,
 	}
 }
 

@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/gogo/protobuf/types"
 	"io"
 	"text/tabwriter"
 	"time"
@@ -251,7 +252,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 func writeObject(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) error {
 	var object *topoapi.Object
 	id := args[0]
-	attributes, _ := cmd.Flags().GetStringToString("attributes")
+	//attributes, _ := cmd.Flags().GetStringToString("attributes")
 
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -270,10 +271,10 @@ func writeObject(cmd *cobra.Command, args []string, objectType topoapi.Object_Ty
 		}
 
 		object = &topoapi.Object{
-			ID:         topoapi.ID(id),
-			Type:       objectType,
-			Obj:        entity,
-			Attributes: attributes,
+			ID:   topoapi.ID(id),
+			Type: objectType,
+			Obj:  entity,
+			// Deal with aspects
 		}
 	} else if objectType == topoapi.Object_RELATION {
 		kindID, _ := cmd.Flags().GetString("kind")
@@ -442,12 +443,12 @@ func printRow(object topoapi.Object, watch bool, noHeaders bool) {
 			kindID = e.KindID
 		}
 		// printUpdateType()
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s%s\n", width, prec, object.Type, width, prec, object.ID, width, prec, kindID, attrsToString(object.Attributes))
+		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s%s\n", width, prec, object.Type, width, prec, object.ID, width, prec, kindID, attrsToString(object.Aspects))
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
 		// printUpdateType()
 		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s", width, prec, object.Type, width, prec, object.ID, width, prec, r.KindID)
-		_, _ = fmt.Fprintf(writer, "src=%s, tgt=%s, %s\n", r.SrcEntityID, r.TgtEntityID, attrsToString(object.Attributes))
+		_, _ = fmt.Fprintf(writer, "src=%s, tgt=%s, %s\n", r.SrcEntityID, r.TgtEntityID, attrsToString(object.Aspects))
 	case topoapi.Object_KIND:
 		k := object.GetKind()
 		// printUpdateType()
@@ -458,7 +459,7 @@ func printRow(object topoapi.Object, watch bool, noHeaders bool) {
 	_ = writer.Flush()
 }
 
-func attrsToString(attrs map[string]string) string {
+func attrsToString(attrs map[string]*types.Any) string {
 	attributesBuf := bytes.Buffer{}
 	first := true
 	for key, attribute := range attrs {
@@ -469,7 +470,7 @@ func attrsToString(attrs map[string]string) string {
 		}
 		attributesBuf.WriteString(key)
 		attributesBuf.WriteString(":")
-		attributesBuf.WriteString(attribute)
+		attributesBuf.WriteString(attribute.String()) // FIXME
 	}
 	return attributesBuf.String()
 }
