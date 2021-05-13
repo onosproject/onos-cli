@@ -15,7 +15,6 @@
 package topo
 
 import (
-	"bytes"
 	"context"
 	"github.com/gogo/protobuf/types"
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
@@ -110,7 +109,7 @@ func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_T
 		for aspectType, aspectValue := range aspects {
 			object.Aspects[aspectType] = &types.Any{
 				TypeUrl: aspectType,
-				Value:   bytes.NewBufferString(aspectValue).Bytes(),
+				Value:   []byte(aspectValue),
 			}
 		}
 	}

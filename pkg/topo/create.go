@@ -15,7 +15,6 @@
 package topo
 
 import (
-	"bytes"
 	"context"
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -108,7 +107,7 @@ func createObject(object *topoapi.Object, cmd *cobra.Command) error {
 
 	// Apply all aspect values
 	for aspectType, aspectValue := range aspects {
-		err := object.SetAspectBytes(aspectType, bytes.NewBufferString(aspectValue).Bytes())
+		err := object.SetAspectBytes(aspectType, []byte(aspectValue))
 		if err != nil {
 			return err
 		}
