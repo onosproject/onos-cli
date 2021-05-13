@@ -56,7 +56,7 @@ func getCreateKindCommand() *cobra.Command {
 		Short: "Create Kind",
 		RunE:  runCreateKindCommand,
 	}
-	cmd.Flags().StringToStringP("aspects", "a", map[string]string{}, "default aspect for entities of this kind")
+	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "default aspect for entities of this kind")
 	return cmd
 }
 
