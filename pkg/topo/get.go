@@ -22,7 +22,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
-	"text/tabwriter"
+	"os"
 	"time"
 )
 
@@ -81,16 +81,14 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
 
-	writer := new(tabwriter.Writer)
-	writer.Init(cli.GetOutput(), 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	if !noHeaders {
-		printHeader(writer, objectType, verbose, false)
-	}
-
+	writer := os.Stdout
 	if len(args) == 0 {
 		objects, err := listObjects(cmd)
 		if err == nil {
+			if !noHeaders {
+				printHeader(writer, objectType, verbose, false)
+			}
+
 			for _, object := range objects {
 				if objectType == object.Type {
 					printObject(writer, object, verbose)
@@ -148,29 +146,23 @@ func getObject(cmd *cobra.Command, id topoapi.ID) (*topoapi.Object, error) {
 
 func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool, printUpdateType bool) {
 	if printUpdateType {
-		_, _ = fmt.Fprintf(writer, "%-*.*s", width, prec, "Update Type")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", "Update Type", "Object Type")
 	}
 
 	if objectType == topoapi.Object_ENTITY {
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s\n%-*.*s", width, prec, "Object Type",
-			width, prec, "Entity ID", width, prec, "Kind ID")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "Entity ID", "Kind ID")
 	} else if objectType == topoapi.Object_RELATION {
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s\n%-*.*s%-*.*s%-*.*s", width, prec, "Object Type",
-			width, prec, "Relation ID", width, prec, "Kind ID", width, prec, "Source ID", width, prec, "Target ID")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t", "Relation ID", "Kind ID", "Source ID", "Target ID")
 	} else if objectType == topoapi.Object_KIND {
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s\n%-*.*s", width, prec, "Object Type",
-			width, prec, "Kind ID", width, prec, "Name")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "Kind ID", "Name")
 	}
 
 	if !verbose {
 		_, _ = fmt.Fprintf(writer, "\tAspects\n")
+	} else {
+		_, _ = fmt.Fprintf(writer, "\n")
 	}
 }
-
-const (
-	width = 16
-	prec  = width - 1
-)
 
 func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 	switch object.Type {
@@ -179,18 +171,17 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 		if e := object.GetEntity(); e != nil {
 			kindID = e.KindID
 		}
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s", width, prec, object.Type, width, prec, object.ID, width, prec, kindID)
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s", object.ID, kindID)
 		printAspects(writer, object, verbose)
 
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s%-*.*s%-*.*s", width, prec, object.Type, width, prec, object.ID, width, prec, r.KindID,
-			width, prec, r.SrcEntityID, width, prec, r.TgtEntityID)
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s", object.ID, r.KindID, r.SrcEntityID, r.TgtEntityID)
 		printAspects(writer, object, verbose)
 
 	case topoapi.Object_KIND:
 		k := object.GetKind()
-		_, _ = fmt.Fprintf(writer, "%-*.*s%-*.*s%-*.*s", width, prec, object.Type, width, prec, object.ID, width, prec, k.GetName())
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s", object.ID, k.GetName())
 		printAspects(writer, object, verbose)
 
 	default:
@@ -199,27 +190,25 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 }
 
 func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
-	if verbose {
-		for aspectType, aspect := range object.Aspects {
-			_, _ = fmt.Fprintf(writer, "\t%s=%s\n", aspectType, bytes.NewBuffer(aspect.Value).String())
-		}
-	} else {
-		_, _ = fmt.Fprintf(writer, "\t%s\n", aspectList(object))
-	}
-}
-
-func aspectList(object topoapi.Object) string {
-	buf := bytes.Buffer{}
 	first := true
 	if object.Aspects != nil {
-		for aspectType := range object.Aspects {
-			if !first {
-				buf.WriteString(",")
+		for aspectType, aspect := range object.Aspects {
+			if verbose {
+				if first {
+					_, _ = fmt.Fprintf(writer, "\n")
+				}
+				_, _ = fmt.Fprintf(writer, "\t%s=%s\n", aspectType, bytes.NewBuffer(aspect.Value).String())
 			} else {
-				first = false
+				if !first {
+					_, _ = fmt.Fprintf(writer, ",")
+				}
+				_, _ = fmt.Fprintf(writer, "%s", aspectType)
 			}
-			buf.WriteString(aspectType)
+			first = false
 		}
 	}
-	return buf.String()
+
+	if object.Aspects == nil || !verbose {
+		_, _ = fmt.Fprintf(writer, "\n")
+	}
 }

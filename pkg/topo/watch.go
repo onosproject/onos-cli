@@ -21,7 +21,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
-	"text/tabwriter"
+	"os"
 )
 
 func getWatchEntityCommand() *cobra.Command {
@@ -120,9 +120,7 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		return err
 	}
 
-	writer := new(tabwriter.Writer)
-	writer.Init(cli.GetOutput(), 0, 0, 3, ' ', tabwriter.FilterHTML)
-
+	writer := os.Stdout
 	if !noHeaders {
 		printHeader(writer, objectType, verbose, true)
 	}
@@ -141,9 +139,8 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		// FIXME: for now doing client-side filtering of events
 		if id == topoapi.NullID || id == event.Object.ID {
 			if event.Object.Type == topoapi.Object_UNSPECIFIED || objectType == event.Object.Type {
-				printUpdateType(writer, event.Type)
+				printUpdateType(writer, event.Type, event.Object.Type)
 				printObject(writer, event.Object, true)
-				_ = writer.Flush()
 			}
 		}
 	}
@@ -151,10 +148,10 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 	return nil
 }
 
-func printUpdateType(writer io.Writer, eventType topoapi.EventType) {
+func printUpdateType(writer io.Writer, eventType topoapi.EventType, objectType topoapi.Object_Type) {
 	if eventType == topoapi.EventType_NONE {
-		_, _ = fmt.Fprintf(writer, "%-*.*s", width, prec, "REPLAY")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", "REPLAY", objectType)
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-*.*s", width, prec, eventType)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", eventType, objectType)
 	}
 }
