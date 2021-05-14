@@ -42,7 +42,7 @@ func getAddCommand() *cobra.Command {
 
 func getUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update {entity|relation|kind} [args]",
+		Use:   "set {entity|relation|kind} [args]",
 		Short: "Update a topology resource",
 	}
 	cmd.AddCommand(getUpdateEntityCommand())
