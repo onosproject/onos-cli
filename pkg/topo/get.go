@@ -82,13 +82,13 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	verbose, _ := cmd.Flags().GetBool("verbose")
 
 	writer := os.Stdout
-	if !noHeaders {
-		printHeader(writer, objectType, verbose, false)
-	}
-
 	if len(args) == 0 {
 		objects, err := listObjects(cmd)
 		if err == nil {
+			if !noHeaders {
+				printHeader(writer, objectType, verbose, false)
+			}
+
 			for _, object := range objects {
 				if objectType == object.Type {
 					printObject(writer, object, verbose)
