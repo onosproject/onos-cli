@@ -100,7 +100,7 @@ func runCreateKindCommand(cmd *cobra.Command, args []string) error {
 }
 
 func createObject(object *topoapi.Object, cmd *cobra.Command) error {
-	aspects, err := cmd.Flags().GetStringToString("aspects")
+	aspects, err := cmd.Flags().GetStringToString("aspect")
 	if err != nil {
 		return err
 	}
