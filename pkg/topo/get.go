@@ -155,6 +155,8 @@ func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool,
 		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t", "Relation ID", "Kind ID", "Source ID", "Target ID")
 	} else if objectType == topoapi.Object_KIND {
 		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "Kind ID", "Name")
+	} else {
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "ID", "Kind ID/Name")
 	}
 
 	if !verbose {

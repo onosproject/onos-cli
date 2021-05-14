@@ -67,7 +67,7 @@ func Test_SubCommands(t *testing.T) {
 		{commandName: "create", expectedShort: "Create a topology resource"},
 		{commandName: "get", expectedShort: "Get topology resources"},
 		{commandName: "delete", expectedShort: "Delete a topology resource"},
-		{commandName: "update", expectedShort: "Update a topology resource"},
+		{commandName: "set", expectedShort: "Update a topology resource"},
 		{commandName: "watch", expectedShort: "Watch for changes to a topology resource type"},
 		{commandName: "log", expectedShort: "logging api commands"},
 	}
