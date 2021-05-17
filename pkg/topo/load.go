@@ -18,10 +18,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gogo/protobuf/types"
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 )
@@ -29,7 +32,7 @@ import (
 func getLoadTopoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "load [jsonFilePath|-]",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.MaximumNArgs(1),
 		Short: "Load topology resources in JSON format",
 		RunE:  runLoadTopoCommand,
 	}
@@ -38,14 +41,30 @@ func getLoadTopoCommand() *cobra.Command {
 }
 
 func runLoadTopoCommand(cmd *cobra.Command, args []string) error {
-	sdata, err := cmd.Flags().GetString("data")
+	var err error
+	var data []byte
+
+	if len(args) > 0 {
+		if args[0] == "-" {
+			data, err = ioutil.ReadAll(os.Stdin)
+		} else {
+			data, err = ioutil.ReadFile(args[0])
+		}
+	} else {
+		sdata, _ := cmd.Flags().GetString("data")
+		data = []byte(sdata)
+	}
+
 	if err != nil {
 		return err
 	}
+	return loadFromBytes(cmd, data)
+}
 
+func loadFromBytes(cmd *cobra.Command, jsonData []byte) error {
 	// Load the JSON data
 	var data interface{}
-	err = json.Unmarshal([]byte(sdata), &data)
+	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
 		return err
 	}
@@ -68,6 +87,7 @@ func runLoadTopoCommand(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
+		_, _ = fmt.Fprintf(os.Stdout, "Creating %s...\n", object.ID)
 		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
 		if err != nil {
 			return err
