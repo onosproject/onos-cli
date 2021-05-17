@@ -65,6 +65,9 @@ func runLoadTopoCommand(cmd *cobra.Command, args []string) error {
 	jsonObjects := data.(map[string]interface{})
 	for k, v := range jsonObjects {
 		object, err := parseObject(topoapi.ID(k), v)
+		if err != nil {
+			return err
+		}
 		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
 		if err != nil {
 			return err
@@ -90,8 +93,16 @@ func parseObject(id topoapi.ID, v interface{}) (*topoapi.Object, error) {
 	return nil, errors.New("invalid json")
 }
 
+func getString(k string, jsonObject map[string]interface{}) string {
+	v := jsonObject[k]
+	if v == nil {
+		return ""
+	}
+	return v.(string)
+}
+
 func createKind(id topoapi.ID, jsonObject map[string]interface{}) *topoapi.Object {
-	name := jsonObject["name"].(string)
+	name := getString("name", jsonObject)
 	return &topoapi.Object{
 		ID:   id,
 		Type: topoapi.Object_KIND,
@@ -104,7 +115,7 @@ func createKind(id topoapi.ID, jsonObject map[string]interface{}) *topoapi.Objec
 }
 
 func createEntity(id topoapi.ID, jsonObject map[string]interface{}) *topoapi.Object {
-	kindID := jsonObject["kind"].(string)
+	kindID := getString("kind", jsonObject)
 	return &topoapi.Object{
 		ID:   id,
 		Type: topoapi.Object_ENTITY,
@@ -119,9 +130,9 @@ func createEntity(id topoapi.ID, jsonObject map[string]interface{}) *topoapi.Obj
 }
 
 func createRelation(id topoapi.ID, jsonObject map[string]interface{}) *topoapi.Object {
-	kindID := jsonObject["kind"].(string)
-	srcID := jsonObject["source"].(string)
-	tgtID := jsonObject["target"].(string)
+	kindID := getString("kind", jsonObject)
+	srcID := getString("source", jsonObject)
+	tgtID := getString("target", jsonObject)
 	return &topoapi.Object{
 		ID:   id,
 		Type: topoapi.Object_RELATION,
@@ -155,7 +166,7 @@ func getAspects(jsonObject map[string]interface{}) map[string]*types.Any {
 }
 
 func getLabels(jsonObject map[string]interface{}) []string {
-	labels := make([]string, 0, 0)
+	labels := make([]string, 0)
 	jsonLabels := jsonObject["labels"]
 	if jsonLabels != nil {
 		for _, l := range jsonLabels.([]interface{}) {
