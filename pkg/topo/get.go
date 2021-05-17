@@ -83,12 +83,12 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 
 	writer := os.Stdout
 	if len(args) == 0 {
+		if !noHeaders {
+			printHeader(writer, objectType, verbose, false)
+		}
+
 		objects, err := listObjects(cmd)
 		if err == nil {
-			if !noHeaders {
-				printHeader(writer, objectType, verbose, false)
-			}
-
 			for _, object := range objects {
 				if objectType == object.Type {
 					printObject(writer, object, verbose)
@@ -146,17 +146,17 @@ func getObject(cmd *cobra.Command, id topoapi.ID) (*topoapi.Object, error) {
 
 func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool, printUpdateType bool) {
 	if printUpdateType {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", "Update Type", "Object Type")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s", "Update Type", "Object Type")
 	}
 
 	if objectType == topoapi.Object_ENTITY {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "Entity ID", "Kind ID")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "Entity ID", "Kind ID", "Labels")
 	} else if objectType == topoapi.Object_RELATION {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t", "Relation ID", "Kind ID", "Source ID", "Target ID")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t%-20s", "Relation ID", "Kind ID", "Source ID", "Target ID", "Labels")
 	} else if objectType == topoapi.Object_KIND {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "Kind ID", "Name")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "Kind ID", "Name", "Labels")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t", "ID", "Kind ID/Name")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "ID", "Kind ID/Name", "Labels")
 	}
 
 	if !verbose {
@@ -167,28 +167,49 @@ func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool,
 }
 
 func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
+	labels := labelsAsCSV(object)
 	switch object.Type {
 	case topoapi.Object_ENTITY:
 		var kindID topoapi.ID
 		if e := object.GetEntity(); e != nil {
 			kindID = e.KindID
 		}
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s", object.ID, kindID)
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", object.ID, kindID, labels)
 		printAspects(writer, object, verbose)
+		if verbose {
+			printProtocols(writer, object.GetEntity())
+		}
 
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s", object.ID, r.KindID, r.SrcEntityID, r.TgtEntityID)
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t%-20s", object.ID, r.KindID, r.SrcEntityID, r.TgtEntityID, labels)
 		printAspects(writer, object, verbose)
 
 	case topoapi.Object_KIND:
 		k := object.GetKind()
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s", object.ID, k.GetName())
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", object.ID, k.GetName(), labels)
 		printAspects(writer, object, verbose)
 
 	default:
 		_, _ = fmt.Fprintf(writer, "\n")
 	}
+}
+
+func printProtocols(writer io.Writer, entity *topoapi.Entity) {
+	for _, p := range entity.Protocols {
+		_, _ = fmt.Fprintf(writer, "\t%s=%s:%s\n", p.Protocol, p.ConnectivityState, p.ChannelState)
+	}
+}
+
+func labelsAsCSV(object topoapi.Object) string {
+	var buffer bytes.Buffer
+	for i, l := range object.Labels {
+		if i > 0 {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString(l)
+	}
+	return buffer.String()
 }
 
 func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
@@ -203,6 +224,8 @@ func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
 			} else {
 				if !first {
 					_, _ = fmt.Fprintf(writer, ",")
+				} else {
+					_, _ = fmt.Fprintf(writer, "\t")
 				}
 				_, _ = fmt.Fprintf(writer, "%s", aspectType)
 			}
