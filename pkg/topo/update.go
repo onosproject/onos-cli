@@ -31,6 +31,7 @@ func getUpdateEntityCommand() *cobra.Command {
 		RunE:  runUpdateEntityCommand,
 	}
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this entity")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	cmd.Flags().StringToStringP("set", "s", map[string]string{}, "set single attribute of an aspect")
 	return cmd
 }
@@ -43,6 +44,7 @@ func getUpdateRelationCommand() *cobra.Command {
 		RunE:  runUpdateRelationCommand,
 	}
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this entity")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	cmd.Flags().StringToStringP("set", "s", map[string]string{}, "set single attribute of an aspect")
 	return cmd
 }
@@ -56,6 +58,7 @@ func getUpdateKindCommand() *cobra.Command {
 	}
 	cmd.Flags().StringP("name", "n", "", "Kind Name")
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this entity")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	cmd.Flags().StringToStringP("set", "s", map[string]string{}, "set single attribute of an aspect")
 	return cmd
 }
@@ -71,6 +74,8 @@ func runUpdateRelationCommand(cmd *cobra.Command, args []string) error {
 func runUpdateKindCommand(cmd *cobra.Command, args []string) error {
 	return updateObject(cmd, args, topoapi.Object_KIND)
 }
+
+const deleteKeyword = "--delete"
 
 func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) error {
 	conn, err := cli.GetConnection(cmd)
@@ -93,6 +98,20 @@ func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_T
 
 	object := response.Object
 
+	// Apply label changes
+	labels, err := cmd.Flags().GetStringToString("label")
+	if err != nil {
+		return err
+	}
+
+	for labelKey, labelValue := range labels {
+		if len(labelValue) > 0 && labelValue != deleteKeyword {
+			object.Labels[labelKey] = labelValue
+		} else {
+			delete(object.Labels, labelKey)
+		}
+	}
+
 	// If kind, change name if needed
 	if objectType == topoapi.Object_KIND {
 		if cmd.Flags().Changed("name") {
@@ -107,9 +126,13 @@ func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_T
 	aspects, err := cmd.Flags().GetStringToString("aspect")
 	if err == nil {
 		for aspectType, aspectValue := range aspects {
-			object.Aspects[aspectType] = &types.Any{
-				TypeUrl: aspectType,
-				Value:   []byte(aspectValue),
+			if len(aspectValue) > 0 && aspectValue != deleteKeyword {
+				object.Aspects[aspectType] = &types.Any{
+					TypeUrl: aspectType,
+					Value:   []byte(aspectValue),
+				}
+			} else {
+				delete(object.Aspects, aspectType)
 			}
 		}
 	}

@@ -185,12 +185,13 @@ func getAspects(jsonObject map[string]interface{}) map[string]*types.Any {
 	return aspects
 }
 
-func getLabels(jsonObject map[string]interface{}) []string {
-	labels := make([]string, 0)
+func getLabels(jsonObject map[string]interface{}) map[string]string {
+	labels := map[string]string{}
 	jsonLabels := jsonObject["labels"]
 	if jsonLabels != nil {
-		for _, l := range jsonLabels.([]interface{}) {
-			labels = append(labels, l.(string))
+		labelsObject := jsonLabels.(map[string]interface{})
+		for k, v := range labelsObject {
+			labels[k] = v.(string)
 		}
 	}
 	return labels

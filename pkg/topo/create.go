@@ -30,8 +30,8 @@ func getCreateEntityCommand() *cobra.Command {
 		RunE:  runCreateEntityCommand,
 	}
 	cmd.Flags().StringP("kind", "k", "", "Kind ID")
-	//_ = cmd.MarkFlagRequired("kind")
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this entity")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	return cmd
 }
 
@@ -45,6 +45,7 @@ func getCreateRelationCommand() *cobra.Command {
 	cmd.Flags().StringP("kind", "k", "", "Kind ID")
 	//_ = cmd.MarkFlagRequired("kind")
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this relation")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	return cmd
 }
 
@@ -56,6 +57,7 @@ func getCreateKindCommand() *cobra.Command {
 		RunE:  runCreateKindCommand,
 	}
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "default aspect for entities of this kind")
+	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	return cmd
 }
 
@@ -100,6 +102,12 @@ func runCreateKindCommand(cmd *cobra.Command, args []string) error {
 }
 
 func createObject(object *topoapi.Object, cmd *cobra.Command) error {
+	labels, err := cmd.Flags().GetStringToString("label")
+	if err != nil {
+		return err
+	}
+	object.Labels = labels
+
 	aspects, err := cmd.Flags().GetStringToString("aspect")
 	if err != nil {
 		return err
