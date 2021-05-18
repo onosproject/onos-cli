@@ -1,0 +1,70 @@
+{
+  "somekind": {
+    "type": "kind",
+    "name": "Some Kind",
+    "labels": [
+      "schema",
+      "ran"
+    ],
+    "onos.topo.Location": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  "contains": {
+    "type": "kind",
+    "name": "Contains relationship",
+    "labels": [
+      "schema",
+      "ran"
+    ]
+  },
+  "controls": {
+    "type": "kind",
+    "name": "Controls relationship",
+    "labels": [
+      "schema",
+      "ran"
+    ]
+  },
+  "foo": {
+    "type": "entity",
+    "kind": "somekind",
+    "labels": [
+      "ran",
+      "test"
+    ],
+    "onos.topo.Location": {
+      "lat": 1.23,
+      "lng": 3.21
+    },
+    "onos.topo.Configurable": {
+      "address": "circus.local",
+      "target": "hit",
+      "timeout": 15
+    }
+  },
+  "bar": {
+    "type": "entity",
+    "kind": "somekind",
+    "labels": [
+      "ran",
+      "test"
+    ],
+    "onos.topo.Location": {
+      "lat": 3.14,
+      "lng": 6.28
+    },
+    "onos.topo.Configurable": {
+      "address": "clownville.local",
+      "target": "missed",
+      "timeout": 42
+    }
+  },
+  "foobar": {
+    "type": "relation",
+    "kind": "controls",
+    "source": "foo",
+    "target": "bar"
+  }
+}
