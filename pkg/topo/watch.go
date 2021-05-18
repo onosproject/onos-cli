@@ -34,6 +34,8 @@ func getWatchEntityCommand() *cobra.Command {
 	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -47,6 +49,8 @@ func getWatchRelationCommand() *cobra.Command {
 	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -60,6 +64,8 @@ func getWatchKindCommand() *cobra.Command {
 	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -72,6 +78,8 @@ func getWatchAllCommand() *cobra.Command {
 	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -103,6 +111,8 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		id = topoapi.NullID
 	}
 
+	filters := compileFilters(cmd, objectType)
+
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -112,6 +122,7 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 	client := topoapi.CreateTopoClient(conn)
 
 	req := &topoapi.WatchRequest{
+		Filters:  filters,
 		Noreplay: noreplay,
 	}
 
@@ -136,7 +147,7 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		}
 
 		event := res.Event
-		// FIXME: for now doing client-side filtering of events
+		// TODO: Filtering for ID and object type is still client-side; labels and kinds are server-side now
 		if id == topoapi.NullID || id == event.Object.ID {
 			if event.Object.Type == topoapi.Object_UNSPECIFIED || objectType == event.Object.Type {
 				printUpdateType(writer, event.Type, event.Object.Type)
