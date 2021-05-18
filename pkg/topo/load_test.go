@@ -22,7 +22,7 @@ import (
 )
 
 func Test_LoadKind(t *testing.T) {
-	jsonData := `{"somekind": {"type": "kind", "name": "SomeKind", "labels": ["test", "kindly"], "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
+	jsonData := `{"somekind": {"type": "kind", "name": "SomeKind", "labels": {"env": "test", "what": "kindly"}, "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
 
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonData), &data)
@@ -37,15 +37,15 @@ func Test_LoadKind(t *testing.T) {
 		assert.Equal(t, topoapi.ID("somekind"), object.ID)
 		assert.Equal(t, "SomeKind", object.GetKind().Name)
 		assert.Equal(t, 2, len(object.Labels))
-		assert.Equal(t, "test", object.Labels[0])
-		assert.Equal(t, "kindly", object.Labels[1])
+		assert.Equal(t, "test", object.Labels["env"])
+		assert.Equal(t, "kindly", object.Labels["what"])
 		assert.Equal(t, 1, len(object.Aspects))
 		assert.NotNil(t, object.Aspects["onos.topo.Location"])
 	}
 }
 
 func Test_LoadEntity(t *testing.T) {
-	jsonData := `{"foo": {"type": "entity", "kind": "somekind", "labels": ["test", "something"], "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
+	jsonData := `{"foo": {"type": "entity", "kind": "somekind", "labels": {"env": "test", "what": "something"}, "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
 
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonData), &data)
@@ -60,15 +60,15 @@ func Test_LoadEntity(t *testing.T) {
 		assert.Equal(t, topoapi.ID("foo"), object.ID)
 		assert.Equal(t, topoapi.ID("somekind"), object.GetEntity().KindID)
 		assert.Equal(t, 2, len(object.Labels))
-		assert.Equal(t, "test", object.Labels[0])
-		assert.Equal(t, "something", object.Labels[1])
+		assert.Equal(t, "test", object.Labels["env"])
+		assert.Equal(t, "something", object.Labels["what"])
 		assert.Equal(t, 1, len(object.Aspects))
 		assert.NotNil(t, object.Aspects["onos.topo.Location"])
 	}
 }
 
 func Test_LoadRelation(t *testing.T) {
-	jsonData := `{"rel": {"type": "relation", "kind": "somekind", "source": "foo", "target": "bar", "labels": ["test", "relative"], "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
+	jsonData := `{"rel": {"type": "relation", "kind": "somekind", "source": "foo", "target": "bar", "labels": {"env": "test", "what": "relative"}, "onos.topo.Location": {"lat": 3.14, "lng": 6.28}}}`
 
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonData), &data)
@@ -85,8 +85,8 @@ func Test_LoadRelation(t *testing.T) {
 		assert.Equal(t, topoapi.ID("foo"), object.GetRelation().SrcEntityID)
 		assert.Equal(t, topoapi.ID("bar"), object.GetRelation().TgtEntityID)
 		assert.Equal(t, 2, len(object.Labels))
-		assert.Equal(t, "test", object.Labels[0])
-		assert.Equal(t, "relative", object.Labels[1])
+		assert.Equal(t, "test", object.Labels["env"])
+		assert.Equal(t, "relative", object.Labels["what"])
 		assert.Equal(t, 1, len(object.Aspects))
 		assert.NotNil(t, object.Aspects["onos.topo.Location"])
 	}

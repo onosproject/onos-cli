@@ -36,6 +36,8 @@ func getGetEntityCommand() *cobra.Command {
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -49,6 +51,8 @@ func getGetRelationCommand() *cobra.Command {
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("kind", "", "kind query")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -62,6 +66,7 @@ func getGetKindCommand() *cobra.Command {
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
+	cmd.Flags().String("label", "", "label query")
 	return cmd
 }
 
@@ -83,11 +88,13 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 
 	writer := os.Stdout
 	if len(args) == 0 {
+		filters := compileFilters(cmd, objectType)
+
 		if !noHeaders {
 			printHeader(writer, objectType, verbose, false)
 		}
 
-		objects, err := listObjects(cmd)
+		objects, err := listObjects(cmd, filters)
 		if err == nil {
 			for _, object := range objects {
 				if objectType == object.Type {
@@ -109,7 +116,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	return nil
 }
 
-func listObjects(cmd *cobra.Command) ([]topoapi.Object, error) {
+func listObjects(cmd *cobra.Command, filters *topoapi.Filters) ([]topoapi.Object, error) {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return nil, err
@@ -118,7 +125,7 @@ func listObjects(cmd *cobra.Command) ([]topoapi.Object, error) {
 
 	client := topoapi.CreateTopoClient(conn)
 
-	resp, err := client.List(context.Background(), &topoapi.ListRequest{})
+	resp, err := client.List(context.Background(), &topoapi.ListRequest{Filters: filters})
 	if err != nil {
 		return nil, err
 	}
@@ -203,11 +210,15 @@ func printProtocols(writer io.Writer, entity *topoapi.Entity) {
 
 func labelsAsCSV(object topoapi.Object) string {
 	var buffer bytes.Buffer
-	for i, l := range object.Labels {
-		if i > 0 {
+	first := true
+	for k, v := range object.Labels {
+		if first {
 			buffer.WriteString(",")
 		}
-		buffer.WriteString(l)
+		buffer.WriteString(k)
+		buffer.WriteString("=")
+		buffer.WriteString(v)
+		first = false
 	}
 	return buffer.String()
 }
