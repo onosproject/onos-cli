@@ -40,7 +40,7 @@ import (
 
 const (
 	onosConfigAddress  = "onos-config:5150"
-	modelName          = "ric"
+	modelName          = "RIC"
 	modelVersion       = "1.0.0"
 	reportIntervalPath = "/report_period/interval"
 	target             = "onos-config"
