@@ -183,9 +183,6 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 		}
 		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", object.ID, kindID, labels)
 		printAspects(writer, object, verbose)
-		if verbose {
-			printProtocols(writer, object.GetEntity())
-		}
 
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
@@ -199,12 +196,6 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 
 	default:
 		_, _ = fmt.Fprintf(writer, "\n")
-	}
-}
-
-func printProtocols(writer io.Writer, entity *topoapi.Entity) {
-	for _, p := range entity.Protocols {
-		_, _ = fmt.Fprintf(writer, "\t%s=%s:%s\n", p.Protocol, p.ConnectivityState, p.ChannelState)
 	}
 }
 

@@ -1,0 +1,126 @@
+// Copyright 2021-present Open Networking Foundation.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package uenib
+
+import (
+	"context"
+	"fmt"
+	"github.com/onosproject/onos-api/go/onos/uenib"
+	"github.com/onosproject/onos-lib-go/pkg/cli"
+	"github.com/spf13/cobra"
+	"io"
+	"os"
+)
+
+func getWatchCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "watch {ue|ues}",
+		Short: "Watch for changes to UE information",
+	}
+	cmd.AddCommand(getWatchUECommand())
+	cmd.AddCommand(getWatchUEsCommand())
+	return cmd
+}
+
+func getWatchUECommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "ue ue-id [args]",
+		Short: "Watch for changes to a specific UE information",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runWatchUEsCommand,
+	}
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing UE state")
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to watch")
+	return cmd
+}
+
+func getWatchUEsCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "ues [args]",
+		Args:  cobra.ExactArgs(0),
+		Short: "Watch for changes to any UE information",
+		RunE:  runWatchUEsCommand,
+	}
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing UE state")
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to watch")
+	return cmd
+}
+
+func runWatchUEsCommand(cmd *cobra.Command, args []string) error {
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	noReplay, _ := cmd.Flags().GetBool("noreplay")
+
+	aspectTypes, _ := cmd.Flags().GetStringSlice("aspect")
+
+	var id uenib.ID
+	if len(args) > 0 {
+		id = uenib.ID(args[0])
+	} else {
+		id = uenib.NullID
+	}
+
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := uenib.CreateUEServiceClient(conn)
+
+	req := &uenib.WatchUERequest{
+		AspectTypes: aspectTypes,
+		Noreplay:    noReplay,
+	}
+
+	stream, err := client.WatchUEs(context.Background(), req)
+	if err != nil {
+		return err
+	}
+
+	writer := os.Stdout
+	if !noHeaders {
+		printHeader(writer, true)
+	}
+
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			cli.Output("Error receiving notification : %v", err)
+			return err
+		}
+
+		event := res.Event
+		// TODO: Filtering for ID is still client-side; we need to fix this
+		if id == uenib.NullID || id == event.UE.ID {
+			printUpdateType(writer, event.Type)
+			printUE(writer, event.UE)
+		}
+	}
+
+	return nil
+}
+
+func printUpdateType(writer io.Writer, eventType uenib.EventType) {
+	if eventType == uenib.EventType_NONE {
+		_, _ = fmt.Fprintf(writer, "%-12s\t", "REPLAY")
+	} else {
+		_, _ = fmt.Fprintf(writer, "%-12s\t", eventType)
+	}
+}
