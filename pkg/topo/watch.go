@@ -31,7 +31,7 @@ func getWatchEntityCommand() *cobra.Command {
 		Args:  cobra.MaximumNArgs(2),
 		RunE:  runWatchEntityCommand,
 	}
-	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing topo state")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
@@ -46,7 +46,7 @@ func getWatchRelationCommand() *cobra.Command {
 		Args:  cobra.MaximumNArgs(2),
 		RunE:  runWatchRelationCommand,
 	}
-	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay exiting topo state")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
@@ -61,7 +61,7 @@ func getWatchKindCommand() *cobra.Command {
 		Args:  cobra.MaximumNArgs(2),
 		RunE:  runWatchKindCommand,
 	}
-	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay exiting topo state")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
@@ -75,7 +75,7 @@ func getWatchAllCommand() *cobra.Command {
 		Short: "Watch Entities, Relations and Kinds",
 		RunE:  runWatchAllCommand,
 	}
-	cmd.Flags().BoolP("no-replay", "r", false, "do not replay past topo updates")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay exiting topo state")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")

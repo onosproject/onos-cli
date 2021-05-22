@@ -23,6 +23,7 @@ import (
 	"github.com/onosproject/onos-cli/pkg/modelregistry"
 	"github.com/onosproject/onos-cli/pkg/pci"
 	"github.com/onosproject/onos-cli/pkg/topo"
+	"github.com/onosproject/onos-cli/pkg/uenib"
 
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
@@ -63,6 +64,7 @@ func GetRootCommand() *cobra.Command {
 		SilenceErrors:          true,
 	}
 	cmd.AddCommand(topo.GetCommand())
+	cmd.AddCommand(uenib.GetCommand())
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
 	cmd.AddCommand(e2sub.GetCommand())
