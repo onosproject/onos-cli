@@ -130,9 +130,9 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 
 func printHeader(writer *os.File, replay bool) {
 	if replay {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-16s\t%-20s\t%sn", "Event Type", "UE ID", "Aspect Type", "Aspect Value")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-16s\t%-20s\t%s\n", "Event Type", "UE ID", "Aspect Type", "Aspect Value")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-20s\t%sn", "UE ID", "Aspect Type", "Aspect Value")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-20s\t%s\n", "UE ID", "Aspect Type", "Aspect Value")
 	}
 }
 
