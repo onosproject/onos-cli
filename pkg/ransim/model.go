@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 	"io/ioutil"
+	"os"
 )
 
 func loadCommand() *cobra.Command {
@@ -75,7 +76,13 @@ func runLoadCommand(cmd *cobra.Command, args []string) error {
 	// Slurp all data files into memory as bytes; each as a separate data set
 	dataSet := make([]*modelapi.DataSet, 0, len(names))
 	for i, name := range names {
-		data, err := ioutil.ReadFile(paths[i])
+		var err error
+		var data []byte
+		if paths[i] == "-" {
+			data, err = ioutil.ReadAll(os.Stdin)
+		} else {
+			data, err = ioutil.ReadFile(paths[i])
+		}
 		if err != nil {
 			return err
 		}
