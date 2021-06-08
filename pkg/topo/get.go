@@ -22,7 +22,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
-	"os"
+	"text/tabwriter"
 	"time"
 )
 
@@ -86,7 +86,9 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
 
-	writer := os.Stdout
+	outputWriter := cli.GetOutput()
+	writer := new(tabwriter.Writer)
+	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 	if len(args) == 0 {
 		filters := compileFilters(cmd, objectType)
 
@@ -113,6 +115,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 		}
 	}
 
+	_ = writer.Flush()
 	return nil
 }
 
@@ -153,17 +156,17 @@ func getObject(cmd *cobra.Command, id topoapi.ID) (*topoapi.Object, error) {
 
 func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool, printUpdateType bool) {
 	if printUpdateType {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s", "Update Type", "Object Type")
+		_, _ = fmt.Fprintf(writer, "%s\t%s", "Update Type", "Object Type")
 	}
 
 	if objectType == topoapi.Object_ENTITY {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "Entity ID", "Kind ID", "Labels")
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", "Entity ID", "Kind ID", "Labels")
 	} else if objectType == topoapi.Object_RELATION {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t%-20s", "Relation ID", "Kind ID", "Source ID", "Target ID", "Labels")
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", "Relation ID", "Kind ID", "Source ID", "Target ID", "Labels")
 	} else if objectType == topoapi.Object_KIND {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "Kind ID", "Name", "Labels")
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", "Kind ID", "Name", "Labels")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", "ID", "Kind ID/Name", "Labels")
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", "ID", "Kind ID/Name", "Labels")
 	}
 
 	if !verbose {
@@ -181,17 +184,17 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
 		if e := object.GetEntity(); e != nil {
 			kindID = e.KindID
 		}
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", object.ID, kindID, labels)
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, kindID, labels)
 		printAspects(writer, object, verbose)
 
 	case topoapi.Object_RELATION:
 		r := object.GetRelation()
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-16s\t%-16s\t%-20s", object.ID, r.KindID, r.SrcEntityID, r.TgtEntityID, labels)
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, r.KindID, r.SrcEntityID, r.TgtEntityID, labels)
 		printAspects(writer, object, verbose)
 
 	case topoapi.Object_KIND:
 		k := object.GetKind()
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-16s\t%-20s", object.ID, k.GetName(), labels)
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, k.GetName(), labels)
 		printAspects(writer, object, verbose)
 
 	default:
