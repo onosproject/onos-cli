@@ -18,8 +18,11 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"text/tabwriter"
 	"time"
+
+	prototypes "github.com/gogo/protobuf/types"
 
 	kpimonapi "github.com/onosproject/onos-api/go/onos/kpimon"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -59,7 +62,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	attr := make(map[string]string)
-	for cellID, measItems := range respGetMeasurement.GetMeasurements() {
+	for key, measItems := range respGetMeasurement.GetMeasurements() {
 		for _, measItem := range measItems.MeasurementItems {
 			for _, measRecord := range measItem.MeasurementRecords {
 				timeStamp := measRecord.Timestamp
@@ -70,13 +73,31 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 					attr[measName] = measName
 				}
 
-				if _, ok1 := results[cellID]; !ok1 {
-					results[cellID] = make(map[uint64]map[string]string)
+				if _, ok1 := results[key]; !ok1 {
+					results[key] = make(map[uint64]map[string]string)
 				}
-				if _, ok2 := results[cellID][timeStamp]; !ok2 {
-					results[cellID][timeStamp] = make(map[string]string)
+				if _, ok2 := results[key][timeStamp]; !ok2 {
+					results[key][timeStamp] = make(map[string]string)
 				}
-				results[cellID][timeStamp][measName] = fmt.Sprintf("%v", measValue)
+
+				var value interface{}
+
+				switch measValue.GetTypeUrl() {
+				case "IntegerValue":
+					v := kpimonapi.IntegerValue{}
+					prototypes.UnmarshalAny(measValue, &v)
+					value = v.GetValue()
+				case "RealValue":
+					v := kpimonapi.RealValue{}
+					prototypes.UnmarshalAny(measValue, &v)
+					value = v.GetValue()
+				case "NoValue":
+					v := kpimonapi.RealValue{}
+					prototypes.UnmarshalAny(measValue, &v)
+					value = v.GetValue()
+				}
+
+				results[key][timeStamp][measName] = fmt.Sprintf("%v", value)
 			}
 		}
 	}
@@ -86,7 +107,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	}
 	sort.Strings(types)
 
-	header := "Cell ID\tTime"
+	header := "Node ID\tCell ID\tTime"
 
 	for _, key := range types {
 		tmpHeader := header
@@ -110,7 +131,9 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 			timeObj := time.Unix(0, int64(timeStamp))
 			tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
 
-			resultLine := fmt.Sprintf("%s\t%s", keyID, tsFormat)
+			ids := strings.Split(keyID, ":")
+			nodeID, cellID := ids[0], ids[1]
+			resultLine := fmt.Sprintf("%s\t%s\t%s", nodeID, cellID, tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
 				var tmpValue string
