@@ -11,6 +11,7 @@ require (
 	github.com/onosproject/onos-ric-sdk-go v0.7.10
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802
 	github.com/openconfig/ygot v0.8.12 // indirect
+	github.com/prometheus/common v0.4.0
 	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9

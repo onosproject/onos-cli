@@ -23,6 +23,7 @@ import (
 	"time"
 
 	prototypes "github.com/gogo/protobuf/types"
+	"github.com/prometheus/common/log"
 
 	kpimonapi "github.com/onosproject/onos-api/go/onos/kpimon"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -85,15 +86,25 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 				switch measValue.GetTypeUrl() {
 				case "IntegerValue":
 					v := kpimonapi.IntegerValue{}
-					prototypes.UnmarshalAny(measValue, &v)
+					err := prototypes.UnmarshalAny(measValue, &v)
+					if err != nil {
+						log.Warn(err)
+					}
+
 					value = v.GetValue()
 				case "RealValue":
 					v := kpimonapi.RealValue{}
-					prototypes.UnmarshalAny(measValue, &v)
+					err := prototypes.UnmarshalAny(measValue, &v)
+					if err != nil {
+						log.Warn(err)
+					}
 					value = v.GetValue()
 				case "NoValue":
 					v := kpimonapi.RealValue{}
-					prototypes.UnmarshalAny(measValue, &v)
+					err := prototypes.UnmarshalAny(measValue, &v)
+					if err != nil {
+						log.Warn(err)
+					}
 					value = v.GetValue()
 				}
 
