@@ -16,6 +16,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/onosproject/onos-cli/pkg/config"
 	"github.com/onosproject/onos-cli/pkg/e2sub"
 	"github.com/onosproject/onos-cli/pkg/e2t"
@@ -28,10 +29,11 @@ import (
 	// Needed to keep ran-sim happy for the mo
 	_ "github.com/onosproject/onos-lib-go/pkg/cli"
 
+	"os"
+
 	"github.com/onosproject/onos-cli/pkg/ransim"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
-	"os"
 )
 
 // Execute runs the root command and any sub-commands.
@@ -70,8 +72,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
-	cmd.AddCommand(kpimon.GetCommandV1())
-	cmd.AddCommand(kpimon.GetCommandV2())
 	cmd.AddCommand(pci.GetCommand())
 	cmd.AddCommand(modelregistry.GetCommand())
 	cmd.AddCommand()
