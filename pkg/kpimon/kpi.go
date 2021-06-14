@@ -57,7 +57,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	request := kpimonapi.GetRequest{}
 	client := kpimonapi.NewKpimonClient(conn)
 
-	respGetMeasurement, err := client.GetMeasurement(context.Background(), &request)
+	respGetMeasurement, err := client.ListMeasurements(context.Background(), &request)
 	if err != nil {
 		return err
 	}
