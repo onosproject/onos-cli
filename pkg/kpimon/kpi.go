@@ -83,29 +83,36 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 				var value interface{}
 
-				switch measValue.GetTypeUrl() {
-				case "IntegerValue":
+				name, err := prototypes.AnyMessageName(measValue)
+				if err != nil {
+					return err
+				}
+
+				switch name {
+				case "onos.kpimon.IntegerValue":
 					v := kpimonapi.IntegerValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
 						log.Warn(err)
 					}
+					value = v.GetValue()
 
-					value = v.GetValue()
-				case "RealValue":
+				case "onos.kpimon.RealValue":
 					v := kpimonapi.RealValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
 						log.Warn(err)
 					}
 					value = v.GetValue()
-				case "NoValue":
-					v := kpimonapi.RealValue{}
+
+				case "onos.kpimon.NoValue":
+					v := kpimonapi.NoValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
 						log.Warn(err)
 					}
 					value = v.GetValue()
+
 				}
 
 				results[key][timeStamp][measName] = fmt.Sprintf("%v", value)
