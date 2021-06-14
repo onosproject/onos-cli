@@ -51,10 +51,10 @@ func updateUECommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "ue <imsi> [field options]",
 		Args:  cobra.ExactArgs(1),
-		Short: "Update a UE ECGI assignment and/or geo location",
+		Short: "Update a UE NCGI assignment and/or geo location",
 		RunE:  runUpdateUECommand,
 	}
-	cmd.Flags().Uint64("ecgi", 0, "serving cell ECGI")
+	cmd.Flags().Uint64("ncgi", 0, "serving cell NCGI")
 	cmd.Flags().Float64("lat", 0.0, "new coordinate latitude")
 	cmd.Flags().Float64("lng", 0.0, "new coordinate longitude")
 	cmd.Flags().Uint32("heading", 0, "new heading")
@@ -123,7 +123,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputUE(ue *types.Ue) {
-	cli.Output("IMSI: %-16d\nECGI: %-16d\nCRNTI: %-16d\nAdmitted: %t\nLat: %8.4f\nLng: %8.4f\nHeading: %3d\n",
+	cli.Output("IMSI: %-16d\nNCGI: %-16d\nCRNTI: %-16d\nAdmitted: %t\nLat: %8.4f\nLng: %8.4f\nHeading: %3d\n",
 		ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation)
 	// TODO: Add other candidate cell ECGIs
 }
@@ -161,12 +161,12 @@ func runUpdateUECommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	ecgi, _ := cmd.Flags().GetUint64("ecgi")
-	if ecgi != 0 {
+	ncgi, _ := cmd.Flags().GetUint64("ncgi")
+	if ncgi != 0 {
 		_, err := client.MoveToCell(context.Background(),
 			&modelapi.MoveToCellRequest{
 				IMSI: types.IMSI(imsi),
-				ECGI: types.ECGI(ecgi),
+				NCGI: types.NCGI(ncgi),
 			})
 		if err != nil {
 			return err

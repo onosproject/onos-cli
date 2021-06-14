@@ -53,7 +53,7 @@ func createNodeCommand() *cobra.Command {
 		Short: "Create an E2 node",
 		RunE:  runCreateNodeCommand,
 	}
-	cmd.Flags().UintSlice("cells", []uint{}, "cell ECGIs")
+	cmd.Flags().UintSlice("cells", []uint{}, "cell NCGIs")
 	cmd.Flags().StringSlice("service-models", []string{}, "supported service models")
 	cmd.Flags().StringSlice("controllers", []string{}, "E2T controller")
 	return cmd
@@ -76,7 +76,7 @@ func updateNodeCommand() *cobra.Command {
 		Short: "Update an E2 node",
 		RunE:  runUpdateNodeCommand,
 	}
-	cmd.Flags().UintSlice("cells", []uint{}, "cell ECGIs")
+	cmd.Flags().UintSlice("cells", []uint{}, "cell NCGIs")
 	cmd.Flags().StringSlice("service-models", []string{}, "supported service models")
 	cmd.Flags().StringSlice("controllers", []string{}, "E2T controller")
 	return cmd
@@ -142,7 +142,7 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %-8s %-16s %-20s %s\n", "EnbID", "Status", "Service Models", "E2T Controllers", "Cell ECGIs")
+		cli.Output("%-16s %-8s %-16s %-20s %s\n", "GnbID", "Status", "Service Models", "E2T Controllers", "Cell NCGIs")
 	}
 
 	if watch, _ := cmd.Flags().GetBool("watch"); watch {
@@ -156,8 +156,8 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			node := r.Node
-			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.EnbID, node.Status,
-				catStrings(node.ServiceModels), catStrings(node.Controllers), catECGIs(node.CellECGIs))
+			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
+				catStrings(node.ServiceModels), catStrings(node.Controllers), catNCGIs(node.CellNCGIs))
 		}
 
 	} else {
@@ -173,8 +173,8 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			node := r.Node
-			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.EnbID, node.Status,
-				catStrings(node.ServiceModels), catStrings(node.Controllers), catECGIs(node.CellECGIs))
+			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
+				catStrings(node.ServiceModels), catStrings(node.Controllers), catNCGIs(node.CellNCGIs))
 		}
 	}
 
@@ -184,7 +184,7 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 func optionsToNode(cmd *cobra.Command, node *types.Node, update bool) (*types.Node, error) {
 	cells, _ := cmd.Flags().GetUintSlice("cells")
 	if !update || cmd.Flags().Changed("cells") {
-		node.CellECGIs = toECGIs(cells)
+		node.CellNCGIs = toNCGIs(cells)
 	}
 
 	models, _ := cmd.Flags().GetStringSlice("service-models")
@@ -211,7 +211,7 @@ func runCreateNodeCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	node, err := optionsToNode(cmd, &types.Node{EnbID: types.EnbID(enbid)}, false)
+	node, err := optionsToNode(cmd, &types.Node{GnbID: types.GnbID(enbid)}, false)
 	if err != nil {
 		return err
 	}
@@ -237,7 +237,7 @@ func runUpdateNodeCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	// Get the node first to prime the update node with existing values and allow sparse update
-	gres, err := client.GetNode(context.Background(), &modelapi.GetNodeRequest{EnbID: types.EnbID(enbid)})
+	gres, err := client.GetNode(context.Background(), &modelapi.GetNodeRequest{GnbID: types.GnbID(enbid)})
 	if err != nil {
 		return err
 	}
@@ -256,8 +256,8 @@ func runUpdateNodeCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputNode(node *types.Node) {
-	cli.Output("EnbID: %-16d\nStatus: %s\nService Models: %s\nControllers: %s\nCell EGGIs: %s\n",
-		node.EnbID, node.Status, catStrings(node.ServiceModels), catStrings(node.Controllers), catECGIs(node.CellECGIs))
+	cli.Output("GnbID: %-16d\nStatus: %s\nService Models: %s\nControllers: %s\nCell EGGIs: %s\n",
+		node.GnbID, node.Status, catStrings(node.ServiceModels), catStrings(node.Controllers), catNCGIs(node.CellNCGIs))
 }
 
 func runGetNodeCommand(cmd *cobra.Command, args []string) error {
@@ -271,7 +271,7 @@ func runGetNodeCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	defer conn.Close()
-	res, err := client.GetNode(context.Background(), &modelapi.GetNodeRequest{EnbID: types.EnbID(enbid)})
+	res, err := client.GetNode(context.Background(), &modelapi.GetNodeRequest{GnbID: types.GnbID(enbid)})
 	if err != nil {
 		return err
 	}
@@ -291,7 +291,7 @@ func runDeleteNodeCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	defer conn.Close()
-	_, err = client.DeleteNode(context.Background(), &modelapi.DeleteNodeRequest{EnbID: types.EnbID(enbid)})
+	_, err = client.DeleteNode(context.Background(), &modelapi.DeleteNodeRequest{GnbID: types.GnbID(enbid)})
 	if err != nil {
 		return err
 	}
@@ -312,7 +312,7 @@ func runControlCommand(command string, cmd *cobra.Command, args []string) error 
 	}
 	defer conn.Close()
 
-	request := &modelapi.AgentControlRequest{EnbID: types.EnbID(enbid), Command: command}
+	request := &modelapi.AgentControlRequest{GnbID: types.GnbID(enbid), Command: command}
 	res, err := client.AgentControl(context.Background(), request)
 	if err != nil {
 		return err
@@ -329,18 +329,18 @@ func runStopNodeCommand(cmd *cobra.Command, args []string) error {
 	return runControlCommand("stop", cmd, args)
 }
 
-func toECGIs(ids []uint) []types.ECGI {
-	ecgis := make([]types.ECGI, 0, len(ids))
+func toNCGIs(ids []uint) []types.NCGI {
+	ecgis := make([]types.NCGI, 0, len(ids))
 	for _, id := range ids {
-		ecgis = append(ecgis, types.ECGI(id))
+		ecgis = append(ecgis, types.NCGI(id))
 	}
 	return ecgis
 }
 
-func catECGIs(ecgis []types.ECGI) string {
+func catNCGIs(ecgis []types.NCGI) string {
 	s := ""
-	for _, ecgi := range ecgis {
-		s = s + fmt.Sprintf(",%d", ecgi)
+	for _, ncgi := range ecgis {
+		s = s + fmt.Sprintf(",%d", ncgi)
 	}
 	if len(s) > 1 {
 		return s[1:]
