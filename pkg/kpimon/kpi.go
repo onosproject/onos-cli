@@ -83,13 +83,8 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 				var value interface{}
 
-				name, err := prototypes.AnyMessageName(measValue)
-				if err != nil {
-					return err
-				}
-
-				switch name {
-				case "onos.kpimon.IntegerValue":
+				switch {
+				case prototypes.Is(measValue, &kpimonapi.IntegerValue{}):
 					v := kpimonapi.IntegerValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
@@ -97,7 +92,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 					}
 					value = v.GetValue()
 
-				case "onos.kpimon.RealValue":
+				case prototypes.Is(measValue, &kpimonapi.RealValue{}):
 					v := kpimonapi.RealValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
@@ -105,7 +100,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 					}
 					value = v.GetValue()
 
-				case "onos.kpimon.NoValue":
+				case prototypes.Is(measValue, &kpimonapi.NoValue{}):
 					v := kpimonapi.NoValue{}
 					err := prototypes.UnmarshalAny(measValue, &v)
 					if err != nil {
