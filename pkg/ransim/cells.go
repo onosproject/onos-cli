@@ -50,7 +50,7 @@ func createCellCommand() *cobra.Command {
 	cmd.Flags().Float64("lng", 11.0, "geo location longitude")
 	cmd.Flags().Int32("azimuth", 0, "azimuth of the coverage arc")
 	cmd.Flags().Int32("arc", 120, "angle width of the coverage arc")
-	cmd.Flags().UintSlice("neighbors", []uint{}, "neighbor cell ECGIs")
+	cmd.Flags().UintSlice("neighbors", []uint{}, "neighbor cell NCGIs")
 	cmd.Flags().String("color", "blue", "color label")
 	cmd.Flags().Int32("a3-offset", int32(0), "A3 offset")
 	cmd.Flags().Int32("a3-ttt", int32(0), "Time-To-Trigger")
@@ -83,7 +83,7 @@ func updateCellCommand() *cobra.Command {
 	cmd.Flags().Float64("lng", 11.0, "geo location longitude")
 	cmd.Flags().Int32("azimuth", 0, "azimuth of the coverage arc")
 	cmd.Flags().Int32("arc", 120, "angle width of the coverage arc")
-	cmd.Flags().UintSlice("neighbors", []uint{}, "neighbor cell ECGIs")
+	cmd.Flags().UintSlice("neighbors", []uint{}, "neighbor cell NCGIs")
 	cmd.Flags().String("color", "blue", "color label")
 	cmd.Flags().Int32("a3-offset", int32(0), "A3 offset")
 	cmd.Flags().Int32("a3-ttt", int32(0), "Time-To-Trigger")
@@ -115,7 +115,7 @@ func getCellClient(cmd *cobra.Command) (modelapi.CellModelClient, *grpc.ClientCo
 func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
 		cli.Output("%-16s %7s %7s %7s %9s %9s %7s %7s %10s %7s %7s %10s %10s %-8s %s\n",
-			"ECGI", "#UEs", "Max UEs", "TxDB", "Lat", "Lng", "Azimuth", "Arc",
+			"NCGI", "#UEs", "Max UEs", "TxDB", "Lat", "Lng", "Azimuth", "Arc",
 			"A3Offset", "TTT", "A3Hyst", "CellOffset", "FreqOffset", "Color", "Neighbors")
 	}
 
@@ -138,11 +138,11 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 			}
 			cell := r.Cell
 			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %-8s %s\n",
-				cell.ECGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
+				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.EventA3Params.A3Offset, cell.EventA3Params.A3TimeToTrigger, cell.EventA3Params.A3Hysteresis,
 				cell.EventA3Params.A3CellOffset, cell.EventA3Params.A3FrequencyOffset, cell.Color,
-				catECGIs(cell.Neighbors))
+				catNCGIs(cell.Neighbors))
 		}
 
 	} else {
@@ -159,11 +159,11 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 			}
 			cell := r.Cell
 			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %-8s %s\n",
-				cell.ECGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
+				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.EventA3Params.A3Offset, cell.EventA3Params.A3TimeToTrigger, cell.EventA3Params.A3Hysteresis,
 				cell.EventA3Params.A3CellOffset, cell.EventA3Params.A3FrequencyOffset, cell.Color,
-				catECGIs(cell.Neighbors))
+				catNCGIs(cell.Neighbors))
 		}
 	}
 	return nil
@@ -240,13 +240,13 @@ func optionsToCell(cmd *cobra.Command, cell *types.Cell, update bool) (*types.Ce
 
 	neighbors, _ := cmd.Flags().GetUintSlice("neighbors")
 	if !update || cmd.Flags().Changed("neighbors") {
-		cell.Neighbors = toECGIs(neighbors)
+		cell.Neighbors = toNCGIs(neighbors)
 	}
 	return cell, nil
 }
 
 func runCreateCellCommand(cmd *cobra.Command, args []string) error {
-	ecgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -257,7 +257,7 @@ func runCreateCellCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	cell, err := optionsToCell(cmd, &types.Cell{ECGI: types.ECGI(ecgi)}, false)
+	cell, err := optionsToCell(cmd, &types.Cell{NCGI: types.NCGI(ncgi)}, false)
 	if err != nil {
 		return err
 	}
@@ -266,12 +266,12 @@ func runCreateCellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cli.Output("Cell %d created\n", ecgi)
+	cli.Output("Cell %d created\n", ncgi)
 	return nil
 }
 
 func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
-	ecgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -283,7 +283,7 @@ func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	// Get the cell first to prime the update cell with existing values and allow sparse update
-	gres, err := client.GetCell(context.Background(), &modelapi.GetCellRequest{ECGI: types.ECGI(ecgi)})
+	gres, err := client.GetCell(context.Background(), &modelapi.GetCellRequest{NCGI: types.NCGI(ncgi)})
 	if err != nil {
 		return err
 	}
@@ -297,12 +297,12 @@ func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cli.Output("Cell %d updated\n", ecgi)
+	cli.Output("Cell %d updated\n", ncgi)
 	return nil
 }
 
 func runGetCellCommand(cmd *cobra.Command, args []string) error {
-	ecgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -312,17 +312,17 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	defer conn.Close()
-	res, err := client.GetCell(context.Background(), &modelapi.GetCellRequest{ECGI: types.ECGI(ecgi)})
+	res, err := client.GetCell(context.Background(), &modelapi.GetCellRequest{NCGI: types.NCGI(ncgi)})
 	if err != nil {
 		return err
 	}
 
 	cell := res.Cell
-	cli.Output("ECGI: %-16d\nUE Count: %d\nMax UEs: %d\nTxPower dB: %.2f\n",
-		cell.ECGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
+	cli.Output("NCGI: %-16d\nUE Count: %d\nMax UEs: %d\nTxPower dB: %.2f\n",
+		cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
 	cli.Output("Latitude: %.3f\nLongitude: %.3f\nAzimuth: %d\nArc: %d\nColor: %s\nNeighbors: %s\n",
 		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Color,
-		catECGIs(cell.Neighbors))
+		catNCGIs(cell.Neighbors))
 	cli.Output("A3offset: %7d\nA3TimeToTrigger: %7d\nA3Hystereis: %7d\nA3CellOffset: %7d\nA3FrequencyOffset: %7d",
 		cell.EventA3Params.A3Offset, cell.EventA3Params.A3TimeToTrigger, cell.EventA3Params.A3Hysteresis,
 		cell.EventA3Params.A3CellOffset, cell.EventA3Params.A3FrequencyOffset)
@@ -330,7 +330,7 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runDeleteCellCommand(cmd *cobra.Command, args []string) error {
-	ecgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -340,11 +340,11 @@ func runDeleteCellCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	defer conn.Close()
-	_, err = client.DeleteCell(context.Background(), &modelapi.DeleteCellRequest{ECGI: types.ECGI(ecgi)})
+	_, err = client.DeleteCell(context.Background(), &modelapi.DeleteCellRequest{NCGI: types.NCGI(ncgi)})
 	if err != nil {
 		return err
 	}
 
-	cli.Output("Cell %d deleted\n", ecgi)
+	cli.Output("Cell %d deleted\n", ncgi)
 	return nil
 }
