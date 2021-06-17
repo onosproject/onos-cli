@@ -86,7 +86,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %-16s %-16s %-5s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted")
+		cli.Output("%-10s %-18s %-10s %-10s %-5s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted", "RRC")
 	}
 
 	if watch, _ := cmd.Flags().GetBool("watch"); watch {
@@ -100,7 +100,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16d %-16d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
+			cli.Output("%-10d %-18d %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
 		}
 
 	} else {
@@ -115,7 +115,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16d %116d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
+			cli.Output("%-10d %-18d %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
 		}
 	}
 
