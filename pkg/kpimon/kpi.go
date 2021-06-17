@@ -131,7 +131,14 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 		_, _ = fmt.Fprintln(writer, header)
 	}
 
-	for keyID, metrics := range results {
+	keys := make([]string, 0, len(results))
+	for k := range results {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, keyID := range keys {
+		metrics := results[keyID]
 		// sort 2nd map with timestamp
 		timeKeySlice := make([]uint64, 0, len(metrics))
 		for timeStampKey := range metrics {
