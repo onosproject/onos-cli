@@ -318,12 +318,12 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	cell := res.Cell
-	cli.Output("NCGI: %-16d\nUE Count: %d\nMax UEs: %d\nTxPower dB: %.2f\n",
+	cli.Output("NCGI:       %-17d\nUE Count:   %-5d\nMax UEs:    %-5d\nTxPower dB: %.2f\n",
 		cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
-	cli.Output("Latitude: %.3f\nLongitude: %.3f\nAzimuth: %d\nArc: %d\nColor: %s\nNeighbors: %s\n",
-		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Color,
+	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nPCI:        %d\nArc:        %d\nColor:      %s\nNeighbors:  %s\n",
+		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Pci, cell.Color,
 		catNCGIs(cell.Neighbors))
-	cli.Output("A3offset: %7d\nA3TimeToTrigger: %7d\nA3Hystereis: %7d\nA3CellOffset: %7d\nA3FrequencyOffset: %7d",
+	cli.Output("A3offset:          %7d\nA3TimeToTrigger:   %7d\nA3Hystereis:       %7d\nA3CellOffset:      %7d\nA3FrequencyOffset: %7d\n",
 		cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
 		cell.MeasurementParams.PcellIndividualOffset, cell.MeasurementParams.FrequencyOffset)
 	return nil
