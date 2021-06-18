@@ -114,9 +114,9 @@ func getCellClient(cmd *cobra.Command) (modelapi.CellModelClient, *grpc.ClientCo
 
 func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %7s %7s %7s %9s %9s %7s %7s %10s %7s %7s %10s %10s %-8s %s\n",
+		cli.Output("%-17s %7s %7s %7s %9s %9s %7s %7s %10s %7s %7s %10s %10s %8s %8s %s\n",
 			"NCGI", "#UEs", "Max UEs", "TxDB", "Lat", "Lng", "Azimuth", "Arc",
-			"A3Offset", "TTT", "A3Hyst", "CellOffset", "FreqOffset", "Color", "Neighbors")
+			"A3Offset", "TTT", "A3Hyst", "CellOffset", "FreqOffset", "PCI", "Color", "Neighbors")
 	}
 
 	client, conn, err := getCellClient(cmd)
@@ -137,11 +137,11 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			cell := r.Cell
-			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %-8s %s\n",
+			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
 				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
-				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Color,
+				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Pci, cell.Color,
 				catNCGIs(cell.Neighbors))
 		}
 
@@ -158,11 +158,11 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			cell := r.Cell
-			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %-8s %s\n",
+			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
 				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
-				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Color,
+				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Pci, cell.Color,
 				catNCGIs(cell.Neighbors))
 		}
 	}
