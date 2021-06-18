@@ -16,10 +16,11 @@ package ransim
 
 import (
 	"context"
+	"strconv"
+
 	simapi "github.com/onosproject/onos-api/go/onos/ransim/trafficsim"
 	"github.com/onosproject/onos-api/go/onos/ransim/types"
 	"google.golang.org/grpc"
-	"strconv"
 
 	modelapi "github.com/onosproject/onos-api/go/onos/ransim/model"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -70,6 +71,16 @@ func getUECountCommand() *cobra.Command {
 	return cmd
 }
 
+func setUECountCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "ueCount <count>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Set UE count",
+		RunE:  runSetUECountCommand,
+	}
+	return cmd
+}
+
 func getUEClient(cmd *cobra.Command) (modelapi.UEModelClient, *grpc.ClientConn, error) {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -86,7 +97,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-10s %-18s %-10s %-10s %-5s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted", "RRC")
+		cli.Output("%-16s %-16s %-16s %-5s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted")
 	}
 
 	if watch, _ := cmd.Flags().GetBool("watch"); watch {
@@ -100,7 +111,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-10d %-18d %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
+			cli.Output("%-16d %-16d %-16d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
 		}
 
 	} else {
@@ -123,9 +134,9 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputUE(ue *types.Ue) {
-	cli.Output("IMSI: %-16d\nNCGI: %-16d\nCRNTI: %-16d\nAdmitted: %t\nLat: %8.4f\nLng: %8.4f\nHeading: %3d\n",
-		ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation)
-	// TODO: Add other candidate cell ECGIs
+	cli.Output("IMSI:     %-16d\nNCGI:     %-16d\nStrength: %8.4f\nCRNTI:    %-16d\nAdmitted: %t\nLat: %8.4f\nLng: %8.4f\nHeading: %3d\n",
+		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation)
+	cli.Output("Candidate Cells: %d, %d, %d\n", ue.Tower1, ue.Tower2, ue.Tower3)
 }
 
 func runGetUECommand(cmd *cobra.Command, args []string) error {
@@ -218,5 +229,24 @@ func runGetUECountCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	cli.Output("%d\n", countUEs(stream))
+	return nil
+}
+
+func runSetUECountCommand(cmd *cobra.Command, args []string) error {
+	count, err := strconv.ParseUint(args[0], 10, 16)
+	if err != nil {
+		return err
+	}
+	client, conn, err := getUEClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = client.SetUECount(context.Background(), &modelapi.SetUECountRequest{Count: uint32(count)})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

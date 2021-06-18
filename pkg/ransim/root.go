@@ -114,7 +114,7 @@ func getGetCommand() *cobra.Command {
 
 func getSetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set {metric} [args]",
+		Use:   "set {node,cell,ue,ueCount,metric} [args]",
 		Short: "Commands for setting RAN simulator model metrics and other information",
 	}
 
@@ -122,5 +122,6 @@ func getSetCommand() *cobra.Command {
 	cmd.AddCommand(updateCellCommand())
 	cmd.AddCommand(updateUECommand())
 	cmd.AddCommand(setMetricCommand())
+	cmd.AddCommand(setUECountCommand())
 	return cmd
 }
