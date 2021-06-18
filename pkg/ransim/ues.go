@@ -134,8 +134,8 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputUE(ue *types.Ue) {
-	cli.Output("IMSI:     %-16d\nNCGI:     %-16d\nStrength: %8.4f\nCRNTI:    %-16d\nAdmitted: %t\nLat: %8.4f\nLng: %8.4f\nHeading: %3d\n",
-		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation)
+	cli.Output("IMSI:      %-16d\nNCGI:      %-16d\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRrc:       %d\n",
+		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, ue.RrcState)
 	cli.Output("Candidate Cells: %d, %d, %d\n", ue.Tower1, ue.Tower2, ue.Tower3)
 }
 
