@@ -32,6 +32,7 @@ func getPlmnIDCommand() *cobra.Command {
 		Short: "Get the PLMNID",
 		RunE:  runGetPlmnIDCommand,
 	}
+	cmd.Flags().BoolP("hex", "x", false, "show PLMNID in hex")
 	return cmd
 }
 
@@ -130,7 +131,11 @@ func runGetPlmnIDCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cli.Output("%d\n", resp.PlmnID)
+	if hex, _ := cmd.Flags().GetBool("hex"); hex {
+		cli.Output("%x\n", resp.PlmnID)
+	} else {
+		cli.Output("%d\n", resp.PlmnID)
+	}
 	return nil
 }
 
@@ -156,7 +161,7 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			node := r.Node
-			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
+			cli.Output("%-16x %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
 				catStrings(node.ServiceModels), catStrings(node.Controllers), catNCGIs(node.CellNCGIs))
 		}
 
@@ -173,7 +178,7 @@ func runGetNodesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			node := r.Node
-			cli.Output("%-16d %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
+			cli.Output("%-16x %-8s %-16s %-20s %s\n", node.GnbID, node.Status,
 				catStrings(node.ServiceModels), catStrings(node.Controllers), catNCGIs(node.CellNCGIs))
 		}
 	}
@@ -200,7 +205,7 @@ func optionsToNode(cmd *cobra.Command, node *types.Node, update bool) (*types.No
 }
 
 func runCreateNodeCommand(cmd *cobra.Command, args []string) error {
-	enbid, err := strconv.ParseUint(args[0], 10, 64)
+	enbid, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -225,7 +230,7 @@ func runCreateNodeCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runUpdateNodeCommand(cmd *cobra.Command, args []string) error {
-	enbid, err := strconv.ParseUint(args[0], 10, 64)
+	enbid, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -261,7 +266,7 @@ func outputNode(node *types.Node) {
 }
 
 func runGetNodeCommand(cmd *cobra.Command, args []string) error {
-	enbid, err := strconv.ParseUint(args[0], 10, 64)
+	enbid, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -281,7 +286,7 @@ func runGetNodeCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runDeleteNodeCommand(cmd *cobra.Command, args []string) error {
-	enbid, err := strconv.ParseUint(args[0], 10, 64)
+	enbid, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -301,7 +306,7 @@ func runDeleteNodeCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runControlCommand(command string, cmd *cobra.Command, args []string) error {
-	enbid, err := strconv.ParseUint(args[0], 10, 64)
+	enbid, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -340,7 +345,7 @@ func toNCGIs(ids []uint) []types.NCGI {
 func catNCGIs(ecgis []types.NCGI) string {
 	s := ""
 	for _, ncgi := range ecgis {
-		s = s + fmt.Sprintf(",%d", ncgi)
+		s = s + fmt.Sprintf(",%x", ncgi)
 	}
 	if len(s) > 1 {
 		return s[1:]

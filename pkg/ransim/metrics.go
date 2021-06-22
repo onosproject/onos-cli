@@ -90,19 +90,19 @@ func getMetricsClient(cmd *cobra.Command) (metricsapi.MetricsServiceClient, *grp
 func outputMetric(m *metricsapi.Metric, verbose bool, uberVerbose bool) {
 	if verbose {
 		if uberVerbose {
-			cli.Output("%d/%s=%s (%s)\n", m.EntityID, m.Key, m.Value, m.Type)
+			cli.Output("%x/%s=%s (%s)\n", m.EntityID, m.Key, m.Value, m.Type)
 		} else {
 			cli.Output("%s=%s (%s)\n", m.Key, m.Value, m.Type)
 		}
 	} else if uberVerbose {
-		cli.Output("%d/%s=%s\n", m.EntityID, m.Key, m.Value)
+		cli.Output("%x/%s=%s\n", m.EntityID, m.Key, m.Value)
 	} else {
 		cli.Output("%s=%s\n", m.Key, m.Value)
 	}
 }
 
 func runGetMetricCommand(cmd *cobra.Command, args []string) error {
-	entityID, err := strconv.ParseUint(args[0], 10, 64)
+	entityID, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func runGetMetricsCommand(cmd *cobra.Command, args []string) error {
 	watch, _ := cmd.Flags().GetBool("watch")
 
 	if len(args) == 1 {
-		entityID, err = strconv.ParseUint(args[0], 10, 64)
+		entityID, err = strconv.ParseUint(args[0], 16, 64)
 		if err != nil {
 			return err
 		}
@@ -178,7 +178,7 @@ func runGetMetricsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runSetMetricCommand(cmd *cobra.Command, args []string) error {
-	entityID, err := strconv.ParseUint(args[0], 10, 64)
+	entityID, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -206,7 +206,7 @@ func runSetMetricCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runDeleteMetricCommand(cmd *cobra.Command, args []string) error {
-	entityID, err := strconv.ParseUint(args[0], 10, 64)
+	entityID, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func runDeleteMetricCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runDeleteMetricsCommand(cmd *cobra.Command, args []string) error {
-	entityID, err := strconv.ParseUint(args[0], 10, 64)
+	entityID, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
