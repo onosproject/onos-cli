@@ -79,9 +79,8 @@ func runGetEntityCommand(cmd *cobra.Command, args []string) error {
 	// if any flag relating to the entity-relation filter is set, call the corresponding function (which checks if all necessary flags are set)
 	if cmd.Flag("related-to").Value.String() != "" || cmd.Flag("related-via").Value.String() != "" || cmd.Flag("tgt-kind").Value.String() != "" {
 		return runGetEntityRelationCommand(cmd, args)
-	} else {
-		return runGetCommand(cmd, args, topoapi.Object_ENTITY)
 	}
+	return runGetCommand(cmd, args, topoapi.Object_ENTITY)
 }
 
 func runGetEntityRelationCommand(cmd *cobra.Command, args []string) error {
@@ -111,9 +110,8 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string) error {
 		}
 		_ = writer.Flush()
 		return nil
-	} else {
-		return errors.NewInvalid("missing related-to and/or related-via flags")
 	}
+	return errors.NewInvalid("missing related-to and/or related-via flags")
 }
 
 func runGetRelationCommand(cmd *cobra.Command, args []string) error {
