@@ -77,23 +77,23 @@ func getGetKindCommand() *cobra.Command {
 
 func runGetEntityCommand(cmd *cobra.Command, args []string) error {
 	// if any flag relating to the entity-relation filter is set, call the corresponding function (which checks if all necessary flags are set)
-	if cmd.Flag("related-to").Value.String() != "" || cmd.Flag("related-via").Value.String() != "" || cmd.Flag("tgt-kind").Value.String() != "" {
-		return runGetEntityRelationCommand(cmd, args)
+	to, _ := cmd.Flags().GetString("related-to")
+	via, _ := cmd.Flags().GetString("related-via")
+	tgt, _ := cmd.Flags().GetString("tgt-kind")
+	if len(to) != 0 || len(via) != 0 || len(tgt) != 0 {
+		return runGetEntityRelationCommand(cmd, args, to, via, tgt)
 	}
 	return runGetCommand(cmd, args, topoapi.Object_ENTITY)
 }
 
-func runGetEntityRelationCommand(cmd *cobra.Command, args []string) error {
-	to, toErr := cmd.Flags().GetString("related-to")
-	via, viaErr := cmd.Flags().GetString("related-via")
-	tgt, tgtErr := cmd.Flags().GetString("tgt-kind")
+func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, via string, tgt string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 
-	if toErr == nil && viaErr == nil {
+	if len(to) > 0 && len(via) > 0 {
 		outputWriter := cli.GetOutput()
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-		if tgtErr != nil {
+		if len(tgt) == 0 {
 			tgt = ""
 		}
 		filter := &topoapi.RelationFilter{
