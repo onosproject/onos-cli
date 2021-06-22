@@ -84,19 +84,22 @@ func runGetEntityCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runGetEntityRelationCommand(cmd *cobra.Command, args []string) error {
-	to := cmd.Flag("related-to")
-	via := cmd.Flag("related-via")
-	tgt := cmd.Flag("tgt-kind")
+	to, toErr := cmd.Flags().GetString("related-to")
+	via, viaErr := cmd.Flags().GetString("related-via")
+	tgt, tgtErr := cmd.Flags().GetString("tgt-kind")
 	verbose, _ := cmd.Flags().GetBool("verbose")
 
-	if to.Value.String() != "" && via.Value.String() != "" {
+	if toErr == nil && viaErr == nil {
 		outputWriter := cli.GetOutput()
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+		if tgtErr != nil {
+			tgt = ""
+		}
 		filter := &topoapi.RelationFilter{
-			SrcId:        to.Value.String(),
-			RelationKind: via.Value.String(),
-			TargetKind:   tgt.Value.String(),
+			SrcId:        to,
+			RelationKind: via,
+			TargetKind:   tgt,
 		}
 		objects, err := listObjects(cmd, &topoapi.Filters{
 			KindFilters:    []*topoapi.Filter{},
