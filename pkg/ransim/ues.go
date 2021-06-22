@@ -111,7 +111,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16x %-16x %-10d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
+			cli.Output("%-16d %-16x %-10d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
 		}
 
 	} else {
@@ -126,7 +126,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16x %-16x %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
+			cli.Output("%-16d %-16x %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
 		}
 	}
 
@@ -134,13 +134,13 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputUE(ue *types.Ue) {
-	cli.Output("IMSI:      %-16x\nNCGI:      %-16x\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRrc:       %d\n",
+	cli.Output("IMSI:      %-16d\nNCGI:      %-16x\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRrc:       %d\n",
 		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, ue.RrcState)
 	cli.Output("Candidate Cells: %x, %x, %x\n", ue.Tower1, ue.Tower2, ue.Tower3)
 }
 
 func runGetUECommand(cmd *cobra.Command, args []string) error {
-	imsi, err := strconv.ParseUint(args[0], 16, 64)
+	imsi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -161,7 +161,7 @@ func runGetUECommand(cmd *cobra.Command, args []string) error {
 }
 
 func runUpdateUECommand(cmd *cobra.Command, args []string) error {
-	imsi, err := strconv.ParseUint(args[0], 16, 64)
+	imsi, err := strconv.ParseUint(args[0], 10, 64)
 	if err != nil {
 		return err
 	}
@@ -233,7 +233,7 @@ func runGetUECountCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runSetUECountCommand(cmd *cobra.Command, args []string) error {
-	count, err := strconv.ParseUint(args[0], 16, 16)
+	count, err := strconv.ParseUint(args[0], 10, 16)
 	if err != nil {
 		return err
 	}

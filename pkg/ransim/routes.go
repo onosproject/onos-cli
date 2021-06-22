@@ -114,7 +114,7 @@ func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			route := r.Route
-			cli.Output("%-16x %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
+			cli.Output("%-16d %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
 				float64(route.SpeedAvg)/1000, float64(route.SpeedStdev)/1000, waypointsToString(route.Waypoints))
 		}
 
@@ -131,7 +131,7 @@ func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			route := r.Route
-			cli.Output("%-16x %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
+			cli.Output("%-16d %-8s %5.1f %5.1f %s\n", route.RouteID, route.Color,
 				float64(route.SpeedAvg)/1000, float64(route.SpeedStdev)/1000, waypointsToString(route.Waypoints))
 		}
 	}
