@@ -18,12 +18,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	topoapi "github.com/onosproject/onos-api/go/onos/topo"
-	"github.com/onosproject/onos-lib-go/pkg/cli"
-	"github.com/spf13/cobra"
 	"io"
 	"text/tabwriter"
 	"time"
+
+	topoapi "github.com/onosproject/onos-api/go/onos/topo"
+	"github.com/onosproject/onos-lib-go/pkg/cli"
+	"github.com/onosproject/onos-lib-go/pkg/errors"
+	"github.com/spf13/cobra"
 )
 
 func getGetEntityCommand() *cobra.Command {
@@ -38,6 +40,9 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
+	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
+	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to")
+	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	return cmd
 }
 
@@ -71,7 +76,44 @@ func getGetKindCommand() *cobra.Command {
 }
 
 func runGetEntityCommand(cmd *cobra.Command, args []string) error {
-	return runGetCommand(cmd, args, topoapi.Object_ENTITY)
+	// if any flag relating to the entity-relation filter is set, call the corresponding function (which checks if all necessary flags are set)
+	if cmd.Flag("related-to").Value.String() != "" || cmd.Flag("related-via").Value.String() != "" || cmd.Flag("tgt-kind").Value.String() != "" {
+		return runGetEntityRelationCommand(cmd, args)
+	} else {
+		return runGetCommand(cmd, args, topoapi.Object_ENTITY)
+	}
+}
+
+func runGetEntityRelationCommand(cmd *cobra.Command, args []string) error {
+	to := cmd.Flag("related-to")
+	via := cmd.Flag("related-via")
+	tgt := cmd.Flag("tgt-kind")
+	verbose, _ := cmd.Flags().GetBool("verbose")
+
+	if to.Value.String() != "" && via.Value.String() != "" {
+		outputWriter := cli.GetOutput()
+		writer := new(tabwriter.Writer)
+		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+		filter := &topoapi.RelationFilter{
+			SrcId:        to.Value.String(),
+			RelationKind: via.Value.String(),
+			TargetKind:   tgt.Value.String(),
+		}
+		objects, err := listObjects(cmd, &topoapi.Filters{
+			KindFilters:    []*topoapi.Filter{},
+			LabelFilters:   []*topoapi.Filter{},
+			RelationFilter: filter,
+		})
+		if err == nil {
+			for _, object := range objects {
+				printObject(writer, object, verbose)
+			}
+		}
+		_ = writer.Flush()
+		return nil
+	} else {
+		return errors.NewInvalid("missing related-to and/or related-via flags")
+	}
 }
 
 func runGetRelationCommand(cmd *cobra.Command, args []string) error {
