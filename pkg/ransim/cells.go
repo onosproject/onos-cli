@@ -137,7 +137,7 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			cell := r.Cell
-			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
+			cli.Output("%-17x %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
 				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
@@ -158,7 +158,7 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			cell := r.Cell
-			cli.Output("%-16d %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
+			cli.Output("%-17x %7d %7d %7.2f %9.3f %9.3f %7d %7d %10d %7d %7d %10d %10d %8d %8s %s\n",
 				cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB,
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
@@ -246,7 +246,7 @@ func optionsToCell(cmd *cobra.Command, cell *types.Cell, update bool) (*types.Ce
 }
 
 func runCreateCellCommand(cmd *cobra.Command, args []string) error {
-	ncgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -266,12 +266,12 @@ func runCreateCellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cli.Output("Cell %d created\n", ncgi)
+	cli.Output("Cell %x created\n", ncgi)
 	return nil
 }
 
 func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
-	ncgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -297,12 +297,12 @@ func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cli.Output("Cell %d updated\n", ncgi)
+	cli.Output("Cell %x updated\n", ncgi)
 	return nil
 }
 
 func runGetCellCommand(cmd *cobra.Command, args []string) error {
-	ncgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -318,7 +318,7 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	cell := res.Cell
-	cli.Output("NCGI:       %-17d\nUE Count:   %-5d\nMax UEs:    %-5d\nTxPower dB: %.2f\n",
+	cli.Output("NCGI:       %-17x\nUE Count:   %-5d\nMax UEs:    %-5d\nTxPower dB: %.2f\n",
 		cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
 	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nPCI:        %d\nArc:        %d\nColor:      %s\nNeighbors:  %s\n",
 		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Pci, cell.Color,
@@ -330,7 +330,7 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runDeleteCellCommand(cmd *cobra.Command, args []string) error {
-	ncgi, err := strconv.ParseUint(args[0], 10, 64)
+	ncgi, err := strconv.ParseUint(args[0], 16, 64)
 	if err != nil {
 		return err
 	}
@@ -345,6 +345,6 @@ func runDeleteCellCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cli.Output("Cell %d deleted\n", ncgi)
+	cli.Output("Cell %x deleted\n", ncgi)
 	return nil
 }
