@@ -35,7 +35,7 @@ func compileFilters(cmd *cobra.Command, objectType topoapi.Object_Type) *topoapi
 
 func compileLabelFilters(query string) []*topoapi.Filter {
 	filters := make([]*topoapi.Filter, 0)
-	fields := strings.Split(query, ",")
+	fields := strings.Split(query, " && ")
 	for _, field := range fields {
 		filter, _ := compileLabelFilter(strings.TrimSpace(field))
 		if filter != nil {
@@ -75,7 +75,7 @@ func compileLabelFilter(field string) (*topoapi.Filter, error) {
 		}, nil
 
 	} else if strings.Contains(field, "=") {
-		key := extractKey(field, "!=")
+		key := extractKey(field, "=")
 		value := extractValue(field)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}},
@@ -105,16 +105,42 @@ func extractValues(field string) []string {
 
 func compileKindFilters(query string) []*topoapi.Filter {
 	filters := make([]*topoapi.Filter, 0)
-	fields := strings.Split(query, ",")
-	for _, field := range fields {
-		filter, _ := compileKindFilter(strings.TrimSpace(field))
-		if filter != nil {
-			filters = append(filters, filter)
-		}
+	filter, _ := compileKindFilter(strings.TrimSpace(query))
+	if filter != nil {
+		filters = append(filters, filter)
 	}
 	return filters
 }
 
 func compileKindFilter(field string) (*topoapi.Filter, error) {
+	if strings.Contains(field, "!in (") {
+		values := extractValues(field)
+		return &topoapi.Filter{
+			Filter: &topoapi.Filter_Not{Not: &topoapi.NotFilter{
+				Inner: &topoapi.Filter{Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}}}},
+			},
+		}, nil
+
+	} else if strings.Contains(field, "in (") {
+		values := extractValues(field)
+		return &topoapi.Filter{
+			Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}},
+		}, nil
+
+	} else if strings.Contains(field, "!=") {
+		value := extractValue(field)
+		return &topoapi.Filter{
+			Filter: &topoapi.Filter_Not{Not: &topoapi.NotFilter{
+				Inner: &topoapi.Filter{Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}}}},
+			},
+		}, nil
+
+	} else if strings.Contains(field, "=") {
+		value := extractValue(field)
+		return &topoapi.Filter{
+			Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}},
+		}, nil
+
+	}
 	return nil, nil
 }
