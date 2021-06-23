@@ -16,6 +16,7 @@ package ransim
 
 import (
 	"context"
+	e2sm_mho "github.com/onosproject/onos-e2-sm/servicemodels/e2sm_mho/v1/e2sm-mho"
 	"strconv"
 
 	simapi "github.com/onosproject/onos-api/go/onos/ransim/trafficsim"
@@ -97,7 +98,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %-16s %-10s %-5s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted")
+		cli.Output("%-16s %-16s %-10s %-10s %-20s\n", "IMSI", "Serving Cell", "CRNTI", "Admitted", "RRC")
 	}
 
 	if watch, _ := cmd.Flags().GetBool("watch"); watch {
@@ -111,7 +112,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16x %-10d %-5t\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted)
+			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
 		}
 
 	} else {
@@ -126,7 +127,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16x %-10d %-10t %-5d\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, ue.RrcState)
+			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
 		}
 	}
 
@@ -134,8 +135,8 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func outputUE(ue *types.Ue) {
-	cli.Output("IMSI:      %-16d\nNCGI:      %-16x\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRrc:       %d\n",
-		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, ue.RrcState)
+	cli.Output("IMSI:      %-16d\nNCGI:      %-16x\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRRC:       %s\n",
+		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
 	cli.Output("Candidate Cells: %x, %x, %x\n", ue.Tower1, ue.Tower2, ue.Tower3)
 }
 
