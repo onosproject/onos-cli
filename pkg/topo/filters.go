@@ -28,6 +28,7 @@ func compileFilters(cmd *cobra.Command, objectType topoapi.Object_Type) *topoapi
 		kq, _ := cmd.Flags().GetString("kind")
 		filters.KindFilters = compileKindFilters(kq)
 	}
+	filters.ObjectTypes = []topoapi.Object_Type{objectType}
 	return filters
 }
 
