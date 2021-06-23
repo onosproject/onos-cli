@@ -142,9 +142,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 		objects, err := listObjects(cmd, filters)
 		if err == nil {
 			for _, object := range objects {
-				if objectType == object.Type {
-					printObject(writer, object, verbose)
-				}
+				printObject(writer, object, verbose)
 			}
 		}
 	} else {
@@ -153,7 +151,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 		if err != nil {
 			return err
 		}
-		if object != nil && objectType == object.Type {
+		if object != nil {
 			printObject(writer, *object, verbose)
 		}
 	}
