@@ -96,15 +96,12 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, v
 		if len(tgt) == 0 {
 			tgt = ""
 		}
-		filter := &topoapi.RelationFilter{
-			SrcId:        to,
-			RelationKind: via,
-			TargetKind:   tgt,
-		}
 		objects, err := listObjects(cmd, &topoapi.Filters{
-			KindFilters:    []*topoapi.Filter{},
-			LabelFilters:   []*topoapi.Filter{},
-			RelationFilter: filter,
+			RelationFilter: &topoapi.RelationFilter{
+				SrcId:        to,
+				RelationKind: via,
+				TargetKind:   tgt,
+			},
 		})
 		if err == nil {
 			for _, object := range objects {
