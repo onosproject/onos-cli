@@ -28,7 +28,7 @@ func compileFilters(cmd *cobra.Command, objectType topoapi.Object_Type) *topoapi
 	filters.ObjectTypes = []topoapi.Object_Type{objectType}
 	if objectType == topoapi.Object_ENTITY || objectType == topoapi.Object_RELATION {
 		kq, _ := cmd.Flags().GetString("kind")
-		filters.KindFilters = compileKindFilters(kq)
+		filters.KindFilter = compileKindFilter(kq)
 	}
 	return filters
 }
@@ -103,44 +103,39 @@ func extractValues(field string) []string {
 	return values
 }
 
-func compileKindFilters(query string) []*topoapi.Filter {
-	filters := make([]*topoapi.Filter, 0)
-	filter, _ := compileKindFilter(strings.TrimSpace(query))
-	if filter != nil {
-		filters = append(filters, filter)
+func compileKindFilter(query string) *topoapi.Filter {
+	if len(query) == 0 {
+		return nil
 	}
-	return filters
-}
 
-func compileKindFilter(field string) (*topoapi.Filter, error) {
-	if strings.Contains(field, "!in (") {
-		values := extractValues(field)
+	if strings.Contains(query, "!in (") {
+		values := extractValues(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_Not{Not: &topoapi.NotFilter{
 				Inner: &topoapi.Filter{Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}}}},
 			},
-		}, nil
+		}
 
-	} else if strings.Contains(field, "in (") {
-		values := extractValues(field)
+	} else if strings.Contains(query, "in (") {
+		values := extractValues(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}},
-		}, nil
+		}
 
-	} else if strings.Contains(field, "!=") {
-		value := extractValue(field)
+	} else if strings.Contains(query, "!=") {
+		value := extractValue(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_Not{Not: &topoapi.NotFilter{
 				Inner: &topoapi.Filter{Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}}}},
 			},
-		}, nil
+		}
 
-	} else if strings.Contains(field, "=") {
-		value := extractValue(field)
+	} else if strings.Contains(query, "=") {
+		value := extractValue(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}},
-		}, nil
+		}
 
 	}
-	return nil, nil
+	return nil
 }
