@@ -15,20 +15,21 @@
 package topo
 
 import (
+	"strings"
+
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func compileFilters(cmd *cobra.Command, objectType topoapi.Object_Type) *topoapi.Filters {
 	filters := &topoapi.Filters{}
 	lq, _ := cmd.Flags().GetString("label")
 	filters.LabelFilters = compileLabelFilters(lq)
-	if objectType == topoapi.Object_KIND || objectType == topoapi.Object_RELATION {
+	filters.ObjectTypes = []topoapi.Object_Type{objectType}
+	if objectType == topoapi.Object_ENTITY || objectType == topoapi.Object_RELATION {
 		kq, _ := cmd.Flags().GetString("kind")
 		filters.KindFilters = compileKindFilters(kq)
 	}
-	filters.ObjectTypes = []topoapi.Object_Type{objectType}
 	return filters
 }
 
