@@ -97,8 +97,8 @@ func extractValue(field string) string {
 func extractValues(field string) []string {
 	gs := strings.Split(strings.Split(strings.Split(field, "(")[1], ")")[0], ",")
 	values := make([]string, 0, len(gs))
-	for i, v := range gs {
-		values[i] = strings.TrimSpace(v)
+	for _, v := range gs {
+		values = append(values, strings.TrimSpace(v))
 	}
 	return values
 }
@@ -108,6 +108,8 @@ func compileKindFilter(query string) *topoapi.Filter {
 		return nil
 	}
 
+	// parse queries of form "!in (a, b, c)"
+	// do this before the positive form of inclusion b/c containing !in ( is more restrictive and precise
 	if strings.Contains(query, "!in (") {
 		values := extractValues(query)
 		return &topoapi.Filter{
@@ -115,13 +117,13 @@ func compileKindFilter(query string) *topoapi.Filter {
 				Inner: &topoapi.Filter{Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}}}},
 			},
 		}
-
+		// parse queries of form "in ( a,b,c )"
 	} else if strings.Contains(query, "in (") {
 		values := extractValues(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}},
 		}
-
+		// parse queries of form "!= a", again do more restrictive Contains check first
 	} else if strings.Contains(query, "!=") {
 		value := extractValue(query)
 		return &topoapi.Filter{
@@ -129,13 +131,19 @@ func compileKindFilter(query string) *topoapi.Filter {
 				Inner: &topoapi.Filter{Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}}}},
 			},
 		}
-
+		// parse queries of form "= a"
 	} else if strings.Contains(query, "=") {
 		value := extractValue(query)
 		return &topoapi.Filter{
 			Filter: &topoapi.Filter_Equal_{Equal_: &topoapi.EqualFilter{Value: value}},
 		}
-
+		// parse queries of the form "a" or "a, b, c"
+		// shortcut for "in(a)" (which is equivalent to "=a") or "in(a, b, c)"
+	} else if !strings.Contains(query, "(") && !strings.Contains(query, ")") && !strings.Contains(query, "!") {
+		values := extractValues(" (" + query + ") ")
+		return &topoapi.Filter{
+			Filter: &topoapi.Filter_In{In: &topoapi.InFilter{Values: values}},
+		}
 	}
 	return nil
 }
