@@ -46,6 +46,8 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(cli.GetConfigCommand())
 	cmd.AddCommand(getListCommand())
 	cmd.AddCommand(getAddSubscriptionCommand())
+	cmd.AddCommand(getRemoveSubscriptionCommand())
+	cmd.AddCommand(getGetSubscriptionCommand())
 	cmd.AddCommand(getWatchCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
