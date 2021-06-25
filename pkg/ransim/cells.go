@@ -299,7 +299,7 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 	cell := res.Cell
 	cli.Output("NCGI:       %-17x\nUE Count:   %-5d\nMax UEs:    %-5d\nTxPower dB: %.2f\n",
 		cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
-	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nPCI:        %d\nArc:        %d\nColor:      %s\nNeighbors:  %s\n",
+	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nArc:        %d\nPCI:        %d\nColor:      %s\nNeighbors:  %s\n",
 		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Pci, cell.Color,
 		catNCGIs(cell.Neighbors))
 	cli.Output("A3offset:          %7d\nA3TimeToTrigger:   %7d\nA3Hystereis:       %7d\nA3CellOffset:      %7d\nA3FrequencyOffset: %7d\n",
