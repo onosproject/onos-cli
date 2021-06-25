@@ -90,6 +90,7 @@ func updateCellCommand() *cobra.Command {
 	cmd.Flags().Int32("a3-hyst", int32(0), "A3 hysteresis")
 	cmd.Flags().Int32("a3-celloffset", int32(0), "A3 cell Offset")
 	cmd.Flags().Int32("a3-freqoffset", int32(0), "A3 frequency offset")
+	cmd.Flags().Uint32("pci", uint32(0), "new PCI value")
 	return cmd
 }
 
@@ -170,6 +171,24 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func optionsToCell(cmd *cobra.Command, cell *types.Cell, update bool) (*types.Cell, error) {
+	geoToCell(cmd, cell, update)
+	a3FreqOffset, _ := cmd.Flags().GetInt32("a3-freqoffset")
+	if !update || cmd.Flags().Changed("a3-freqoffset") {
+		cell.MeasurementParams.FrequencyOffset = a3FreqOffset
+	}
+
+	neighbors, _ := cmd.Flags().GetUintSlice("neighbors")
+	if !update || cmd.Flags().Changed("neighbors") {
+		cell.Neighbors = toNCGIs(neighbors)
+	}
+	pci, _ := cmd.Flags().GetUint32("pci")
+	if !update || cmd.Flags().Changed("pci") {
+		cell.Pci = pci
+	}
+	return cell, nil
+}
+
+func geoToCell(cmd *cobra.Command, cell *types.Cell, update bool) {
 	arc, _ := cmd.Flags().GetInt32("arc")
 	azimuth, _ := cmd.Flags().GetInt32("azimuth")
 	lat, _ := cmd.Flags().GetFloat64("lat")
@@ -202,47 +221,6 @@ func optionsToCell(cmd *cobra.Command, cell *types.Cell, update bool) (*types.Ce
 	if !update || cmd.Flags().Changed("color") {
 		cell.Color = color
 	}
-
-	maxUEs, _ := cmd.Flags().GetUint32("max-ues")
-	if !update || cmd.Flags().Changed("max-ues") {
-		cell.MaxUEs = maxUEs
-	}
-
-	txDb, _ := cmd.Flags().GetFloat64("tx-power")
-	if !update || cmd.Flags().Changed("tx-power") {
-		cell.TxPowerdB = txDb
-	}
-
-	a3Offset, _ := cmd.Flags().GetInt32("a3-offset")
-	if !update || cmd.Flags().Changed("a3-offset") {
-		cell.MeasurementParams.EventA3Params.A3Offset = a3Offset
-	}
-
-	a3TTT, _ := cmd.Flags().GetInt32("a3-ttt")
-	if !update || cmd.Flags().Changed("a3-ttt") {
-		cell.MeasurementParams.TimeToTrigger = a3TTT
-	}
-
-	a3Hyst, _ := cmd.Flags().GetInt32("a3-hyst")
-	if !update || cmd.Flags().Changed("a3-hyst") {
-		cell.MeasurementParams.TimeToTrigger = a3Hyst
-	}
-
-	a3CellOffset, _ := cmd.Flags().GetInt32("a3-celloffset")
-	if !update || cmd.Flags().Changed("a3-celloffset") {
-		cell.MeasurementParams.PcellIndividualOffset = a3CellOffset
-	}
-
-	a3FreqOffset, _ := cmd.Flags().GetInt32("a3-freqoffset")
-	if !update || cmd.Flags().Changed("a3-freqoffset") {
-		cell.MeasurementParams.FrequencyOffset = a3FreqOffset
-	}
-
-	neighbors, _ := cmd.Flags().GetUintSlice("neighbors")
-	if !update || cmd.Flags().Changed("neighbors") {
-		cell.Neighbors = toNCGIs(neighbors)
-	}
-	return cell, nil
 }
 
 func runCreateCellCommand(cmd *cobra.Command, args []string) error {
@@ -292,6 +270,7 @@ func runUpdateCellCommand(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	cli.Output("Cell is now %v", cell)
 
 	_, err = client.UpdateCell(context.Background(), &modelapi.UpdateCellRequest{Cell: cell})
 	if err != nil {
@@ -320,7 +299,7 @@ func runGetCellCommand(cmd *cobra.Command, args []string) error {
 	cell := res.Cell
 	cli.Output("NCGI:       %-17x\nUE Count:   %-5d\nMax UEs:    %-5d\nTxPower dB: %.2f\n",
 		cell.NCGI, len(cell.CrntiMap), cell.MaxUEs, cell.TxPowerdB)
-	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nPCI:        %d\nArc:        %d\nColor:      %s\nNeighbors:  %s\n",
+	cli.Output("Latitude:   %.3f\nLongitude:  %.3f\nAzimuth:    %d\nArc:        %d\nPCI:        %d\nColor:      %s\nNeighbors:  %s\n",
 		cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc, cell.Pci, cell.Color,
 		catNCGIs(cell.Neighbors))
 	cli.Output("A3offset:          %7d\nA3TimeToTrigger:   %7d\nA3Hystereis:       %7d\nA3CellOffset:      %7d\nA3FrequencyOffset: %7d\n",
