@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	subscriptionHeaders = "ID\tRevision\tApp ID\tService Model ID\tE2 NodeID\tEncodStatus"
-	subscriptionFormat  = "%s\t%d\t%s\t%s:%s\t%s\t%s\n"
+	subscriptionHeaders = "ID\tRevision\tService Model ID\tE2 NodeID\tEncoding\tPhase\tState"
+	subscriptionFormat  = "%s\t%d\t%s:%s\t%s\t%s\t%s\t%s\n"
 )
 
 func displaySubscriptionHeaders(writer io.Writer) {
@@ -39,8 +39,8 @@ func displaySubscriptionHeaders(writer io.Writer) {
 
 func displaySubscription(writer io.Writer, sub *subapi.Subscription) {
 	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.E2NodeID, sub.SubscriptionMeta.Encoding,
-		string(sub.Status.Phase), string(sub.Status.State))
+		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version, none(string(sub.SubscriptionMeta.E2NodeID)),
+		none(sub.SubscriptionMeta.Encoding.String()), none(sub.Status.Phase.String()), none(sub.Status.State.String()))
 }
 
 func getListSubscriptionsCommand() *cobra.Command {
@@ -65,6 +65,30 @@ func getAddSubscriptionCommand() *cobra.Command {
 	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
 	cmd.Flags().String("smID", "", "Identifier of the service model")
 	cmd.Flags().String("smVer", "", "Version of the service model")
+	return cmd
+}
+
+func getRemoveSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Remove subscription",
+		RunE:  runRemoveSubscriptionCommand,
+	}
+	cmd.Flags().String("transactionID", "", "Identifier")
+	cmd.Flags().String("appID", "", "Application Identifier")
+	cmd.Flags().String("appInstanceID", "", "Application Identifier")
+	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
+	return cmd
+}
+
+func getGetSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Get subscription",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runGetSubscriptionCommand,
+	}
+
 	return cmd
 }
 
@@ -102,65 +126,148 @@ func runListSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
-	ID, _ := cmd.Flags().GetString("ID")
-	if ID == "" {
-		return errors.New("identifier must be specified with --ID")
-	}
-	appID, _ := cmd.Flags().GetString("appID")
-	if appID == "" {
-		return errors.New("appID must be specified with --appID")
-	}
-	appInstanceID, _ := cmd.Flags().GetString("appInstanceID")
-	if appInstanceID == "" {
-		return errors.New("appInstanceID must be specified with --appInstanceID")
-	}
-	e2NodeID, _ := cmd.Flags().GetString("e2NodeID")
-	if e2NodeID == "" {
-		return errors.New("e2NodeID must be specified with --e2NodeID")
-	}
-	smID, _ := cmd.Flags().GetString("smID")
-	if smID == "" {
-		return errors.New("service model ID must be specified with --smID")
-	}
-	smVer, _ := cmd.Flags().GetString("smVer")
-	if smVer == "" {
-		return errors.New("service model version must be specified with --smVer")
-	}
+	return errors.New("Unimplemented")
+	// ID, _ := cmd.Flags().GetString("ID")
+	// if ID == "" {
+	// 	return errors.New("identifier must be specified with --ID")
+	// }
+	// appID, _ := cmd.Flags().GetString("appID")
+	// if appID == "" {
+	// 	return errors.New("appID must be specified with --appID")
+	// }
+	// appInstanceID, _ := cmd.Flags().GetString("appInstanceID")
+	// if appInstanceID == "" {
+	// 	return errors.New("appInstanceID must be specified with --appInstanceID")
+	// }
+	// e2NodeID, _ := cmd.Flags().GetString("e2NodeID")
+	// if e2NodeID == "" {
+	// 	return errors.New("e2NodeID must be specified with --e2NodeID")
+	// }
+	// smID, _ := cmd.Flags().GetString("smID")
+	// if smID == "" {
+	// 	return errors.New("service model ID must be specified with --smID")
+	// }
+	// smVer, _ := cmd.Flags().GetString("smVer")
+	// if smVer == "" {
+	// 	return errors.New("service model version must be specified with --smVer")
+	// }
 
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
+	// conn, err := cli.GetConnection(cmd)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer conn.Close()
+	// outputWriter := cli.GetOutput()
+	// writer := new(tabwriter.Writer)
+	// writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	// client := v1beta1.NewSubscriptionServiceClient(conn)
+
+	// ctx, cancel := context.WithCancel(context.Background())
+	// defer cancel()
+
+	// request := v1beta1.SubscribeRequest{
+	// 	Headers: subapi.RequestHeaders{
+	// 		AppID:         subapi.AppID(appID),
+	// 		AppInstanceID: subapi.AppInstanceID(appInstanceID),
+	// 		E2NodeID:      subapi.E2NodeID(e2NodeID),
+	// 		ServiceModel: subapi.ServiceModel{
+	// 			Name:    subapi.ServiceModelName(smID),
+	// 			Version: subapi.ServiceModelVersion(smVer),
+	// 		},
+	// 		Encoding: 0,
+	// 	},
+	// 	TransactionID: subapi.TransactionID(ID),
+	// 	Subscription:  subapi.SubscriptionSpec{},
+	// }
+	// _, err = client.Subscribe(ctx, &request)
+
+	// if err != nil {
+	// 	return err
+	// }
+
+	// _ = writer.Flush()
+	// return nil
+}
+
+func runRemoveSubscriptionCommand(cmd *cobra.Command, args []string) error {
+	return errors.New("Unimplemented")
+	// transactionID, _ := cmd.Flags().GetString("transactionID")
+	// if transactionID == "" {
+	// 	return errors.New("identifier must be specified with --transactionID")
+	// }
+	// appID, _ := cmd.Flags().GetString("appID")
+	// if appID == "" {
+	// 	return errors.New("appID must be specified with --appID")
+	// }
+	// appInstanceID, _ := cmd.Flags().GetString("appInstanceID")
+	// if appInstanceID == "" {
+	// 	return errors.New("appInstanceID must be specified with --appInstanceID")
+	// }
+	// e2NodeID, _ := cmd.Flags().GetString("e2NodeID")
+	// if e2NodeID == "" {
+	// 	return errors.New("e2NodeID must be specified with --e2NodeID")
+	// }
+	// conn, err := cli.GetConnection(cmd)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer conn.Close()
+
+	// ctx, cancel := context.WithCancel(context.Background())
+	// defer cancel()
+
+	// client := v1beta1.NewSubscriptionServiceClient(conn)
+	// _, err = client.Unsubscribe(ctx, &subapi.UnsubscribeRequest{
+	// 	Headers: subapi.RequestHeaders{
+	// 		AppID:         subapi.AppID(appID),
+	// 		AppInstanceID: subapi.AppInstanceID(appInstanceID),
+	// 		E2NodeID:      subapi.E2NodeID(e2NodeID),
+	// 		ServiceModel:  subapi.ServiceModel{},
+	// 		Encoding:      0,
+	// 	},
+	// 	TransactionID: subapi.TransactionID(transactionID),
+	// })
+
+	// return err
+}
+
+func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
+	return errors.New("Unimplemented")
+	// noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	// ID := v1beta1.ID(args[0])
+	// conn, err := cli.GetConnection(cmd)
+	// if err != nil {
+	// 	return err
+	// }
+	// defer conn.Close()
+	// outputWriter := cli.GetOutput()
+	// writer := new(tabwriter.Writer)
+	// writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	// if !noHeaders {
+	// 	displaySubscriptionHeaders(writer)
+	// }
+
+	// ctx, cancel := context.WithCancel(context.Background())
+	// defer cancel()
+
+	// client := subscription.NewClient(conn)
+
+	// sub, err := client.Get(ctx, ID)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// displaySubscription(writer, sub)
+	// _ = writer.Flush()
+
+	// return nil
+}
+
+func none(s string) string {
+	if s == "" {
+		return "<None>"
 	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	client := v1beta1.NewSubscriptionServiceClient(conn)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	request := v1beta1.SubscribeRequest{
-		Headers: subapi.RequestHeaders{
-			AppID:         subapi.AppID(appID),
-			AppInstanceID: subapi.AppInstanceID(appInstanceID),
-			E2NodeID:      subapi.E2NodeID(e2NodeID),
-			ServiceModel: subapi.ServiceModel{
-				Name:    subapi.ServiceModelName(smID),
-				Version: subapi.ServiceModelVersion(smVer),
-			},
-			Encoding: 0,
-		},
-		TransactionID: subapi.TransactionID(ID),
-		Subscription:  subapi.SubscriptionSpec{},
-	}
-	_, err = client.Subscribe(ctx, &request)
-
-	if err != nil {
-		return err
-	}
-
-	_ = writer.Flush()
-	return nil
+	return s
 }
