@@ -60,17 +60,11 @@ func getAddSubscriptionCommand() *cobra.Command {
 		RunE:  runAddSubscriptionCommand,
 	}
 	cmd.Flags().String("ID", "", "Identifier")
-	cmd.MarkFlagRequired("ID")
 	cmd.Flags().String("appID", "", "Application Identifier")
-	cmd.MarkFlagRequired("appID")
 	cmd.Flags().String("appInstanceID", "", "Application Identifier")
-	cmd.MarkFlagRequired("appInstanceID")
 	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
-	cmd.MarkFlagRequired("e2NodeID")
 	cmd.Flags().String("smID", "", "Identifier of the service model")
-	cmd.MarkFlagRequired("smID")
 	cmd.Flags().String("smVer", "", "Version of the service model")
-	cmd.MarkFlagRequired("smVer")
 	return cmd
 }
 
