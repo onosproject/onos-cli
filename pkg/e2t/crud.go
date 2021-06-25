@@ -14,14 +14,17 @@
 
 package e2t
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+)
 
 func getListCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list {connections} [args]",
+		Use:   "list {connections | subscriptions} [args]",
 		Short: "List E2T resources",
 	}
 	cmd.AddCommand(getListConnectionsCommand())
+	cmd.AddCommand(getListSubscriptionsCommand())
 	return cmd
 }
 
