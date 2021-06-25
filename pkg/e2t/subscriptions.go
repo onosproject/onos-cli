@@ -16,6 +16,7 @@ package e2t
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"text/tabwriter"
@@ -52,6 +53,27 @@ func getListSubscriptionsCommand() *cobra.Command {
 	return cmd
 }
 
+func getAddSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Get subscription",
+		RunE:  runAddSubscriptionCommand,
+	}
+	cmd.Flags().String("ID", "", "Identifier")
+	cmd.MarkFlagRequired("ID")
+	cmd.Flags().String("appID", "", "Application Identifier")
+	cmd.MarkFlagRequired("appID")
+	cmd.Flags().String("appInstanceID", "", "Application Identifier")
+	cmd.MarkFlagRequired("appInstanceID")
+	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
+	cmd.MarkFlagRequired("e2NodeID")
+	cmd.Flags().String("smID", "", "Identifier of the service model")
+	cmd.MarkFlagRequired("smID")
+	cmd.Flags().String("smVer", "", "Version of the service model")
+	cmd.MarkFlagRequired("smVer")
+	return cmd
+}
+
 func runListSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
@@ -79,6 +101,70 @@ func runListSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	for _, sub := range response.Subscriptions {
 		pin := sub
 		displaySubscription(writer, &pin)
+	}
+
+	_ = writer.Flush()
+	return nil
+}
+
+func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
+	ID, _ := cmd.Flags().GetString("ID")
+	if ID == "" {
+		return errors.New("identifier must be specified with --ID")
+	}
+	appID, _ := cmd.Flags().GetString("appID")
+	if appID == "" {
+		return errors.New("appID must be specified with --appID")
+	}
+	appInstanceID, _ := cmd.Flags().GetString("appInstanceID")
+	if appInstanceID == "" {
+		return errors.New("appInstanceID must be specified with --appInstanceID")
+	}
+	e2NodeID, _ := cmd.Flags().GetString("e2NodeID")
+	if e2NodeID == "" {
+		return errors.New("e2NodeID must be specified with --e2NodeID")
+	}
+	smID, _ := cmd.Flags().GetString("smID")
+	if smID == "" {
+		return errors.New("service model ID must be specified with --smID")
+	}
+	smVer, _ := cmd.Flags().GetString("smVer")
+	if smVer == "" {
+		return errors.New("service model version must be specified with --smVer")
+	}
+
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	outputWriter := cli.GetOutput()
+	writer := new(tabwriter.Writer)
+	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	client := v1beta1.NewSubscriptionServiceClient(conn)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	request := v1beta1.SubscribeRequest{
+		Headers: subapi.RequestHeaders{
+			AppID:         subapi.AppID(appID),
+			AppInstanceID: subapi.AppInstanceID(appInstanceID),
+			E2NodeID:      subapi.E2NodeID(e2NodeID),
+			ServiceModel: subapi.ServiceModel{
+				Name:    subapi.ServiceModelName(smID),
+				Version: subapi.ServiceModelVersion(smVer),
+			},
+			Encoding: 0,
+		},
+		TransactionID: subapi.TransactionID(ID),
+		Subscription:  subapi.SubscriptionSpec{},
+	}
+	_, err = client.Subscribe(ctx, &request)
+
+	if err != nil {
+		return err
 	}
 
 	_ = writer.Flush()
