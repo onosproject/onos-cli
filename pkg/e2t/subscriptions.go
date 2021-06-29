@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/onosproject/onos-cli/pkg/utils"
 	"io"
 	"text/tabwriter"
 
@@ -39,8 +40,8 @@ func displaySubscriptionHeaders(writer io.Writer) {
 
 func displaySubscription(writer io.Writer, sub *subapi.Subscription) {
 	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version, none(string(sub.SubscriptionMeta.E2NodeID)),
-		none(sub.SubscriptionMeta.Encoding.String()), none(sub.Status.Phase.String()), none(sub.Status.State.String()))
+		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version, utils.None(string(sub.SubscriptionMeta.E2NodeID)),
+		utils.None(sub.SubscriptionMeta.Encoding.String()), utils.None(sub.Status.Phase.String()), utils.None(sub.Status.State.String()))
 }
 
 func getListSubscriptionsCommand() *cobra.Command {
@@ -263,11 +264,4 @@ func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	// _ = writer.Flush()
 
 	// return nil
-}
-
-func none(s string) string {
-	if s == "" {
-		return "<None>"
-	}
-	return s
 }
