@@ -20,6 +20,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 
@@ -106,7 +107,7 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "sCell node ID\tsCell PLMN ID\tsCell cell ID\tsCell object ID\tnCell node ID\tnCell PLMN ID\tnCell cell ID\tnCell object ID\tOcn")
+		_, _ = fmt.Fprintf(writer, "sCell node ID\tsCell PLMN ID\tsCell cell ID\tsCell object ID\tnCell PLMN ID\tnCell cell ID\tOcn [dB]\n")
 	}
 
 	request := mlbapi.GetOcnRequest{}
@@ -139,14 +140,21 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 		})
 		for _, ik := range sortedInnerOcnMap {
 			nCellIDs := strings.Split(ik, ":")
-			nCellNodeID := nCellIDs[0]
-			nCellPlmnID := nCellIDs[1]
-			nCellCellID := nCellIDs[2]
-			nCellObjID := nCellIDs[3]
+			nCellPlmnIDDec := nCellIDs[1]
+			nCellPlmnIDUint64, err := strconv.ParseUint(nCellPlmnIDDec, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			nCellCellIDDec := nCellIDs[2]
+			nCellCellIDUint64, err := strconv.ParseUint(nCellCellIDDec, 10, 64)
+			if err != nil {
+				return err
+			}
 			ocn := meastype.QOffsetRange(response.GetOcnMap()[k].GetOcnRecord()[ik])
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%x\t%x\t%d\n",
 				sCellNodeID, sCellPlmnID, sCellCellID, sCellObjID,
-				nCellNodeID, nCellPlmnID, nCellCellID, nCellObjID, ocn.String())
+				nCellPlmnIDUint64, nCellCellIDUint64, ocn.GetValue())
 		}
 	}
 	_ = writer.Flush()
