@@ -18,7 +18,7 @@ import "github.com/spf13/cobra"
 
 func getListCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "list {parameters/ocns}",
+		Use:   "list {parameters/ocns}",
 		Short: "List MLB resources",
 	}
 	cmd.AddCommand(getListParameters())
@@ -28,7 +28,7 @@ func getListCommand() *cobra.Command {
 
 func getSetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "set {parameters}",
+		Use:   "set {parameters}",
 		Short: "Set MLB resources",
 	}
 	cmd.AddCommand(getSetParameters())

@@ -29,9 +29,9 @@ import (
 
 func getListParameters() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "parameters",
+		Use:   "parameters",
 		Short: "Get all MLB parameters",
-		RunE: runListParameters,
+		RunE:  runListParameters,
 	}
 	cmd.Flags().Bool("no-headers", false, "disable output headers")
 	return cmd
@@ -39,9 +39,9 @@ func getListParameters() *cobra.Command {
 
 func getListOcns() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "ocns",
+		Use:   "ocns",
 		Short: "Get all Ocn for all cells",
-		RunE: runListOcns,
+		RunE:  runListOcns,
 	}
 	cmd.Flags().Bool("no-headers", false, "disable output headers")
 	return cmd
@@ -49,9 +49,9 @@ func getListOcns() *cobra.Command {
 
 func getSetParameters() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "parameters",
+		Use:   "parameters",
 		Short: "Set MLB parameters",
-		RunE: runSetParameters,
+		RunE:  runSetParameters,
 	}
 	cmd.Flags().Int32("interval", int32(10), "MLB interval")
 	cmd.Flags().Int32("delta-ocn", int32(3), "Delta Ocn per step")
@@ -117,7 +117,7 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 	}
 
 	// need to sort keys
-	sortedOcnMap := getIDListSortedByString(func() []string{
+	sortedOcnMap := getIDListSortedByString(func() []string {
 		list := make([]string, 0)
 		for k := range response.GetOcnMap() {
 			list = append(list, k)
@@ -130,9 +130,10 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 		sCellPlmnID := sCellIDs[1]
 		sCellCellID := sCellIDs[2]
 		sCellObjID := sCellIDs[3]
-		sortedInnerOcnMap := getIDListSortedByString(func() []string{
+		key := k // to avoide scopelint error
+		sortedInnerOcnMap := getIDListSortedByString(func() []string {
 			list := make([]string, 0)
-			for fk := range response.GetOcnMap()[k].GetOcnRecord() {
+			for fk := range response.GetOcnMap()[key].GetOcnRecord() {
 				list = append(list, fk)
 			}
 			return list
@@ -179,22 +180,34 @@ func runSetParameters(cmd *cobra.Command, args []string) error {
 
 	if cmd.Flags().Changed("interval") {
 		interval, err = cmd.Flags().GetInt32("interval")
+		if err != nil {
+			return err
+		}
 	}
 	if cmd.Flags().Changed("delta-ocn") {
 		deltaOcn, err = cmd.Flags().GetInt32("delta-ocn")
+		if err != nil {
+			return err
+		}
 	}
 	if cmd.Flags().Changed("overload-threshold") {
 		overloadThr, err = cmd.Flags().GetInt32("overload-threshold")
+		if err != nil {
+			return err
+		}
 	}
 	if cmd.Flags().Changed("target-threshold") {
 		targetThr, err = cmd.Flags().GetInt32("target-threshold")
+		if err != nil {
+			return err
+		}
 	}
 
 	setRequest := mlbapi.SetMlbParamRequest{
-		Interval: interval,
-		DeltaOcn: deltaOcn,
+		Interval:          interval,
+		DeltaOcn:          deltaOcn,
 		OverloadThreshold: overloadThr,
-		TargetThreshold: targetThr,
+		TargetThreshold:   targetThr,
 	}
 	setResponse, err := client.SetMlbParams(context.Background(), &setRequest)
 	if err != nil {

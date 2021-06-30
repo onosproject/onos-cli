@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	configName = "mlb"
+	configName     = "mlb"
 	defaultAddress = "onos-mlb:5150"
 )
 
@@ -36,7 +36,7 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "mlb {set/list} [args]",
+		Use:   "mlb {set/list} [args]",
 		Short: "ONOS MLB subsystem commands",
 	}
 
