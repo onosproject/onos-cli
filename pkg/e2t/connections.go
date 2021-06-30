@@ -70,6 +70,7 @@ func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
+		// We want the PLMNID in hex
 		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%d\t%s\n",
 			response.Id, response.PlmnId, response.NodeId, response.ConnectionType.String(),
 			strings.Join(response.RemoteIp, ","), response.RemotePort,

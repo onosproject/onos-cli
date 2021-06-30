@@ -39,6 +39,7 @@ func getCreateUECommand() *cobra.Command {
 		RunE:  runCreateUECommand,
 	}
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "UE aspect to create")
+	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 
