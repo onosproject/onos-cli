@@ -278,7 +278,7 @@ func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
 	}
 
 	if object.Aspects == nil {
-		_, _ = fmt.Fprintf(writer, "%s", utils.None(""))
+		_, _ = fmt.Fprintf(writer, "\t%s", utils.None(""))
 	}
 
 	if object.Aspects == nil || !verbose {
