@@ -36,12 +36,11 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "pci {list/listall} [args]",
+		Use:   "pci {get} [args]",
 		Short: "ONOS PCI subsystem commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
-	cmd.AddCommand(getListCommand())
-	cmd.AddCommand(getListAllCommand())
+	cmd.AddCommand(getGetCommand())
 	return cmd
 }

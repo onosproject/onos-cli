@@ -16,26 +16,13 @@ package pci
 
 import "github.com/spf13/cobra"
 
-func getListCommand() *cobra.Command {
+func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list {numconflicts/neighbors/metric/pci}",
-		Short: "List PCI resources for a specific cell",
+		Use:   "get {conflicts/cell/cells}",
+		Short: "Get PCI resources",
 	}
-	cmd.AddCommand(getListNumConflicts())
-	cmd.AddCommand(getListNeighbors())
-	cmd.AddCommand(getListMetric())
-	cmd.AddCommand(getListPci())
-	return cmd
-}
-
-func getListAllCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "listall {numconflicts/neighbors/metric/pci}",
-		Short: "List PCI resources for all cells",
-	}
-	cmd.AddCommand(getListNumConflictsAll())
-	cmd.AddCommand(getListNeighborsAll())
-	cmd.AddCommand(getListMetricAll())
-	cmd.AddCommand(getListPciAll())
+	cmd.AddCommand(getGetConflicts())
+	cmd.AddCommand(getGetCell())
+	cmd.AddCommand(getGetCells())
 	return cmd
 }
