@@ -20,6 +20,7 @@ import (
 	"io"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	adminapi "github.com/onosproject/onos-api/go/onos/e2t/admin"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -48,7 +49,7 @@ func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintln(writer, "Global ID\tPLNM ID\tIP Addr\tPort\tConn Type")
+		_, _ = fmt.Fprintln(writer, "Connection ID\tPLNM ID\tNode ID\tNode Type\tIP Addr\tPort\tStatus")
 	}
 
 	request := adminapi.ListE2NodeConnectionsRequest{}
@@ -69,11 +70,11 @@ func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		_, _ = fmt.Fprintf(
-			writer,
-			"%s\t%s\t%s\t%d\t%s\n",
-			response.Id, response.PlmnId, strings.Join(response.RemoteIp, ","), response.RemotePort,
-			response.ConnectionType.String())
+		// We want the PLMNID in hex
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%d\t%s\n",
+			response.Id, response.PlmnId, response.NodeId, response.ConnectionType.String(),
+			strings.Join(response.RemoteIp, ","), response.RemotePort,
+			(time.Duration(response.AgeMs) * time.Millisecond).String())
 	}
 
 	_ = writer.Flush()

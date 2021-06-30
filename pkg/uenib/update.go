@@ -25,7 +25,7 @@ import (
 
 func getUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create {ue}",
+		Use:   "update {ue}",
 		Short: "Update UE information",
 	}
 	cmd.AddCommand(getUpdateUECommand())
@@ -39,6 +39,7 @@ func getUpdateUECommand() *cobra.Command {
 		RunE:  runUpdateUECommand,
 	}
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "UE aspect to update")
+	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 

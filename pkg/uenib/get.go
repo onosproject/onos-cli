@@ -44,6 +44,7 @@ func getGetUECommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 
@@ -56,6 +57,7 @@ func getGetUEsCommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 
