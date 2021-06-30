@@ -17,6 +17,7 @@ package e2t
 import (
 	"context"
 	"fmt"
+	"github.com/onosproject/onos-cli/pkg/utils"
 	"io"
 	"strings"
 	"text/tabwriter"
@@ -49,7 +50,7 @@ func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
 	if !noHeaders {
-		_, _ = fmt.Fprintln(writer, "Connection ID\tPLNM ID\tNode ID\tNode Type\tIP Addr\tPort\tStatus")
+		_, _ = fmt.Fprintln(writer, "Connection ID\tPLMN ID\tNode ID\tNode Type\tIP Addr\tPort\tStatus")
 	}
 
 	request := adminapi.ListE2NodeConnectionsRequest{}
@@ -72,7 +73,7 @@ func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
 
 		// We want the PLMNID in hex
 		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%d\t%s\n",
-			response.Id, response.PlmnId, response.NodeId, response.ConnectionType.String(),
+			response.Id, response.PlmnId, utils.None(response.NodeId), response.ConnectionType.String(),
 			strings.Join(response.RemoteIp, ","), response.RemotePort,
 			(time.Duration(response.AgeMs) * time.Millisecond).String())
 	}
