@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/onosproject/onos-cli/pkg/utils"
 	"io"
 	"text/tabwriter"
 	"time"
@@ -128,7 +129,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+	writer.Init(outputWriter, 0, 0, 3, ' ', 0)
 	if len(args) == 0 {
 		filters := compileFilters(cmd, objectType)
 
@@ -215,7 +216,7 @@ func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool,
 }
 
 func printObject(writer io.Writer, object topoapi.Object, verbose bool) {
-	labels := labelsAsCSV(object)
+	labels := utils.None(labelsAsCSV(object))
 	switch object.Type {
 	case topoapi.Object_ENTITY:
 		var kindID topoapi.ID
@@ -274,6 +275,10 @@ func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
 			}
 			first = false
 		}
+	}
+
+	if object.Aspects == nil {
+		_, _ = fmt.Fprintf(writer, "%s", utils.None(""))
 	}
 
 	if object.Aspects == nil || !verbose {
