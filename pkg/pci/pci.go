@@ -17,99 +17,49 @@ package pci
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"text/tabwriter"
+
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
-	"strings"
-	"text/tabwriter"
 
 	pciapi "github.com/onosproject/onos-api/go/onos/pci"
 )
 
-func getListNumConflicts() *cobra.Command {
+func getGetConflicts() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "numconflicts",
-		Short: "Get the number of conflicts for a specific cell",
-		RunE:  runListNumConflicts,
+		Use:     "conflicts",
+		Aliases: []string{"conflict"},
+		Short:   "Get the conflicting cells for a specific cell or all cells if not specified",
+		RunE:    runGetConflicts,
+		Args:    cobra.MaximumNArgs(1),
+	}
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	return cmd
+}
+
+func getGetCell() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cell <id>",
+		Short: "Get a single cell's info",
+		RunE:  runGetCell,
 		Args:  cobra.ExactArgs(1),
 	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
-func getListNumConflictsAll() *cobra.Command {
+func getGetCells() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "numconflicts",
-		Short: "Get the number of conflicts for all cells",
-		RunE:  runListNumConflictsAll,
+		Use:   "cells",
+		Short: "Get all cells",
+		RunE:  runGetCells,
+		Args:  cobra.NoArgs,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
-func getListNeighbors() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "neighbors",
-		Short: "Get neighbors for a specific cell",
-		RunE:  runListNeighbors,
-		Args:  cobra.ExactArgs(1),
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func getListNeighborsAll() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "neighbors",
-		Short: "Get neighbors for all cells",
-		RunE:  runListNeighborsAll,
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func getListMetric() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "metric",
-		Short: "Get the metric for a specific cell",
-		RunE:  runListMetric,
-		Args:  cobra.ExactArgs(1),
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func getListMetricAll() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "metric",
-		Short: "Get the metrics for all cells",
-		RunE:  runListMetricAll,
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func getListPci() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "pci",
-		Short: "Get the PCI for a specific cell",
-		RunE:  runListPci,
-		Args:  cobra.ExactArgs(1),
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func getListPciAll() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "pci",
-		Short: "Get the PCIs for all cells",
-		RunE:  runListPciAll,
-	}
-	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	return cmd
-}
-
-func runListNumConflicts(cmd *cobra.Command, args []string) error {
+func runGetConflicts(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -120,28 +70,26 @@ func runListNumConflicts(cmd *cobra.Command, args []string) error {
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)\n")
+	request := pciapi.GetConflictsRequest{}
+	if len(args) != 0 {
+		id, err := strconv.ParseUint(args[0], 10, 64)
+		if err != nil {
+			return err
+		}
+		request.CellId = id
 	}
-
-	request := pciapi.GetRequest{
-		Id: args[0],
-	}
-
 	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetNumConflicts(context.Background(), &request)
-
+	response, err := client.GetConflicts(context.Background(), &request)
 	if err != nil {
 		return err
 	}
 
-	for k, v := range response.GetObject().GetAttributes() {
-		_, _ = fmt.Fprintf(writer, "%s\t%v\n", k, v)
+	printTableHeader(noHeaders, writer)
+	for _, cell := range response.GetCells() {
+		printTableCell(cell, writer)
+		// _, _ = fmt.Fprintf(writer, "%x\t%v\n", cell.Id, cell)
 	}
-
 	err = writer.Flush()
-
 	if err != nil {
 		return err
 	}
@@ -149,39 +97,33 @@ func runListNumConflicts(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runListNumConflictsAll(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+func runGetCell(cmd *cobra.Command, args []string) error {
+
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
+
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tnum(conflicts)\n")
+	request := pciapi.GetCellRequest{}
+	id, err := strconv.ParseUint(args[0], 16, 64)
+	if err != nil {
+		return err
 	}
-
-	request := pciapi.GetRequest{
-		Id: "pci",
-	}
+	request.CellId = id
 
 	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetNumConflictsAll(context.Background(), &request)
-
+	response, err := client.GetCell(context.Background(), &request)
 	if err != nil {
 		return err
 	}
 
-	for k, v := range response.GetObject().GetAttributes() {
-		_, _ = fmt.Fprintf(writer, "%s\t%v\n", k, v)
-	}
-
+	printSingleCell(response.Cell, writer)
 	err = writer.Flush()
-
 	if err != nil {
 		return err
 	}
@@ -189,7 +131,7 @@ func runListNumConflictsAll(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runListNeighbors(cmd *cobra.Command, args []string) error {
+func runGetCells(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -200,283 +142,66 @@ func runListNeighbors(cmd *cobra.Command, args []string) error {
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tNeighbors\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: args[0],
-	}
-
+	request := pciapi.GetCellsRequest{}
 	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetNeighbors(context.Background(), &request)
-
+	response, err := client.GetCells(context.Background(), &request)
 	if err != nil {
 		return err
 	}
 
-	nMap := make(map[string]string)
+	printTableHeader(noHeaders, writer)
+	for _, cell := range response.GetCells() {
+		printTableCell(cell, writer)
+	}
+	err = writer.Flush()
+	if err != nil {
+		return err
+	}
 
-	for k, v := range response.GetObject().GetAttributes() {
-		if _, ok := nMap[strings.Split(k, ":")[0]]; !ok {
-			nMap[strings.Split(k, ":")[0]] = v
-		} else {
-			nMap[strings.Split(k, ":")[0]] = fmt.Sprintf("%s,%s", nMap[strings.Split(k, ":")[0]], v)
+	return nil
+}
+
+func printTableHeader(noHeaders bool, writer *tabwriter.Writer) {
+	if !noHeaders {
+		_, _ = fmt.Fprintf(writer, "ID\tNode ID\tDlearfcn\tCell Type\tPCI\tPCI Pool\n")
+	}
+}
+
+func printTableCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
+	_, _ = fmt.Fprintf(writer, "%x\t%s\t%d\t%s\t%d\t", cell.Id, cell.NodeId, cell.Dlearfcn, cell.CellType.String(), cell.Pci)
+
+	// print pci pools
+	_, _ = fmt.Fprint(writer, "[")
+	for i, minMax := range cell.PciPool {
+		_, _ = fmt.Fprintf(writer, "%d:%d", minMax.Min, minMax.Max)
+		if i != len(cell.PciPool)-1 {
+			_, _ = fmt.Fprint(writer, ",")
 		}
 	}
-
-	for k, v := range nMap {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\n", k, v)
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, _ = fmt.Fprint(writer, "]\n")
 }
 
-func runListNeighborsAll(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+func printSingleCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
+	_, _ = fmt.Fprintf(writer, "ID: %x\nNode ID: %s\nDlearfcn: %d\nCell Type: %s\nPCI: %d\n", cell.Id, cell.NodeId, cell.Dlearfcn, cell.CellType.String(), cell.Pci)
 
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tNeighbors\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: "pci",
-	}
-
-	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetNeighborsAll(context.Background(), &request)
-
-	if err != nil {
-		return err
-	}
-
-	nMap := make(map[string]string)
-
-	for k, v := range response.GetObject().GetAttributes() {
-		if _, ok := nMap[strings.Split(k, ":")[0]]; !ok {
-			nMap[strings.Split(k, ":")[0]] = v
-		} else {
-			nMap[strings.Split(k, ":")[0]] = fmt.Sprintf("%s,%s", nMap[strings.Split(k, ":")[0]], v)
+	// print neighbors
+	_, _ = fmt.Fprint(writer, "Neighbors: [")
+	for i, neighbor := range cell.NeighborIds {
+		_, _ = fmt.Fprintf(writer, "%x", neighbor)
+		if i != len(cell.NeighborIds)-1 {
+			_, _ = fmt.Fprint(writer, ",")
 		}
 	}
+	_, _ = fmt.Fprint(writer, "]\n")
 
-	for k, v := range nMap {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\n", k, v)
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func runListMetric(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: args[0],
-	}
-
-	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetMetric(context.Background(), &request)
-
-	if err != nil {
-		return err
-	}
-
-	keys := make(map[string]bool)
-	pcis := make(map[string]string)
-	dlearfcns := make(map[string]string)
-	cellsizes := make(map[string]string)
-
-	for k, v := range response.GetObject().GetAttributes() {
-		keys[strings.Split(k, ":")[0]] = true
-		if strings.Split(k, ":")[1] == "PCI" {
-			pcis[strings.Split(k, ":")[0]] = v
-		} else if strings.Split(k, ":")[1] == "DlEarfcn" {
-			dlearfcns[strings.Split(k, ":")[0]] = v
-		} else if strings.Split(k, ":")[1] == "CellSize" {
-			cellsizes[strings.Split(k, ":")[0]] = v
+	// print pci pools
+	_, _ = fmt.Fprint(writer, "PCI Pool: [")
+	for i, minMax := range cell.PciPool {
+		_, _ = fmt.Fprintf(writer, "%d:%d", minMax.Min, minMax.Max)
+		if i != len(cell.PciPool)-1 {
+			_, _ = fmt.Fprint(writer, ",")
 		}
 	}
+	_, _ = fmt.Fprint(writer, "]\n")
 
-	for k := range keys {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\n", k, pcis[k], dlearfcns[k], cellsizes[k])
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func runListMetricAll(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\tDlEarfcn\tCellSize\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: "pci",
-	}
-
-	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetMetricAll(context.Background(), &request)
-
-	if err != nil {
-		return err
-	}
-
-	keys := make(map[string]bool)
-	pcis := make(map[string]string)
-	dlearfcns := make(map[string]string)
-	cellsizes := make(map[string]string)
-
-	for k, v := range response.GetObject().GetAttributes() {
-		keys[strings.Split(k, ":")[0]] = true
-		if strings.Split(k, ":")[1] == "PCI" {
-			pcis[strings.Split(k, ":")[0]] = v
-		} else if strings.Split(k, ":")[1] == "DlEarfcn" {
-			dlearfcns[strings.Split(k, ":")[0]] = v
-		} else if strings.Split(k, ":")[1] == "CellSize" {
-			cellsizes[strings.Split(k, ":")[0]] = v
-		}
-	}
-
-	for k := range keys {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\n", k, pcis[k], dlearfcns[k], cellsizes[k])
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func runListPci(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: args[0],
-	}
-
-	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetPci(context.Background(), &request)
-
-	if err != nil {
-		return err
-	}
-
-	for k, v := range response.GetObject().GetAttributes() {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\n", k, v)
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func runListPciAll(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tPCI\n")
-	}
-
-	request := pciapi.GetRequest{
-		Id: "pci",
-	}
-
-	client := pciapi.NewPciClient(conn)
-
-	response, err := client.GetPciAll(context.Background(), &request)
-
-	if err != nil {
-		return err
-	}
-
-	for k, v := range response.GetObject().GetAttributes() {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\n", k, v)
-	}
-
-	err = writer.Flush()
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
