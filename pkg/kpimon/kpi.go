@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -153,7 +154,12 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 			ids := strings.Split(keyID, ":")
 			nodeID, cellID := ids[0], ids[1]
-			resultLine := fmt.Sprintf("%s\t%s\t%s", nodeID, cellID, tsFormat)
+			// parse string to int in order to print as hex
+			cellNum, err := strconv.Atoi(cellID)
+			if err != nil {
+				return err
+			}
+			resultLine := fmt.Sprintf("%s\t%s\t%s", nodeID, fmt.Sprintf("%x", cellNum), tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
 				var tmpValue string
