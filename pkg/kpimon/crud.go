@@ -25,6 +25,15 @@ func getListCommand() *cobra.Command {
 	return cmd
 }
 
+func getWatchCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "watch {metrics} [args]",
+		Short: "Watch KPIMON resources",
+	}
+	cmd.AddCommand(getWatchMetricsCommand())
+	return cmd
+}
+
 func getSetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set {report_interval} [args]",
