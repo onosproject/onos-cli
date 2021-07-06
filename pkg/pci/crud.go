@@ -18,10 +18,11 @@ import "github.com/spf13/cobra"
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {conflicts/cell/cells}",
+		Use:   "get {conflicts/resolved/cell/cells}",
 		Short: "Get PCI resources",
 	}
 	cmd.AddCommand(getGetConflicts())
+	cmd.AddCommand(getGetResolvedConflicts())
 	cmd.AddCommand(getGetCell())
 	cmd.AddCommand(getGetCells())
 	return cmd
