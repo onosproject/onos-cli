@@ -38,6 +38,17 @@ func getGetConflicts() *cobra.Command {
 	return cmd
 }
 
+func getGetResolvedConflicts() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "resolved",
+		Short: "Get the number of resolutions and most recent resolution for all cells",
+		RunE:  runGetResolvedConflicts,
+		Args:  cobra.NoArgs,
+	}
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	return cmd
+}
+
 func getGetCell() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "cell <id>",
@@ -72,7 +83,7 @@ func runGetConflicts(cmd *cobra.Command, args []string) error {
 
 	request := pciapi.GetConflictsRequest{}
 	if len(args) != 0 {
-		id, err := strconv.ParseUint(args[0], 10, 64)
+		id, err := strconv.ParseUint(args[0], 16, 64)
 		if err != nil {
 			return err
 		}
@@ -87,7 +98,36 @@ func runGetConflicts(cmd *cobra.Command, args []string) error {
 	printTableHeader(noHeaders, writer)
 	for _, cell := range response.GetCells() {
 		printTableCell(cell, writer)
-		// _, _ = fmt.Fprintf(writer, "%x\t%v\n", cell.Id, cell)
+	}
+	err = writer.Flush()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func runGetResolvedConflicts(cmd *cobra.Command, args []string) error {
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	outputWriter := cli.GetOutput()
+	writer := new(tabwriter.Writer)
+	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	request := pciapi.GetResolvedConflictsRequest{}
+	client := pciapi.NewPciClient(conn)
+	response, err := client.GetResolvedConflicts(context.Background(), &request)
+	if err != nil {
+		return err
+	}
+
+	printResolvedHeader(noHeaders, writer)
+	for _, cell := range response.GetCells() {
+		printResolvedCell(cell, writer)
 	}
 	err = writer.Flush()
 	if err != nil {
@@ -181,6 +221,16 @@ func printTableCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
 	_, _ = fmt.Fprint(writer, "]\n")
 }
 
+func printResolvedHeader(noHeaders bool, writer *tabwriter.Writer) {
+	if !noHeaders {
+		_, _ = fmt.Fprintf(writer, "ID\tTotal Resolved Conflicts\tMost Recent Resolution\n")
+	}
+}
+
+func printResolvedCell(cell *pciapi.CellResolution, writer *tabwriter.Writer) {
+	_, _ = fmt.Fprintf(writer, "%x\t%d\t%d=>%d\n", cell.Id, cell.ResolvedConflicts, cell.OriginalPci, cell.ResolvedPci)
+}
+
 func printSingleCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
 	_, _ = fmt.Fprintf(writer, "ID: %x\nNode ID: %s\nDlearfcn: %d\nCell Type: %s\nPCI: %d\n", cell.Id, cell.NodeId, cell.Dlearfcn, cell.CellType.String(), cell.Pci)
 
@@ -203,5 +253,4 @@ func printSingleCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
 		}
 	}
 	_, _ = fmt.Fprint(writer, "]\n")
-
 }
