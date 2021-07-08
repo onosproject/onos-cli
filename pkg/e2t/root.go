@@ -46,11 +46,7 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(cli.GetConfigCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	cmd.AddCommand(getGetCommand())
-
-	// TODO: Remove: deprecated
-	//cmd.AddCommand(getAddCommand())
-	//cmd.AddCommand(getRemoveCommand())
-	//cmd.AddCommand(getWatchCommand())
+	cmd.AddCommand(getWatchCommand())
 	return cmd
 }
 
@@ -67,34 +63,12 @@ func getGetCommand() *cobra.Command {
 	return cmd
 }
 
-// TODO: Remove: deprecated
-/*
-func getAddCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "add {subscription} [args]",
-		Short: "Add command",
-	}
-
-	cmd.AddCommand(getAddSubscriptionCommand())
-	return cmd
-}
-
-func getRemoveCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "remove {subscription} [args]",
-		Short: "Remove command",
-	}
-
-	cmd.AddCommand(getRemoveSubscriptionCommand())
-	return cmd
-}
-
 func getWatchCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "watch {indications} [args]",
-		Short: "Watch E2T resources",
+		Use:   "watch {subscriptions} [args]",
+		Short: "Watch command",
 	}
-	cmd.AddCommand(getWatchIndicationsCommand())
+
+	cmd.AddCommand(getWatchSubscriptionsCommand())
 	return cmd
 }
-*/
