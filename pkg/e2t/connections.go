@@ -28,17 +28,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getListConnectionsCommand() *cobra.Command {
+func getGetConnectionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "connections",
 		Short: "Get SB connections",
-		RunE:  runListConnectionsCommand,
+		RunE:  runGetConnectionsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
-func runListConnectionsCommand(cmd *cobra.Command, args []string) error {
+func runGetConnectionsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {

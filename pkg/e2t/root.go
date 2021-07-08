@@ -38,17 +38,58 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "e2t {get} [args]",
+		Use:   "e2t {get,add,remove,watch} [args]",
 		Short: "ONOS e2t subsystem commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(cli.GetConfigCommand())
-	cmd.AddCommand(getListCommand())
-	cmd.AddCommand(getAddSubscriptionCommand())
-	cmd.AddCommand(getRemoveSubscriptionCommand())
-	cmd.AddCommand(getGetSubscriptionCommand())
+	cmd.AddCommand(getGetCommand())
+	cmd.AddCommand(getAddCommand())
+	cmd.AddCommand(getRemoveCommand())
 	cmd.AddCommand(getWatchCommand())
 	cmd.AddCommand(loglib.GetCommand())
+	return cmd
+}
+
+func getGetCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "get {connections,subscriptions,subscription} [args]",
+		Short:   "Get command",
+		Aliases: []string{"list"},
+	}
+
+	cmd.AddCommand(getGetConnectionsCommand())
+	cmd.AddCommand(getGetSubscriptionsCommand())
+	cmd.AddCommand(getGetSubscriptionCommand())
+	return cmd
+}
+
+func getAddCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add {subscription} [args]",
+		Short: "Add command",
+	}
+
+	cmd.AddCommand(getAddSubscriptionCommand())
+	return cmd
+}
+
+func getRemoveCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove {subscription} [args]",
+		Short: "Remove command",
+	}
+
+	cmd.AddCommand(getRemoveSubscriptionCommand())
+	return cmd
+}
+
+func getWatchCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "watch {indications} [args]",
+		Short: "Watch E2T resources",
+	}
+	cmd.AddCommand(getWatchIndicationsCommand())
 	return cmd
 }
