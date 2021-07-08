@@ -58,6 +58,8 @@ func getGetCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(getGetConnectionsCommand())
+	cmd.AddCommand(getGetChannelsCommand())
+	cmd.AddCommand(getGetChannelCommand())
 	cmd.AddCommand(getGetSubscriptionsCommand())
 	cmd.AddCommand(getGetSubscriptionCommand())
 	return cmd
@@ -70,5 +72,6 @@ func getWatchCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(getWatchSubscriptionsCommand())
+	cmd.AddCommand(getWatchChannelsCommand())
 	return cmd
 }
