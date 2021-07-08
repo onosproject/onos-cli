@@ -44,11 +44,13 @@ func GetCommand() *cobra.Command {
 
 	cli.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(cli.GetConfigCommand())
-	cmd.AddCommand(getGetCommand())
-	cmd.AddCommand(getAddCommand())
-	cmd.AddCommand(getRemoveCommand())
-	cmd.AddCommand(getWatchCommand())
 	cmd.AddCommand(loglib.GetCommand())
+	cmd.AddCommand(getGetCommand())
+
+	// TODO: Remove: deprecated
+	//cmd.AddCommand(getAddCommand())
+	//cmd.AddCommand(getRemoveCommand())
+	//cmd.AddCommand(getWatchCommand())
 	return cmd
 }
 
@@ -65,6 +67,8 @@ func getGetCommand() *cobra.Command {
 	return cmd
 }
 
+// TODO: Remove: deprecated
+/*
 func getAddCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add {subscription} [args]",
@@ -93,3 +97,4 @@ func getWatchCommand() *cobra.Command {
 	cmd.AddCommand(getWatchIndicationsCommand())
 	return cmd
 }
+*/

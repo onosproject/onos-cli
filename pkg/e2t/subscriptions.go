@@ -16,7 +16,6 @@ package e2t
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/onosproject/onos-cli/pkg/utils"
 	"io"
@@ -53,44 +52,6 @@ func getGetSubscriptionsCommand() *cobra.Command {
 	return cmd
 }
 
-func getAddSubscriptionCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "subscription",
-		Short: "Get subscription",
-		RunE:  runAddSubscriptionCommand,
-	}
-	cmd.Flags().String("ID", "", "Identifier")
-	cmd.Flags().String("appID", "", "Application Identifier")
-	cmd.Flags().String("appInstanceID", "", "Application Identifier")
-	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
-	cmd.Flags().String("smID", "", "Identifier of the service model")
-	cmd.Flags().String("smVer", "", "Version of the service model")
-	return cmd
-}
-
-func getRemoveSubscriptionCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "subscription",
-		Short: "Remove subscription",
-		RunE:  runRemoveSubscriptionCommand,
-	}
-	cmd.Flags().String("transactionID", "", "Identifier")
-	cmd.Flags().String("appID", "", "Application Identifier")
-	cmd.Flags().String("appInstanceID", "", "Application Identifier")
-	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
-	return cmd
-}
-
-func getGetSubscriptionCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "subscription",
-		Short: "Get subscription",
-		Args:  cobra.ExactArgs(1),
-		RunE:  runGetSubscriptionCommand,
-	}
-	return cmd
-}
-
 func runGetSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
@@ -122,6 +83,78 @@ func runGetSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 
 	_ = writer.Flush()
 	return nil
+}
+
+func getGetSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Get subscription",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runGetSubscriptionCommand,
+	}
+	return cmd
+}
+
+func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	outputWriter := cli.GetOutput()
+	writer := new(tabwriter.Writer)
+	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
+
+	client := subapi.NewSubscriptionAdminServiceClient(conn)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	response, err := client.GetSubscription(ctx, &subapi.GetSubscriptionRequest{
+		SubscriptionID: subapi.SubscriptionID(args[0]),
+	})
+	if err != nil {
+		return err
+	}
+
+	if !noHeaders {
+		displaySubscriptionHeaders(writer)
+	}
+
+	displaySubscription(writer, &response.Subscription)
+
+	_ = writer.Flush()
+	return nil
+}
+
+// TODO: Remove: deprecated
+/*
+func getAddSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Get subscription",
+		RunE:  runAddSubscriptionCommand,
+	}
+	cmd.Flags().String("ID", "", "Identifier")
+	cmd.Flags().String("appID", "", "Application Identifier")
+	cmd.Flags().String("appInstanceID", "", "Application Identifier")
+	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
+	cmd.Flags().String("smID", "", "Identifier of the service model")
+	cmd.Flags().String("smVer", "", "Version of the service model")
+	return cmd
+}
+
+func getRemoveSubscriptionCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "subscription",
+		Short: "Remove subscription",
+		RunE:  runRemoveSubscriptionCommand,
+	}
+	cmd.Flags().String("transactionID", "", "Identifier")
+	cmd.Flags().String("appID", "", "Application Identifier")
+	cmd.Flags().String("appInstanceID", "", "Application Identifier")
+	cmd.Flags().String("e2NodeID", "", "Identifier of the E2 node")
+	return cmd
 }
 
 func runAddSubscriptionCommand(cmd *cobra.Command, args []string) error {
@@ -230,35 +263,4 @@ func runRemoveSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	//
 	//return err
 }
-
-func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
-	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	conn, err := cli.GetConnection(cmd)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	outputWriter := cli.GetOutput()
-	writer := new(tabwriter.Writer)
-	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-
-	client := subapi.NewSubscriptionAdminServiceClient(conn)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	response, err := client.GetSubscription(ctx, &subapi.GetSubscriptionRequest{
-		SubscriptionID: subapi.SubscriptionID(args[0]),
-	})
-	if err != nil {
-		return err
-	}
-
-	if !noHeaders {
-		displaySubscriptionHeaders(writer)
-	}
-
-	displaySubscription(writer, &response.Subscription)
-
-	_ = writer.Flush()
-	return nil
-}
+*/
