@@ -29,31 +29,31 @@ import (
 )
 
 const (
-	subscriptionHeaders = "Subscription ID\tRevision\tService Model ID\tE2 NodeID\tEncoding\tPhase\tState"
-	subscriptionFormat  = "%s\t%d\t%s:%s\t%s\t%s\t%s\t%s\n"
+	channelHeaders = "Channel ID\tRevision\tService Model ID\tE2 NodeID\tEncoding\tPhase\tState"
+	channelFormat  = "%s\t%d\t%s:%s\t%s\t%s\t%s\t%s\n"
 )
 
-func displaySubscriptionHeaders(writer io.Writer) {
-	_, _ = fmt.Fprintln(writer, subscriptionHeaders)
+func displayChannelHeaders(writer io.Writer) {
+	_, _ = fmt.Fprintln(writer, channelHeaders)
 }
 
-func displaySubscription(writer io.Writer, sub *subapi.Subscription) {
-	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version, utils.None(string(sub.SubscriptionMeta.E2NodeID)),
-		utils.None(sub.SubscriptionMeta.Encoding.String()), utils.None(sub.Status.Phase.String()), utils.None(sub.Status.State.String()))
+func displayChannel(writer io.Writer, sub *subapi.Channel) {
+	_, _ = fmt.Fprintf(writer, channelFormat,
+		sub.ID, sub.Revision, sub.ChannelMeta.ServiceModel.Name, sub.ChannelMeta.ServiceModel.Version, utils.None(string(sub.ChannelMeta.E2NodeID)),
+		utils.None(sub.ChannelMeta.Encoding.String()), utils.None(sub.Status.Phase.String()), utils.None(sub.Status.State.String()))
 }
 
-func getGetSubscriptionsCommand() *cobra.Command {
+func getGetChannelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "subscriptions",
-		Short: "Get SB subscriptions",
-		RunE:  runGetSubscriptionsCommand,
+		Use:   "channels",
+		Short: "Get NB channels",
+		RunE:  runGetChannelsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
-func runGetSubscriptionsCommand(cmd *cobra.Command, args []string) error {
+func runGetChannelsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -68,35 +68,35 @@ func runGetSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	response, err := client.ListSubscriptions(ctx, &subapi.ListSubscriptionsRequest{})
+	response, err := client.ListChannels(ctx, &subapi.ListChannelsRequest{})
 	if err != nil {
 		return err
 	}
 
 	if !noHeaders {
-		displaySubscriptionHeaders(writer)
+		displayChannelHeaders(writer)
 	}
 
-	for _, sub := range response.Subscriptions {
+	for _, sub := range response.Channels {
 		pin := sub
-		displaySubscription(writer, &pin)
+		displayChannel(writer, &pin)
 	}
 
 	_ = writer.Flush()
 	return nil
 }
 
-func getGetSubscriptionCommand() *cobra.Command {
+func getGetChannelCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "subscription",
-		Short: "Get SB subscription",
+		Use:   "channel",
+		Short: "Get NB channel",
 		Args:  cobra.ExactArgs(1),
-		RunE:  runGetSubscriptionCommand,
+		RunE:  runGetChannelCommand,
 	}
 	return cmd
 }
 
-func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
+func runGetChannelCommand(cmd *cobra.Command, args []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -110,36 +110,36 @@ func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	response, err := client.GetSubscription(ctx, &subapi.GetSubscriptionRequest{
-		SubscriptionID: subapi.SubscriptionID(args[0]),
+	response, err := client.GetChannel(ctx, &subapi.GetChannelRequest{
+		ChannelID: subapi.ChannelID(args[0]),
 	})
 	if err != nil {
 		return err
 	}
 
-	sub := response.Subscription
-	_, _ = fmt.Fprintf(writer, "Subscription ID:\t%s\nRevision:\t%d\nService Model:\t%s\nService Model Version:\t%s\n",
-		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version)
+	chn := response.Channel
+	_, _ = fmt.Fprintf(writer, "Channel ID:\t%s\nRevision:\t%d\nService Model:\t%s\nService Model Version:\t%s\n",
+		chn.ID, chn.Revision, chn.ChannelMeta.ServiceModel.Name, chn.ChannelMeta.ServiceModel.Version)
 	_, _ = fmt.Fprintf(writer, "E2 Node ID:\t%s\nEncoding:\t%s",
-		utils.None(string(sub.SubscriptionMeta.E2NodeID)), utils.None(sub.SubscriptionMeta.Encoding.String()))
-	_, _ = fmt.Fprintf(writer, "Phase:\t%s\nStatus:\t%s\n", utils.None(sub.Status.Phase.String()), utils.None(sub.Status.State.String()))
-	_, _ = fmt.Fprintf(writer, "Actions:\t%v\nTrigger:\t%v\n", sub.Spec.Actions, sub.Spec.EventTrigger)
+		utils.None(string(chn.ChannelMeta.E2NodeID)), utils.None(chn.ChannelMeta.Encoding.String()))
+	_, _ = fmt.Fprintf(writer, "Phase:\t%s\nStatus:\t%s\n", utils.None(chn.Status.Phase.String()), utils.None(chn.Status.State.String()))
+	_, _ = fmt.Fprintf(writer, "Actions:\t%v\nTrigger:\t%v\n", chn.Spec.Actions, chn.Spec.EventTrigger)
 	_ = writer.Flush()
 	return nil
 }
 
-func getWatchSubscriptionsCommand() *cobra.Command {
+func getWatchChannelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "subscriptions",
-		Short: "Watch SB subscriptions",
-		RunE:  runWatchSubscriptionsCommand,
+		Use:   "channels",
+		Short: "Watch NB channels",
+		RunE:  runWatchChannelsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().Bool("no-replay", false, "disables replay of existing state")
 	return cmd
 }
 
-func runWatchSubscriptionsCommand(cmd *cobra.Command, args []string) error {
+func runWatchChannelsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noReplay, _ := cmd.Flags().GetBool("no-replay")
 	conn, err := cli.GetConnection(cmd)
@@ -155,7 +155,7 @@ func runWatchSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	stream, err := client.WatchSubscriptions(ctx, &subapi.WatchSubscriptionsRequest{
+	stream, err := client.WatchChannels(ctx, &subapi.WatchChannelsRequest{
 		NoReplay: noReplay,
 	})
 	if err != nil {
@@ -164,7 +164,7 @@ func runWatchSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 
 	if !noHeaders {
 		_, _ = fmt.Fprintf(writer, "Event Type\t")
-		displaySubscriptionHeaders(writer)
+		displayChannelHeaders(writer)
 		_ = writer.Flush()
 	}
 
@@ -180,7 +180,7 @@ func runWatchSubscriptionsCommand(cmd *cobra.Command, args []string) error {
 
 		event := res.Event
 		_, _ = fmt.Fprintf(writer, "%s\t", strings.Replace(event.Type.String(), "SUBSCRIPTION_", "", 1))
-		displaySubscription(writer, &event.Subscription)
+		displayChannel(writer, &event.Channel)
 		_ = writer.Flush()
 	}
 
