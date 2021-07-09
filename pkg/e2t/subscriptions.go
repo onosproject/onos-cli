@@ -120,7 +120,7 @@ func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	sub := response.Subscription
 	_, _ = fmt.Fprintf(writer, "Subscription ID:\t%s\nRevision:\t%d\nService Model:\t%s\nService Model Version:\t%s\n",
 		sub.ID, sub.Revision, sub.SubscriptionMeta.ServiceModel.Name, sub.SubscriptionMeta.ServiceModel.Version)
-	_, _ = fmt.Fprintf(writer, "E2 Node ID:\t%s\nEncoding:\t%s",
+	_, _ = fmt.Fprintf(writer, "E2 Node ID:\t%s\nEncoding:\t%s\n",
 		utils.None(string(sub.SubscriptionMeta.E2NodeID)), utils.None(sub.SubscriptionMeta.Encoding.String()))
 	_, _ = fmt.Fprintf(writer, "Phase:\t%s\nStatus:\t%s\n", utils.None(sub.Status.Phase.String()), utils.None(sub.Status.State.String()))
 	_, _ = fmt.Fprintf(writer, "Actions:\t%v\nTrigger:\t%v\n", sub.Spec.Actions, sub.Spec.EventTrigger)
