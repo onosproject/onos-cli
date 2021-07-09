@@ -120,7 +120,7 @@ func runGetChannelCommand(cmd *cobra.Command, args []string) error {
 	chn := response.Channel
 	_, _ = fmt.Fprintf(writer, "Channel ID:\t%s\nRevision:\t%d\nService Model:\t%s\nService Model Version:\t%s\n",
 		chn.ID, chn.Revision, chn.ChannelMeta.ServiceModel.Name, chn.ChannelMeta.ServiceModel.Version)
-	_, _ = fmt.Fprintf(writer, "E2 Node ID:\t%s\nEncoding:\t%s",
+	_, _ = fmt.Fprintf(writer, "E2 Node ID:\t%s\nEncoding:\t%s\n",
 		utils.None(string(chn.ChannelMeta.E2NodeID)), utils.None(chn.ChannelMeta.Encoding.String()))
 	_, _ = fmt.Fprintf(writer, "Phase:\t%s\nStatus:\t%s\n", utils.None(chn.Status.Phase.String()), utils.None(chn.Status.State.String()))
 	_, _ = fmt.Fprintf(writer, "Actions:\t%v\nTrigger:\t%v\n", chn.Spec.Actions, chn.Spec.EventTrigger)
