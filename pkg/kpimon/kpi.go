@@ -33,10 +33,10 @@ import (
 )
 
 const (
-	nodeIDHeader = "Node ID"
-	cellObjIDHeader = "Cell Object ID"
+	nodeIDHeader       = "Node ID"
+	cellObjIDHeader    = "Cell Object ID"
 	cellGlobalIDHeader = "Cell Global ID"
-	timeHeader = "Time"
+	timeHeader         = "Time"
 )
 
 func getListMetricsCommand() *cobra.Command {
