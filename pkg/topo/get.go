@@ -18,10 +18,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/onosproject/onos-cli/pkg/utils"
 	"io"
 	"text/tabwriter"
 	"time"
+
+	"github.com/onosproject/onos-cli/pkg/utils"
 
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
@@ -44,6 +45,7 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
+	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	return cmd
 }
 
@@ -59,6 +61,7 @@ func getGetRelationCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
+	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	return cmd
 }
 
@@ -73,6 +76,7 @@ func getGetKindCommand() *cobra.Command {
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("label", "", "label query")
+	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	return cmd
 }
 
@@ -103,7 +107,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, v
 				RelationKind: via,
 				TargetKind:   tgt,
 			},
-		})
+		}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
 				printObject(writer, object, verbose)
@@ -126,6 +130,15 @@ func runGetKindCommand(cmd *cobra.Command, args []string) error {
 func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
+	sortString, _ := cmd.Flags().GetString("sort-order")
+	sortOrder := topoapi.SortOrder_UNORDERED
+	if sortString == "ascending" {
+		sortOrder = topoapi.SortOrder_ASCENDING
+	} else if sortString == "descending" {
+		sortOrder = topoapi.SortOrder_DESCENDING
+	} else if sortString == "unordered" {
+		sortOrder = topoapi.SortOrder_UNORDERED
+	}
 
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
@@ -137,7 +150,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 			printHeader(writer, objectType, verbose, false)
 		}
 
-		objects, err := listObjects(cmd, filters)
+		objects, err := listObjects(cmd, filters, sortOrder)
 		if err == nil {
 			for _, object := range objects {
 				printObject(writer, object, verbose)
@@ -158,7 +171,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	return nil
 }
 
-func listObjects(cmd *cobra.Command, filters *topoapi.Filters) ([]topoapi.Object, error) {
+func listObjects(cmd *cobra.Command, filters *topoapi.Filters, order topoapi.SortOrder) ([]topoapi.Object, error) {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return nil, err
@@ -167,7 +180,7 @@ func listObjects(cmd *cobra.Command, filters *topoapi.Filters) ([]topoapi.Object
 
 	client := topoapi.CreateTopoClient(conn)
 
-	resp, err := client.List(context.Background(), &topoapi.ListRequest{Filters: filters})
+	resp, err := client.List(context.Background(), &topoapi.ListRequest{Filters: filters, SortOrder: order})
 	if err != nil {
 		return nil, err
 	}
