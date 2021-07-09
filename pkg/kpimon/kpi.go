@@ -32,6 +32,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	nodeIDHeader       = "Node ID"
+	cellObjIDHeader    = "Cell Object ID"
+	cellGlobalIDHeader = "Cell Global ID"
+	timeHeader         = "Time"
+)
+
 func getListMetricsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "metrics",
@@ -132,11 +139,13 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	}
 	sort.Strings(types)
 
-	header := "Node ID\tCell ID\tTime"
+	header := fmt.Sprintf("%-10s %20s %20s %15s", nodeIDHeader, cellObjIDHeader, cellGlobalIDHeader, timeHeader)
+	//header := fmt.Sprintf("%-10s %20s %20s", "Node ID", "Cell Object ID", "Time")
 
 	for _, key := range types {
 		tmpHeader := header
-		header = fmt.Sprintf("%s\t%s", tmpHeader, key)
+		header = fmt.Sprintf(fmt.Sprintf("%%s %%%ds", len(key)+3), tmpHeader, key)
+		//header = fmt.Sprintf("%s %25s", tmpHeader, key)
 	}
 
 	if !noHeaders {
@@ -164,13 +173,14 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 			tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
 
 			ids := strings.Split(keyID, ":")
-			nodeID, cellID := ids[0], ids[1]
+			nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
 			// parse string to int in order to print as hex
 			cellNum, err := strconv.Atoi(cellID)
 			if err != nil {
 				return err
 			}
-			resultLine := fmt.Sprintf("%s\t%s\t%s", nodeID, fmt.Sprintf("%x", cellNum), tsFormat)
+			resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, fmt.Sprintf("%x", cellNum), cellGlobalID, tsFormat)
+			//resultLine := fmt.Sprintf("%-10s %20s %20s", nodeID, fmt.Sprintf("%x", cellNum), tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
 				var tmpValue string
@@ -179,14 +189,12 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 				} else {
 					tmpValue = metrics[timeStamp][typeValue]
 				}
-				resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+				resultLine = fmt.Sprintf(fmt.Sprintf("%%s %%%ds", len(typeValue)+3), tmpResultLine, tmpValue)
 			}
 			_, _ = fmt.Fprintln(writer, resultLine)
 		}
+		_ = writer.Flush()
 	}
-
-	_ = writer.Flush()
-
 	return nil
 }
 
@@ -288,11 +296,11 @@ func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
 
 		if !headerPrinted {
 
-			header := "Node ID\tCell ID\tTime"
+			header := fmt.Sprintf("%-10s %20s %20s %15s", nodeIDHeader, cellObjIDHeader, cellGlobalIDHeader, timeHeader)
 
 			for _, key := range types {
 				tmpHeader := header
-				header = fmt.Sprintf("%s\t%s", tmpHeader, key)
+				header = fmt.Sprintf(fmt.Sprintf("%%s %%%ds", len(key)+3), tmpHeader, key)
 			}
 
 			if !noHeaders {
@@ -324,8 +332,12 @@ func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
 				tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
 
 				ids := strings.Split(keyID, ":")
-				nodeID, cellID := ids[0], ids[1]
-				resultLine := fmt.Sprintf("%s\t%s\t%s", nodeID, cellID, tsFormat)
+				nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
+				cellNum, err := strconv.Atoi(cellID)
+				if err != nil {
+					return err
+				}
+				resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, fmt.Sprintf("%x", cellNum), cellGlobalID, tsFormat)
 
 				for _, typeValue := range types {
 					tmpResultLine := resultLine
@@ -336,15 +348,14 @@ func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
 					} else {
 						tmpValue = metrics[timeStamp][typeValue]
 					}
-					resultLine = fmt.Sprintf("%s\t%s", tmpResultLine, tmpValue)
+					resultLine = fmt.Sprintf(fmt.Sprintf("%%s %%%ds", len(typeValue)+3), tmpResultLine, tmpValue)
 				}
 				_, _ = fmt.Fprintln(writer, resultLine)
+
 			}
+			_ = writer.Flush()
 		}
 
-		_ = writer.Flush()
-
 	}
-
 	return nil
 }
