@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"sort"
-	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -174,12 +173,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 
 			ids := strings.Split(keyID, ":")
 			nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
-			// parse string to int in order to print as hex
-			cellNum, err := strconv.Atoi(cellID)
-			if err != nil {
-				return err
-			}
-			resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, fmt.Sprintf("%x", cellNum), cellGlobalID, tsFormat)
+			resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, cellID, cellGlobalID, tsFormat)
 			//resultLine := fmt.Sprintf("%-10s %20s %20s", nodeID, fmt.Sprintf("%x", cellNum), tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
@@ -333,11 +327,7 @@ func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
 
 				ids := strings.Split(keyID, ":")
 				nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
-				cellNum, err := strconv.Atoi(cellID)
-				if err != nil {
-					return err
-				}
-				resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, fmt.Sprintf("%x", cellNum), cellGlobalID, tsFormat)
+				resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, cellID, cellGlobalID, tsFormat)
 
 				for _, typeValue := range types {
 					tmpResultLine := resultLine
