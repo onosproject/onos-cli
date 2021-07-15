@@ -17,12 +17,13 @@ package uenib
 import (
 	"context"
 	"fmt"
-	"github.com/onosproject/onos-api/go/onos/uenib"
-	"github.com/onosproject/onos-lib-go/pkg/cli"
-	"github.com/spf13/cobra"
 	"io"
 	"os"
 	"time"
+
+	"github.com/onosproject/onos-api/go/onos/uenib"
+	"github.com/onosproject/onos-lib-go/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 func getGetCommand() *cobra.Command {
@@ -44,7 +45,6 @@ func getGetUECommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 
@@ -57,7 +57,6 @@ func getGetUEsCommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	_ = cmd.MarkFlagRequired("aspect")
 	return cmd
 }
 
