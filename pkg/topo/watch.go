@@ -134,7 +134,7 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 
 	writer := os.Stdout
 	if !noHeaders {
-		printHeader(writer, objectType, verbose, true)
+		printHeader(writer, objectType, true, verbose)
 	}
 
 	for {
@@ -151,8 +151,8 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		// TODO: Filtering for ID and object type is still client-side; labels and kinds are server-side now
 		if id == topoapi.NullID || id == event.Object.ID {
 			if event.Object.Type == topoapi.Object_UNSPECIFIED || objectType == event.Object.Type {
-				printUpdateType(writer, event.Type, event.Object.Type)
-				printObject(writer, event.Object, true)
+				printUpdateType(writer, event.Type, event.Object.Type, verbose)
+				printObject(writer, event.Object, verbose)
 			}
 		}
 	}
@@ -160,10 +160,20 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 	return nil
 }
 
-func printUpdateType(writer io.Writer, eventType topoapi.EventType, objectType topoapi.Object_Type) {
-	if eventType == topoapi.EventType_NONE {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", "REPLAY", objectType)
+func printUpdateType(writer io.Writer, eventType topoapi.EventType, objectType topoapi.Object_Type, verbose bool) {
+	if verbose {
+		if eventType == topoapi.EventType_NONE {
+			fmt.Fprintf(writer, "Update Type:\t%s\n", "REPLAY")
+		} else {
+			fmt.Fprintf(writer, "Update Type:\t%s\n", eventType)
+		}
+		fmt.Fprintf(writer, "Object Type:\t%s\n", objectType)
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", eventType, objectType)
+		if eventType == topoapi.EventType_NONE {
+			_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", "REPLAY", objectType)
+		} else {
+			_, _ = fmt.Fprintf(writer, "%-12s\t%-10s\t", eventType, objectType)
+		}
 	}
+
 }

@@ -17,11 +17,12 @@ package uenib
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+
 	"github.com/onosproject/onos-api/go/onos/uenib"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
-	"io"
-	"os"
 )
 
 func getWatchCommand() *cobra.Command {
@@ -110,7 +111,7 @@ func runWatchUEsCommand(cmd *cobra.Command, args []string) error {
 		// TODO: Filtering for ID is still client-side; we need to fix this
 		if id == uenib.NullID || id == event.UE.ID {
 			printUpdateType(writer, event.Type)
-			printUE(writer, event.UE)
+			printUE(writer, event.UE, false)
 		}
 	}
 

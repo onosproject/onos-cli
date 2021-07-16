@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/onosproject/onos-api/go/onos/uenib"
@@ -45,6 +46,7 @@ func getGetUECommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	return cmd
 }
 
@@ -57,12 +59,18 @@ func getGetUEsCommand() *cobra.Command {
 	}
 	cmd.Flags().StringSliceP("aspect", "a", []string{}, "UE aspects to get")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	return cmd
 }
 
 func runGetUECommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	aspectTypes, _ := cmd.Flags().GetStringSlice("aspect")
+	verbose, _ := cmd.Flags().GetBool("verbose")
+	// headers do not make sense when printing flat
+	if verbose {
+		noHeaders = true
+	}
 
 	writer := os.Stdout
 	if !noHeaders {
@@ -85,13 +93,18 @@ func runGetUECommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	printUE(writer, response.UE)
+	printUE(writer, response.UE, verbose)
 	return nil
 }
 
 func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	aspectTypes, _ := cmd.Flags().GetStringSlice("aspect")
+	verbose, _ := cmd.Flags().GetBool("verbose")
+	// headers do not make sense when printing flat
+	if verbose {
+		noHeaders = true
+	}
 
 	writer := os.Stdout
 	if !noHeaders {
@@ -122,7 +135,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 			cli.Output("Unable to read UE: %s", err)
 			return err
 		} else {
-			printUE(writer, resp.UE)
+			printUE(writer, resp.UE, verbose)
 		}
 	}
 
@@ -133,12 +146,23 @@ func printHeader(writer *os.File, replay bool) {
 	if replay {
 		_, _ = fmt.Fprintf(writer, "%-12s\t%-16s\t%-20s\t%s\n", "Event Type", "UE ID", "Aspect Type", "Aspect Value")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-20s\t%s\n", "UE ID", "Aspect Type", "Aspect Value")
+		_, _ = fmt.Fprintf(writer, "%-16s\t%-20s\n", "UE ID", "Aspect Types")
 	}
 }
 
-func printUE(writer io.Writer, ue uenib.UE) {
-	for aspectType, any := range ue.Aspects {
-		_, _ = fmt.Fprintf(writer, "%-16s\t%-20s\t%s\n", ue.ID, aspectType, string(any.Value))
+func printUE(writer io.Writer, ue uenib.UE, verbose bool) {
+	if !verbose {
+		_, _ = fmt.Fprintf(writer, "%-16s\t", ue.ID)
+		aspectTypes := make([]string, 0, len(ue.Aspects))
+		for k := range ue.Aspects {
+			aspectTypes = append(aspectTypes, k)
+		}
+		_, _ = fmt.Fprintf(writer, "%s\n", strings.Join(aspectTypes[:], ","))
+	} else {
+		_, _ = fmt.Fprintf(writer, "ID: %s\n", ue.ID)
+		_, _ = fmt.Fprintf(writer, "Aspects:\n")
+		for aspectType, any := range ue.Aspects {
+			_, _ = fmt.Fprintf(writer, "- %s=%s\n", aspectType, any.Value)
+		}
 	}
 }
