@@ -162,7 +162,7 @@ func printUE(writer io.Writer, ue uenib.UE, verbose bool) {
 		_, _ = fmt.Fprintf(writer, "ID: %s\n", ue.ID)
 		_, _ = fmt.Fprintf(writer, "Aspects:\n")
 		for aspectType, any := range ue.Aspects {
-			_, _ = fmt.Fprintf(writer, "- %s=%s\n", aspectType, any.TypeUrl)
+			_, _ = fmt.Fprintf(writer, "- %s=%s\n", aspectType, any.Value)
 		}
 	}
 }
