@@ -1,11 +1,11 @@
-FROM onosproject/golang-build:v0.6.7 AS build
+FROM onosproject/golang-build:v0.6.9 AS build
 ENV GO111MODULE=on
 RUN go get github.com/atomix/cli/cmd/atomix
 COPY . /go/src/github.com/onosproject/onos-cli
 RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
 
-FROM alpine:3.12
-RUN apk add bash bash-completion curl libc6-compat
+FROM alpine:3.14
+RUN apk add bash bash-completion curl libc6-compat gettext
 
 RUN addgroup -S onos && adduser -S -G onos onos --home /home/onos
 USER onos
