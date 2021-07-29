@@ -17,10 +17,11 @@ package cli
 import (
 	"bytes"
 	"errors"
-	"github.com/onosproject/onos-cli/pkg/config"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/onosproject/onos-cli/pkg/config"
 
 	"github.com/spf13/cobra"
 )
@@ -38,9 +39,10 @@ func getCompletionCommand() *cobra.Command {
 		Use:       "completion <shell>",
 		Short:     "Generated bash or zsh auto-completion script",
 		Args:      cobra.ExactArgs(1),
-		ValidArgs: []string{"bash", "zsh"},
+		ValidArgs: []string{"bash", "zsh", "fish"},
 		Example: `For bash run the following command from the shell: eval $(onos completion bash).
-For zsh run the following command from the shell: source <(onos completion zsh).`,
+For zsh run the following command from the shell: source <(onos completion zsh). 
+For fish run the following command from the shell: onos completion fish > ~/.config/fish/completions/onos.fish`,
 		Run: runCompletionCommand,
 	}
 }
@@ -52,6 +54,10 @@ func runCompletionCommand(cmd *cobra.Command, args []string) {
 		}
 	} else if args[0] == "zsh" {
 		if err := runCompletionZsh(os.Stdout, cmd.Parent()); err != nil {
+			ExitWithError(ExitError, err)
+		}
+	} else if args[0] == "fish" {
+		if err := runCompletionFish(os.Stdout, cmd.Parent()); err != nil {
 			ExitWithError(ExitError, err)
 		}
 
@@ -223,4 +229,8 @@ _complete onos 2>/dev/null
 		ExitWithError(ExitError, err)
 	}
 	return nil
+}
+
+func runCompletionFish(out io.Writer, cmd *cobra.Command) error {
+	return cmd.GenFishCompletion(out, true)
 }
