@@ -26,6 +26,7 @@ func getGetCommand() *cobra.Command {
 	cmd.AddCommand(getGetEntityCommand())
 	cmd.AddCommand(getGetRelationCommand())
 	cmd.AddCommand(getGetKindCommand())
+	cmd.AddCommand(getGetObjectsCommand())
 	return cmd
 }
 
