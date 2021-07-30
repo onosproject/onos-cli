@@ -152,7 +152,7 @@ func watch(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) er
 		if id == topoapi.NullID || id == event.Object.ID {
 			if event.Object.Type == topoapi.Object_UNSPECIFIED || objectType == event.Object.Type {
 				printUpdateType(writer, event.Type, event.Object.Type)
-				printObject(writer, event.Object, true)
+				printObject(writer, event.Object, true, false)
 			}
 		}
 	}
