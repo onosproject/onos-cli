@@ -176,6 +176,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	sortString, _ := cmd.Flags().GetString("sort-order")
+	// sort order selection
 	sortOrder := topoapi.SortOrder_UNORDERED
 	if sortString == "ascending" {
 		sortOrder = topoapi.SortOrder_ASCENDING
