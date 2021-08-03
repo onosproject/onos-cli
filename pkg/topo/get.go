@@ -297,14 +297,8 @@ func listAllObjectTypes(cmd *cobra.Command, args []string) error {
 		objects = append(objects, *object)
 	}
 
-	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s", "Object Type", "Object ID", "Kind ID", "Source ID", "Target ID", "Labels")
-
-		if !verbose {
-			_, _ = fmt.Fprintf(writer, "\tAspects\n")
-		} else {
-			_, _ = fmt.Fprintf(writer, "\n")
-		}
+	if !noHeaders && !verbose {
+		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "Object Type", "Object ID", "Kind ID", "Source ID", "Target ID", "Labels", "Aspects")
 	}
 	for _, object := range objects {
 		printObject(writer, object, verbose, true)
@@ -372,7 +366,11 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 	labels := utils.None(labelsAsCSV(object))
 
 	if printType {
-		_, _ = fmt.Fprintf(writer, "%s\t", object.Type)
+		if verbose {
+			_, _ = fmt.Fprintf(writer, "Object Type: %s\n", object.Type)
+		} else {
+			_, _ = fmt.Fprintf(writer, "%s\t", object.Type)
+		}
 	}
 
 	switch object.Type {
@@ -385,6 +383,26 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, kindID, labels)
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID: %s\nKind ID: %s\nLabels: %s\n", object.ID, kindID, labels)
+			if e := object.GetEntity(); e != nil {
+				_, _ = fmt.Fprintf(writer, "Source Id's: ")
+				for i, id := range e.SrcRelationIDs {
+					if i == 0 {
+						_, _ = fmt.Fprintf(writer, "%s", id)
+					} else {
+						_, _ = fmt.Fprintf(writer, ", %s", id)
+					}
+				}
+				_, _ = fmt.Fprintf(writer, "\n")
+				_, _ = fmt.Fprintf(writer, "Target Id's: ")
+				for i, id := range e.TgtRelationIDs {
+					if i == 0 {
+						_, _ = fmt.Fprintf(writer, "%s", id)
+					} else {
+						_, _ = fmt.Fprintf(writer, ", %s", id)
+					}
+				}
+				_, _ = fmt.Fprintf(writer, "\n")
+			}
 		}
 
 		printAspects(writer, object, verbose)
@@ -429,12 +447,12 @@ func labelsAsCSV(object topoapi.Object) string {
 
 func printAspects(writer io.Writer, object topoapi.Object, verbose bool) {
 	first := true
+	if verbose {
+		_, _ = fmt.Fprintf(writer, "Aspects:\n")
+	}
 	if object.Aspects != nil {
 		for aspectType, aspect := range object.Aspects {
 			if verbose {
-				if first {
-					_, _ = fmt.Fprintf(writer, "Aspects:\n")
-				}
 				_, _ = fmt.Fprintf(writer, "- %s=%s\n", aspectType, aspect.Value)
 			} else {
 				if !first {
