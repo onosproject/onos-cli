@@ -53,7 +53,7 @@ func runWipeoutCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	for _, object := range objects {
-		err = deleteObject(cmd, &object)
+		err = deleteObject(cmd, object)
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func runWipeoutCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func deleteObject(cmd *cobra.Command, object *topoapi.Object) error {
+func deleteObject(cmd *cobra.Command, object topoapi.Object) error {
 	id := object.ID
 
 	conn, err := cli.GetConnection(cmd)
@@ -75,7 +75,7 @@ func deleteObject(cmd *cobra.Command, object *topoapi.Object) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	_, err = client.Delete(ctx, &topoapi.DeleteRequest{ID: topoapi.ID(id)})
+	_, err = client.Delete(ctx, &topoapi.DeleteRequest{ID: id})
 	if err != nil {
 		return err
 	}
