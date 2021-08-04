@@ -41,8 +41,21 @@ func runWipeoutCommand(cmd *cobra.Command, args []string) error {
 		return errors.NewInvalid("Wipeout requires the string 'please'")
 	}
 
+	// delete relations first, to avoid an error where relations are already deleted
+
+	relations, err := listObjects(cmd, &topoapi.Filters{ObjectTypes: []topoapi.Object_Type{topoapi.Object_RELATION}}, topoapi.SortOrder_UNORDERED)
+	if err != nil {
+		return err
+	}
+	for _, relation := range relations {
+		err = deleteObject(cmd, relation)
+		if err != nil {
+			return err
+		}
+	}
+
 	filters := topoapi.Filters{
-		ObjectTypes: []topoapi.Object_Type{topoapi.Object_ENTITY, topoapi.Object_RELATION},
+		ObjectTypes: []topoapi.Object_Type{topoapi.Object_ENTITY},
 	}
 	if includeKinds {
 		filters.ObjectTypes = append(filters.ObjectTypes, topoapi.Object_KIND)
