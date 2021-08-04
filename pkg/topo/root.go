@@ -49,6 +49,7 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getAddCommand())
 	cmd.AddCommand(getUpdateCommand())
 	cmd.AddCommand(getDeleteCommand())
+	cmd.AddCommand(getWipeoutCommand())
 	cmd.AddCommand(getWatchCommand())
 	cmd.AddCommand(getLoadTopoCommand())
 	cmd.AddCommand(loglib.GetCommand())
