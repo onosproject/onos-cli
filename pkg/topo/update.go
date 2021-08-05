@@ -16,11 +16,12 @@ package topo
 
 import (
 	"context"
+	"time"
+
 	"github.com/gogo/protobuf/types"
 	topoapi "github.com/onosproject/onos-api/go/onos/topo"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 func getUpdateEntityCommand() *cobra.Command {
@@ -127,6 +128,9 @@ func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_T
 	if err == nil {
 		for aspectType, aspectValue := range aspects {
 			if len(aspectValue) > 0 && aspectValue != deleteKeyword {
+				if object.Aspects == nil {
+					object.Aspects = make(map[string]*types.Any)
+				}
 				object.Aspects[aspectType] = &types.Any{
 					TypeUrl: aspectType,
 					Value:   []byte(aspectValue),
