@@ -22,6 +22,7 @@ import (
 	"github.com/onosproject/onos-cli/pkg/e2sub"
 	"github.com/onosproject/onos-cli/pkg/e2t"
 	"github.com/onosproject/onos-cli/pkg/kpimon"
+	"github.com/onosproject/onos-cli/pkg/mho"
 	"github.com/onosproject/onos-cli/pkg/modelregistry"
 	"github.com/onosproject/onos-cli/pkg/pci"
 	"github.com/onosproject/onos-cli/pkg/topo"
@@ -73,6 +74,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
+	cmd.AddCommand(mho.GetCommand())
 	cmd.AddCommand(pci.GetCommand())
 	cmd.AddCommand(mlb.GetCommand())
 	cmd.AddCommand(modelregistry.GetCommand())
