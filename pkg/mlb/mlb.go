@@ -126,10 +126,10 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 	})
 	for _, k := range sortedOcnMap {
 		sCellIDs := strings.Split(k, ":")
-		sCellNodeID := sCellIDs[0]
-		sCellPlmnID := sCellIDs[1]
-		sCellCellID := sCellIDs[2]
-		sCellObjID := sCellIDs[3]
+		sCellNodeID := fmt.Sprintf("%s:%s", sCellIDs[0], sCellIDs[1])
+		sCellPlmnID := sCellIDs[2]
+		sCellCellID := sCellIDs[3]
+		sCellObjID := sCellIDs[4]
 		key := k // to avoide scopelint error
 		sortedInnerOcnMap := getIDListSortedByString(func() []string {
 			list := make([]string, 0)

@@ -98,7 +98,10 @@ func snapshotsCommand(cmd *cobra.Command, subscribe bool, args []string) error {
 	}
 
 	if !noHeaders {
-		cli.GetOutput().Write([]byte(snapshotHeader))
+		_, err := cli.GetOutput().Write([]byte(snapshotHeader))
+		if err != nil {
+			return err
+		}
 	}
 	for {
 		in, err := stream.Recv()

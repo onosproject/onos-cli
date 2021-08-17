@@ -103,7 +103,10 @@ func networkChangesCommand(cmd *cobra.Command, subscribe bool, args []string) er
 	}
 
 	if !noHeaders {
-		cli.GetOutput().Write([]byte(changeHeader))
+		_, err := cli.GetOutput().Write([]byte(changeHeader))
+		if err != nil {
+			return err
+		}
 	}
 	for {
 		in, err := stream.Recv()

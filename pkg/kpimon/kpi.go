@@ -172,8 +172,8 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 			tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
 
 			ids := strings.Split(keyID, ":")
-			nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
-			resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, cellID, cellGlobalID, tsFormat)
+			e2ID, nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2], ids[3]
+			resultLine := fmt.Sprintf("%-10s %20s %20s %15s", fmt.Sprintf("%s:%s", e2ID, nodeID), cellID, cellGlobalID, tsFormat)
 			//resultLine := fmt.Sprintf("%-10s %20s %20s", nodeID, fmt.Sprintf("%x", cellNum), tsFormat)
 			for _, typeValue := range types {
 				tmpResultLine := resultLine
@@ -326,8 +326,8 @@ func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
 				tsFormat := fmt.Sprintf("%02d:%02d:%02d.%d", timeObj.Hour(), timeObj.Minute(), timeObj.Second(), timeObj.Nanosecond()/1000000)
 
 				ids := strings.Split(keyID, ":")
-				nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2]
-				resultLine := fmt.Sprintf("%-10s %20s %20s %15s", nodeID, cellID, cellGlobalID, tsFormat)
+				e2id, nodeID, cellID, cellGlobalID := ids[0], ids[1], ids[2], ids[3]
+				resultLine := fmt.Sprintf("%-10s %20s %20s %15s", fmt.Sprintf("%s:%s", e2id, nodeID), cellID, cellGlobalID, tsFormat)
 
 				for _, typeValue := range types {
 					tmpResultLine := resultLine
