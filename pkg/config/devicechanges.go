@@ -88,7 +88,10 @@ func deviceChangesCommand(cmd *cobra.Command, subscribe bool, args []string) err
 		return err
 	}
 	if !noHeaders {
-		cli.GetOutput().Write([]byte(changeHeader))
+		_, err := cli.GetOutput().Write([]byte(changeHeader))
+		if err != nil {
+			return err
+		}
 	}
 	for {
 		in, err := stream.Recv()
