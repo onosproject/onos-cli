@@ -19,7 +19,7 @@ import (
 	"strings"
 	"testing"
 
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 // Test_RootUsage tests the creation of the root command and checks that the ONOS usage messages are included
@@ -40,16 +40,16 @@ func Test_RootUsage(t *testing.T) {
 	}
 
 	cmd := GetCommand()
-	assert.Assert(t, cmd != nil)
+	assert.NotNil(t, cmd)
 	cmd.SetOut(outputBuffer)
 
 	usageErr := cmd.Usage()
-	assert.NilError(t, usageErr)
+	assert.NoError(t, usageErr)
 
 	output := outputBuffer.String()
 
 	for _, testCase := range testCases {
-		assert.Assert(t, strings.Contains(output, testCase.expected), `Expected output "%s"" for %s not found`,
+		assert.True(t, strings.Contains(output, testCase.expected), `Expected output "%s"" for %s not found`,
 			testCase.expected, testCase.description)
 	}
 }
@@ -57,7 +57,7 @@ func Test_RootUsage(t *testing.T) {
 // Test_SubCommands tests that the ONOS supplied sub commands are present in the root
 func Test_SubCommands(t *testing.T) {
 	cmds := GetCommand().Commands()
-	assert.Assert(t, cmds != nil)
+	assert.NotNil(t, cmds)
 
 	testCases := []struct {
 		commandName   string
@@ -84,8 +84,8 @@ func Test_SubCommands(t *testing.T) {
 	for _, testCase := range testCases {
 		// check that this is an expected sub command
 		entry, entryFound := subCommandsFound[testCase.expectedShort]
-		assert.Assert(t, entryFound, "Subcommand %s not found", testCase.commandName)
-		assert.Assert(t, entry == false, "command %s found more than once", testCase.commandName)
+		assert.True(t, entryFound, "Subcommand %s not found", testCase.commandName)
+		assert.False(t, entry, "command %s found more than once", testCase.commandName)
 		subCommandsFound[testCase.expectedShort] = true
 	}
 
@@ -93,7 +93,7 @@ func Test_SubCommands(t *testing.T) {
 	for _, testCase := range testCases {
 		// check that this is an expected sub command
 		entry, entryFound := subCommandsFound[testCase.expectedShort]
-		assert.Assert(t, entryFound)
-		assert.Assert(t, entry, "command %s was not found", testCase.commandName)
+		assert.True(t, entryFound)
+		assert.True(t, entry, "command %s was not found", testCase.commandName)
 	}
 }
