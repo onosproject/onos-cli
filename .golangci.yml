@@ -2,14 +2,12 @@ linters:
   enable:
     - gofmt
     - gocyclo
-    - revive
     - misspell
     - typecheck
     - errcheck
     - dogsled
     - unconvert
     - nakedret
-    - exportloopref
 issues:
   exclude-use-default: false
   exclude:
