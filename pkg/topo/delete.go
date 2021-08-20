@@ -23,30 +23,36 @@ import (
 )
 
 func getDeleteEntityCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "entity <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete Entity",
 		RunE:  runDeleteEntityCommand,
 	}
+	cmd.Flags().Uint64P("revision", "r", 0, "revision to delete")
+	return cmd
 }
 
 func getDeleteRelationCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "object <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete Relation",
 		RunE:  runDeleteRelationCommand,
 	}
+	cmd.Flags().Uint64P("revision", "r", 0, "revision to delete")
+	return cmd
 }
 
 func getDeleteKindCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "kind <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete kind",
 		RunE:  runDeleteKindCommand,
 	}
+	cmd.Flags().Uint64P("revision", "r", 0, "revision to delete")
+	return cmd
 }
 
 func runDeleteEntityCommand(cmd *cobra.Command, args []string) error {
@@ -63,6 +69,7 @@ func runDeleteKindCommand(cmd *cobra.Command, args []string) error {
 
 func runDeleteObjectCommand(cmd *cobra.Command, args []string, typeName string) error {
 	id := args[0]
+	revision, _ := cmd.Flags().GetUint64("revision")
 
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -75,7 +82,7 @@ func runDeleteObjectCommand(cmd *cobra.Command, args []string, typeName string) 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	_, err = client.Delete(ctx, &topoapi.DeleteRequest{ID: topoapi.ID(id)})
+	_, err = client.Delete(ctx, &topoapi.DeleteRequest{ID: topoapi.ID(id), Revision: topoapi.Revision(revision)})
 	if err != nil {
 		return err
 	}
