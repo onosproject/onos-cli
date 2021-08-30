@@ -117,7 +117,7 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
 		cli.Output("%-17s %7s %7s %7s %9s %9s %7s %7s %10s %7s %7s %10s %10s %8s %8s %4s %4s %s\n",
 			"NCGI", "#UEs", "Max UEs", "TxDB", "Lat", "Lng", "Azimuth", "Arc",
-			"A3Offset", "TTT", "A3Hyst", "CellOffset", "FreqOffset", "PCI", "Color", "Idle", "Conn", "Neighbors")
+			"A3Offset", "TTT", "A3Hyst", "PCellOffset", "FreqOffset", "PCI", "Color", "Idle", "Conn", "Neighbors(NCellOffset)")
 	}
 
 	client, conn, err := getCellClient(cmd)
@@ -143,7 +143,7 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Pci, cell.Color,
-				cell.RrcIdleCount, cell.RrcConnectedCount, catNCGIs(cell.Neighbors))
+				cell.RrcIdleCount, cell.RrcConnectedCount, catNCGIsWithOcn(cell.Neighbors, cell.MeasurementParams.NcellIndividualOffsets))
 		}
 
 	} else {
@@ -164,7 +164,7 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 				cell.Location.Lat, cell.Location.Lng, cell.Sector.Azimuth, cell.Sector.Arc,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.TimeToTrigger, cell.MeasurementParams.Hysteresis,
 				cell.MeasurementParams.EventA3Params.A3Offset, cell.MeasurementParams.FrequencyOffset, cell.Pci, cell.Color,
-				cell.RrcIdleCount, cell.RrcConnectedCount, catNCGIs(cell.Neighbors))
+				cell.RrcIdleCount, cell.RrcConnectedCount, catNCGIsWithOcn(cell.Neighbors, cell.MeasurementParams.NcellIndividualOffsets))
 		}
 	}
 	return nil
