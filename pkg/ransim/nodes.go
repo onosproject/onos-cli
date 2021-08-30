@@ -353,6 +353,17 @@ func catNCGIs(ecgis []types.NCGI) string {
 	return s
 }
 
+func catNCGIsWithOcn(ecgis []types.NCGI, ocns map[types.NCGI]int32) string {
+	s := ""
+	for _, ncgi := range ecgis {
+		s = s + fmt.Sprintf(",%x(%d)", ncgi, ocns[ncgi])
+	}
+	if len(s) > 1 {
+		return s[1:]
+	}
+	return s
+}
+
 func catStrings(strings []string) string {
 	s := ""
 	for _, string := range strings {
