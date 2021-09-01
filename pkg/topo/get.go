@@ -43,7 +43,8 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
 	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
-	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to")
+	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
+	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|source_and_target")
@@ -94,7 +95,8 @@ func getGetObjectsCommand() *cobra.Command {
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
 	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
-	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to")
+	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
+	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|all|source_and_target")
@@ -104,15 +106,20 @@ func getGetObjectsCommand() *cobra.Command {
 func runGetEntityCommand(cmd *cobra.Command, args []string) error {
 	// if any flag relating to the entity-relation filter is set, call the corresponding function (which checks if all necessary flags are set)
 	to, _ := cmd.Flags().GetString("related-to")
+	toTgt, _ := cmd.Flags().GetString("related-to-tgt")
 	via, _ := cmd.Flags().GetString("related-via")
 	tgt, _ := cmd.Flags().GetString("tgt-kind")
-	if len(to) != 0 || len(via) != 0 || len(tgt) != 0 {
-		return runGetEntityRelationCommand(cmd, args, to, via, tgt)
+
+	if len(to) != 0 && len(toTgt) != 0 {
+		return errors.NewInvalid("only 'related-to' or 'related-to-tgt' flag can be specified; not both")
+	}
+	if len(to) != 0 || len(toTgt) != 0 || len(via) != 0 || len(tgt) != 0 {
+		return runGetEntityRelationCommand(cmd, args, to, toTgt, via, tgt)
 	}
 	return runGetCommand(cmd, args, topoapi.Object_ENTITY)
 }
 
-func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, via string, tgt string) error {
+func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, toTgt, via string, tgt string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
@@ -122,7 +129,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, v
 		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGET
 	}
 
-	if len(to) > 0 && len(via) > 0 {
+	if (len(to) > 0 || len(toTgt) > 0) && len(via) > 0 {
 		outputWriter := cli.GetOutput()
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -133,14 +140,18 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, v
 			tgt = ""
 		}
 
-		objects, err := listObjects(cmd, &topoapi.Filters{
-			RelationFilter: &topoapi.RelationFilter{
-				SrcId:        to,
-				RelationKind: via,
-				TargetKind:   tgt,
-				Scope:        scope,
-			},
-		}, topoapi.SortOrder_UNORDERED)
+		filter := topoapi.RelationFilter{
+			RelationKind: via,
+			TargetKind:   tgt,
+			Scope:        scope,
+		}
+		if len(to) > 0 {
+			filter.SrcId = to
+		} else {
+			filter.TargetId = toTgt
+		}
+
+		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
 				printObject(writer, object, verbose, false)
@@ -149,7 +160,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, v
 		_ = writer.Flush()
 		return nil
 	}
-	return errors.NewInvalid("missing related-to and/or related-via flags")
+	return errors.NewInvalid("missing 'related-to', 'related-to-tgt' and/or 'related-via' flags")
 }
 
 func runGetRelationCommand(cmd *cobra.Command, args []string) error {
