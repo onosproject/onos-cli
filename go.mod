@@ -3,10 +3,11 @@ module github.com/onosproject/onos-cli
 go 1.16
 
 require (
+	github.com/aybabtme/uniplot v0.0.0-20151203143629-039c559e5e7e
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.3
-	github.com/onosproject/onos-api/go v0.7.89
+	github.com/onosproject/onos-api/go v0.7.91
 	github.com/onosproject/onos-e2-sm/servicemodels/e2sm_mho v0.7.42
 	github.com/onosproject/onos-lib-go v0.7.10
 	github.com/onosproject/onos-ric-sdk-go v0.7.19
