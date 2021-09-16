@@ -57,7 +57,6 @@ func getGetCommand() *cobra.Command {
 		Aliases: []string{"list"},
 	}
 
-	cmd.AddCommand(getGetConnectionsCommand())
 	cmd.AddCommand(getGetChannelsCommand())
 	cmd.AddCommand(getGetChannelCommand())
 	cmd.AddCommand(getGetSubscriptionsCommand())
