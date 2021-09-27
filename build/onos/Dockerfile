@@ -5,7 +5,7 @@ COPY . /go/src/github.com/onosproject/onos-cli
 RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
 
 FROM alpine:3.14
-RUN apk add bash bash-completion curl libc6-compat gettext
+RUN apk add bash bash-completion curl libc6-compat gettext jq
 
 RUN addgroup -S onos && adduser -S -G onos onos --home /home/onos
 USER onos
