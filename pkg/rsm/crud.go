@@ -51,4 +51,3 @@ func getDeleteCommand() *cobra.Command {
 	cmd.AddCommand(getDeleteSlice())
 	return cmd
 }
-

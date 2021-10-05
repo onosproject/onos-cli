@@ -171,11 +171,11 @@ func runSetAssociation(cmd *cobra.Command, args []string) error {
 	ueIDList = append(ueIDList, enbUeS1apIDField)
 
 	setRequest := rsmapi.SetUeSliceAssociationRequest{
-		E2NodeId: e2NodeID,
-		UeId: ueIDList,
+		E2NodeId:  e2NodeID,
+		UeId:      ueIDList,
 		DlSliceId: dlSliceID,
 		UlSliceId: ulSliceID,
-		DrbId: drbID,
+		DrbId:     drbID,
 	}
 	setResponse, err := client.SetUeSliceAssociation(context.Background(), &setRequest)
 	if err != nil {
@@ -233,7 +233,7 @@ func runGetCreateSlice(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	schedulerTypeField := rsmapi.SchedulerType_SCHEDULER_TYPE_ROUND_ROBIN
+	var schedulerTypeField rsmapi.SchedulerType
 	switch schedulerType {
 	case "RR":
 		schedulerTypeField = rsmapi.SchedulerType_SCHEDULER_TYPE_ROUND_ROBIN
@@ -245,7 +245,7 @@ func runGetCreateSlice(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("scheduler should be {RR, PF, QoS}")
 	}
 
-	sliceTypeField := rsmapi.SliceType_SLICE_TYPE_DL_SLICE
+	var sliceTypeField rsmapi.SliceType
 	switch sliceType {
 	case "DL":
 		sliceTypeField = rsmapi.SliceType_SLICE_TYPE_DL_SLICE
@@ -256,11 +256,11 @@ func runGetCreateSlice(cmd *cobra.Command, args []string) error {
 	}
 
 	setRequest := rsmapi.CreateSliceRequest{
-		E2NodeId: e2NodeID,
-		SliceId: sliceID,
-		Weight: weight,
+		E2NodeId:      e2NodeID,
+		SliceId:       sliceID,
+		Weight:        weight,
 		SchedulerType: schedulerTypeField,
-		SliceType: sliceTypeField,
+		SliceType:     sliceTypeField,
 	}
 	setResponse, err := client.CreateSlice(context.Background(), &setRequest)
 	if err != nil {
@@ -319,7 +319,7 @@ func runGetUpdateSlice(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	schedulerTypeField := rsmapi.SchedulerType_SCHEDULER_TYPE_ROUND_ROBIN
+	var schedulerTypeField rsmapi.SchedulerType
 	switch schedulerType {
 	case "RR":
 		schedulerTypeField = rsmapi.SchedulerType_SCHEDULER_TYPE_ROUND_ROBIN
@@ -331,7 +331,7 @@ func runGetUpdateSlice(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("scheduler should be {RR, PF, QoS}")
 	}
 
-	sliceTypeField := rsmapi.SliceType_SLICE_TYPE_DL_SLICE
+	var sliceTypeField rsmapi.SliceType
 	switch sliceType {
 	case "DL":
 		sliceTypeField = rsmapi.SliceType_SLICE_TYPE_DL_SLICE
@@ -342,11 +342,11 @@ func runGetUpdateSlice(cmd *cobra.Command, args []string) error {
 	}
 
 	setRequest := rsmapi.UpdateSliceRequest{
-		E2NodeId: e2NodeID,
-		SliceId: sliceID,
-		Weight: weight,
+		E2NodeId:      e2NodeID,
+		SliceId:       sliceID,
+		Weight:        weight,
 		SchedulerType: schedulerTypeField,
-		SliceType: sliceTypeField,
+		SliceType:     sliceTypeField,
 	}
 	setResponse, err := client.UpdateSlice(context.Background(), &setRequest)
 	if err != nil {
@@ -391,7 +391,7 @@ func runGetDeleteSlice(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	sliceTypeField := rsmapi.SliceType_SLICE_TYPE_DL_SLICE
+	var sliceTypeField rsmapi.SliceType
 	switch sliceType {
 	case "DL":
 		sliceTypeField = rsmapi.SliceType_SLICE_TYPE_DL_SLICE
@@ -402,8 +402,8 @@ func runGetDeleteSlice(cmd *cobra.Command, args []string) error {
 	}
 
 	setRequest := rsmapi.DeleteSliceRequest{
-		E2NodeId: e2NodeID,
-		SliceId: sliceID,
+		E2NodeId:  e2NodeID,
+		SliceId:   sliceID,
 		SliceType: sliceTypeField,
 	}
 	setResponse, err := client.DeleteSlice(context.Background(), &setRequest)

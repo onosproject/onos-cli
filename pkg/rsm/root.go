@@ -20,7 +20,6 @@ import (
 )
 
 const (
-	configName     = "rsm"
 	defaultAddress = "onos-rsm:5150"
 )
 
