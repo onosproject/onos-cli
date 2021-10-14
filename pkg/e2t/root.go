@@ -52,13 +52,11 @@ func GetCommand() *cobra.Command {
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "get {connections,subscriptions,subscription} [args]",
+		Use:     "get {subscriptions,subscription} [args]",
 		Short:   "Get command",
 		Aliases: []string{"list"},
 	}
 
-	cmd.AddCommand(getGetChannelsCommand())
-	cmd.AddCommand(getGetChannelCommand())
 	cmd.AddCommand(getGetSubscriptionsCommand())
 	cmd.AddCommand(getGetSubscriptionCommand())
 	return cmd
@@ -71,6 +69,5 @@ func getWatchCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(getWatchSubscriptionsCommand())
-	cmd.AddCommand(getWatchChannelsCommand())
 	return cmd
 }
