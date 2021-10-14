@@ -134,7 +134,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
 		if !noHeaders {
-			printHeader(writer, topoapi.Object_RELATION, verbose, false)
+			printHeader(writer, topoapi.Object_ENTITY, verbose, false)
 		}
 		if len(tgt) == 0 {
 			tgt = ""
