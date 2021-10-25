@@ -12,7 +12,6 @@ ONOS command line client
 
 * [onos completion](onos_completion.md)	 - Generated bash or zsh auto-completion script
 * [onos config](onos_config.md)	 - ONOS configuration subsystem commands
-* [onos e2sub](onos_e2sub.md)	 - ONOS e2sub subsystem commands
 * [onos e2t](onos_e2t.md)	 - ONOS e2t subsystem commands
 * [onos kpimon](onos_kpimon.md)	 - ONOS KPIMON subsystem commands
 * [onos mho](onos_mho.md)	 - ONOS MHO subsystem commands
