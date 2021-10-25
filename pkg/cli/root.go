@@ -16,12 +16,12 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/onosproject/onos-cli/pkg/mlb"
 	"github.com/onosproject/onos-cli/pkg/perf"
 	"github.com/onosproject/onos-cli/pkg/rsm"
 
 	"github.com/onosproject/onos-cli/pkg/config"
-	"github.com/onosproject/onos-cli/pkg/e2sub"
 	"github.com/onosproject/onos-cli/pkg/e2t"
 	"github.com/onosproject/onos-cli/pkg/kpimon"
 	"github.com/onosproject/onos-cli/pkg/mho"
@@ -73,7 +73,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(uenib.GetCommand())
 	cmd.AddCommand(config.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
-	cmd.AddCommand(e2sub.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
 	cmd.AddCommand(mho.GetCommand())
