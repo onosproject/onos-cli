@@ -26,8 +26,12 @@ import (
 	"text/template"
 )
 
-const deviceChangeTemplate = changeHeaderFormat +
-	"\t{{.NetworkChange.ID}}\t{{.NetworkChange.Index}}\t{{.Change.DeviceID}}\t{{.Change.DeviceVersion}}\n" +
+const devChangeHeader = "CHANGE                                                       INDEX   REVISION PHASE    STATE     REASON   MESSAGE\n"
+
+const devChangeHeaderFormat = "{{printf \"%-60v %-7d %-8d %-8s %-9s %-8s %s\" .ID .Index .Revision .Status.Phase .Status.State .Status.Reason .Status.Message}}\n"
+
+const deviceChangeTemplate = devChangeHeaderFormat +
+	"{{ printf \"\t%-52v %-9d Device: %s (%s)\" .NetworkChange.ID .NetworkChange.Index .Change.DeviceID .Change.DeviceVersion}}\n" +
 	"{{range .Change.Values}}" + typedValueFormat + "{{end}}\n"
 
 func getWatchDeviceChangesCommand() *cobra.Command {
@@ -88,7 +92,7 @@ func deviceChangesCommand(cmd *cobra.Command, subscribe bool, args []string) err
 		return err
 	}
 	if !noHeaders {
-		_, err := cli.GetOutput().Write([]byte(changeHeader))
+		_, err := cli.GetOutput().Write([]byte(devChangeHeader))
 		if err != nil {
 			return err
 		}

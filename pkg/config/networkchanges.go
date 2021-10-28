@@ -23,9 +23,9 @@ import (
 	"text/template"
 )
 
-const changeHeader = "CHANGE                          INDEX  REVISION  PHASE    STATE     REASON   MESSAGE\n"
+const changeHeader = "CHANGE                               INDEX   REVISION USERNAME             PHASE    STATE     REASON   MESSAGE\n"
 
-const changeHeaderFormat = "{{printf \"%-31v %-7d %-8d %-8s %-9s %-8s %s\" .ID .Index .Revision .Status.Phase .Status.State .Status.Reason .Status.Message}}\n"
+const changeHeaderFormat = "{{printf \"%-31v %-7d %-8d %-20s %-8s %-9s %-8s %s\" .ID .Index .Revision .Username .Status.Phase .Status.State .Status.Reason .Status.Message}}\n"
 
 const typedValueFormat = "\t{{wrappath .Path 50 1| printf \"|%-50s|\"}}{{valuetostring .Value | printf \"(%s) %s\" .Value.Type | printf \"%-40s|\" }}{{printf \"%-7t|\" .Removed}}\n"
 
