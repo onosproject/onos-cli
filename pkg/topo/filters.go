@@ -22,7 +22,8 @@ import (
 )
 
 func compileFilters(cmd *cobra.Command, objectType topoapi.Object_Type) *topoapi.Filters {
-	filters := &topoapi.Filters{}
+	aspects, _ := cmd.Flags().GetStringSlice("with-aspect")
+	filters := &topoapi.Filters{WithAspects: aspects}
 	lq, _ := cmd.Flags().GetString("label")
 	filters.LabelFilters = compileLabelFilters(lq)
 	filters.ObjectTypes = []topoapi.Object_Type{objectType}
