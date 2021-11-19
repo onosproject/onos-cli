@@ -46,6 +46,7 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
+	cmd.Flags().StringSlice("with-aspect", nil, "aspect entity must have")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|source_and_target")
 	return cmd
@@ -64,6 +65,7 @@ func getGetRelationCommand() *cobra.Command {
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
+	cmd.Flags().StringSlice("with-aspect", nil, "aspect relation must have")
 	return cmd
 }
 
@@ -79,6 +81,7 @@ func getGetKindCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("label", "", "label query")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
+	cmd.Flags().StringSlice("with-aspect", nil, "aspect relation must have")
 	return cmd
 }
 
@@ -100,6 +103,7 @@ func getGetObjectsCommand() *cobra.Command {
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|all|source_and_target")
+	cmd.Flags().StringSlice("with-aspect", nil, "aspect object must have")
 	return cmd
 }
 
@@ -124,6 +128,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
 	scope := topoapi.RelationFilterScope_TARGET_ONLY
+	aspects, _ := cmd.Flags().GetStringSlice("with-aspect")
 
 	if scopeString == "source_and_target" {
 		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGET
@@ -151,7 +156,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 			filter.TargetId = toTgt
 		}
 
-		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter}, topoapi.SortOrder_UNORDERED)
+		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
 				printObject(writer, object, verbose, false)
@@ -236,6 +241,7 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
 	scope := topoapi.RelationFilterScope_TARGET_ONLY
+	aspects, _ := cmd.Flags().GetStringSlice("with-aspect")
 
 	if scopeString == "all" {
 		scope = topoapi.RelationFilterScope_ALL
@@ -254,14 +260,13 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 			tgt = ""
 		}
 
-		objects, err := listObjects(cmd, &topoapi.Filters{
-			RelationFilter: &topoapi.RelationFilter{
-				SrcId:        to,
-				RelationKind: via,
-				TargetKind:   tgt,
-				Scope:        scope,
-			},
-		}, topoapi.SortOrder_UNORDERED)
+		relationFilter := topoapi.RelationFilter{
+			SrcId:        to,
+			RelationKind: via,
+			TargetKind:   tgt,
+			Scope:        scope,
+		}
+		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &relationFilter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
 				printObject(writer, object, verbose, false)
