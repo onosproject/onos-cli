@@ -16,7 +16,6 @@ package ransim
 
 import (
 	"context"
-	e2sm_mho "github.com/onosproject/onos-e2-sm/servicemodels/e2sm_mho/v1/e2sm-mho"
 	"strconv"
 
 	simapi "github.com/onosproject/onos-api/go/onos/ransim/trafficsim"
@@ -28,6 +27,12 @@ import (
 
 	"github.com/spf13/cobra"
 )
+
+var rrcStatusName = map[int32]string{
+	0: "RRCSTATUS_CONNECTED",
+	1: "RRCSTATUS_INACTIVE",
+	2: "RRCSTATUS_IDLE",
+}
 
 func getUEsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -112,7 +117,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
+			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, rrcStatusName[int32(ue.RrcState)])
 		}
 
 	} else {
@@ -127,7 +132,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 				break
 			}
 			ue := r.Ue
-			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
+			cli.Output("%-16d %-16x %-10d %-10t %-20s\n", ue.IMSI, ue.ServingTower, ue.CRNTI, ue.Admitted, rrcStatusName[int32(ue.RrcState)])
 		}
 	}
 
@@ -136,7 +141,7 @@ func runGetUEsCommand(cmd *cobra.Command, args []string) error {
 
 func outputUE(ue *types.Ue) {
 	cli.Output("IMSI:      %-16d\nNCGI:      %-16x\nStrength: %.4f\nCRNTI:     %-16d\nAdmitted:  %t\nLat:       %.4f\nLng:       %.4f\nHeading:   %3d\nRRC:       %s\n",
-		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, e2sm_mho.Rrcstatus_name[int32(ue.RrcState)])
+		ue.IMSI, ue.ServingTower, ue.ServingTowerStrength, ue.CRNTI, ue.Admitted, ue.Position.Lat, ue.Position.Lng, ue.Rotation, rrcStatusName[int32(ue.RrcState)])
 	cli.Output("Candidate Cells: %x, %x, %x\n", ue.Tower1, ue.Tower2, ue.Tower3)
 }
 
