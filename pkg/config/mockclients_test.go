@@ -75,7 +75,7 @@ func (c mockConfigAdminServiceClient) CompactChanges(ctx context.Context, in *ad
 // MockConfigAdminServiceListRegisteredModelsClient is a mock of the ConfigAdminServiceListRegisteredModelsClient
 // Function pointers are used to allow mocking specific APIs
 type MockConfigAdminServiceListRegisteredModelsClient struct {
-	recvFn      func() (*admin.ModelInfo, error)
+	recvFn      func() (*admin.ModelPlugin, error)
 	headerFn    func() (metadata.MD, error)
 	trailerFn   func() metadata.MD
 	closeSendFn func() error
@@ -84,7 +84,7 @@ type MockConfigAdminServiceListRegisteredModelsClient struct {
 	recvMsgFn   func(interface{}) error
 }
 
-func (c MockConfigAdminServiceListRegisteredModelsClient) Recv() (*admin.ModelInfo, error) {
+func (c MockConfigAdminServiceListRegisteredModelsClient) Recv() (*admin.ModelPlugin, error) {
 	return c.recvFn()
 }
 

@@ -28,6 +28,7 @@ func getGetCommand() *cobra.Command {
 	cmd.AddCommand(getListDeviceChangesCommand())
 	cmd.AddCommand(getGetOpstateCommand())
 	cmd.AddCommand(getListSnapshotsCommand())
+	cmd.AddCommand(getListPluginsCommand())
 	return cmd
 }
 
