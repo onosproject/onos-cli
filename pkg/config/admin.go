@@ -22,8 +22,8 @@ import (
 	"io"
 )
 
-const pluginListTemplate = "table{{.Id}}\t{{.Status}}\t{{.Port}}\t{{.Info.Name}}\t{{.Info.Version}}\t{{.Error}}"
-const pluginListTemplateVerbose = "table{{.Id}}\t{{.Status}}\t{{.Port}}\t{{.Info.Name}}\t{{.Info.Version}}\t{{.Error}}\t{{.Info.ModelData}}"
+const pluginListTemplate = "table{{.Id}}\t{{.Status}}\t{{.Endpoint}}\t{{.Info.Name}}\t{{.Info.Version}}\t{{.Error}}"
+const pluginListTemplateVerbose = "table{{.Id}}\t{{.Status}}\t{{.Endpoint}}\t{{.Info.Name}}\t{{.Info.Version}}\t{{.Error}}\t{{.Info.ModelData}}"
 
 func getListPluginsCommand() *cobra.Command {
 	// TODO support model filtering
