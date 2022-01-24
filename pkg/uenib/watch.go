@@ -63,7 +63,7 @@ func getWatchUEsCommand() *cobra.Command {
 
 func runWatchUEsCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	noReplay, _ := cmd.Flags().GetBool("noreplay")
+	noReplay, _ := cmd.Flags().GetBool("no-replay")
 
 	aspectTypes, _ := cmd.Flags().GetStringSlice("aspect")
 

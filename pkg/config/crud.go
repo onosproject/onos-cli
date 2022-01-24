@@ -16,35 +16,25 @@ package config
 
 import (
 	"github.com/spf13/cobra"
-	"text/template"
 )
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {device-changes,network-changes,plugins,opstate,snapshots} [args]",
+		Use:   "get {transactions,configurations,plugins} [args]",
 		Short: "Get config resources",
 	}
-	cmd.AddCommand(getListNetworkChangesCommand())
-	cmd.AddCommand(getListDeviceChangesCommand())
-	cmd.AddCommand(getGetOpstateCommand())
-	cmd.AddCommand(getListSnapshotsCommand())
+	cmd.AddCommand(getListTransactionsCommand())
+	cmd.AddCommand(getListConfigurationsCommand())
 	cmd.AddCommand(getListPluginsCommand())
 	return cmd
 }
 
 func getWatchCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "watch resource [args]",
+		Use:   "watch {transactions,configurations} [args]",
 		Short: "Watch for updates to a config resource type",
 	}
-	cmd.AddCommand(getWatchDeviceChangesCommand())
-	cmd.AddCommand(getWatchNetworkChangesCommand())
-	cmd.AddCommand(getWatchOpstateCommand())
-	cmd.AddCommand(getWatchSnapshotsCommand())
+	cmd.AddCommand(getWatchConfigurationsCommand())
+	cmd.AddCommand(getWatchTransactionsCommand())
 	return cmd
-}
-
-var funcMapChanges = template.FuncMap{
-	"wrappath":      wrapPath,
-	"valuetostring": valueToSstring,
 }
