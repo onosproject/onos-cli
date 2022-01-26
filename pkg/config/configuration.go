@@ -19,12 +19,57 @@ import (
 	"fmt"
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	v2 "github.com/onosproject/onos-api/go/onos/config/v2"
+	"github.com/onosproject/onos-cli/pkg/format"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
-	"os"
 	"time"
 )
+
+
+const configurationListTemplate = "table{{.ID}}\t{{.TargetID}}\t{{.TargetVersion}}\t{{.TargetType}}\t{{.Status.State}}"
+var configurationListTemplateVerbose = fmt.Sprintf("%s\t{{.Values}}", configurationListTemplate)
+const configurationEventTemplate = "table{{.Type}}\t{{.Configuration.ID}}\t{{.Configuration.TargetID}}\t{{.Configuration.TargetVersion}}\t{{.Configuration.TargetType}}\t{{.Configuration.Status.State}}"
+var configurationEventTemplateVerbose = fmt.Sprintf("s\t{{.Configuration.Values}}", configurationEventTemplate)
+
+type configurationEventWidths struct {
+	Type          int
+	Configuration struct {
+		ID            int
+		TargetID      int
+		TargetVersion int
+		TargetType    int
+		Status        struct {
+			State int
+		}
+		Revision int
+		Index    int
+		Values   int
+	}
+}
+
+var configWidths = configurationEventWidths{
+	Type: 30,
+	Configuration: struct {
+		ID            int
+		TargetID      int
+		TargetVersion int
+		TargetType    int
+		Status        struct{ State int }
+		Revision      int
+		Index         int
+		Values        int
+	}{
+		ID:            13,
+		TargetID:      13,
+		TargetVersion: 15,
+		TargetType:    13,
+		Status:        struct{ State int }{State: 40},
+		Revision:      5,
+		Index:         5,
+		Values:        50,
+	},
+}
 
 func getListConfigurationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -54,11 +99,6 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 
-	writer := os.Stdout
-	if !noHeaders {
-		printConfigurationHeader(writer, verbose, false)
-	}
-
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -75,19 +115,29 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	var tableFormat format.Format
+	if verbose {
+		tableFormat = format.Format(configurationListTemplateVerbose)
+	} else {
+		tableFormat = format.Format(configurationListTemplate)
+	}
+
+	allConfigurations := []*v2.Configuration{}
+
 	for {
 		resp, err := response.Recv()
 		if err == io.EOF {
-			break
+			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allConfigurations); e != nil {
+				return e
+			}
+			return nil
 		} else if err != nil {
 			cli.Output("Unable to read configuration: %s", err)
 			return err
-		} else {
-			printConfiguration(writer, resp.Configuration, verbose)
 		}
+		allConfigurations = append(allConfigurations, resp.Configuration)
 	}
 
-	return nil
 }
 
 func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
@@ -112,9 +162,16 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	writer := os.Stdout
+	f := format.Format(configurationEventTemplate)
+	if verbose {
+		f = format.Format(configurationEventTemplateVerbose)
+	}
 	if !noHeaders {
-		printConfigurationHeader(writer, verbose, true)
+		output, err := f.ExecuteFixedWidth(configWidths, true, nil)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s\n", output)
 	}
 
 	for {
@@ -127,43 +184,15 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		event := res.Event
+		event := res.ConfigurationEvent
 		if len(id) == 0 || id == event.Configuration.ID {
-			printConfigurationUpdateType(writer, event.Type)
-			printConfiguration(writer, &event.Configuration, false)
+			output, err := f.ExecuteFixedWidth(configWidths, false, res)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("%s\n", output)
 		}
 	}
 
 	return nil
-}
-
-func printConfiguration(writer io.Writer, c *v2.Configuration, verbose bool) {
-	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t%v\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index, c.Values)
-	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index)
-	}
-}
-
-func printConfigurationUpdateType(writer io.Writer, eventType v2.ConfigurationEventType) {
-	if eventType == v2.ConfigurationEventType_CONFIGURATION_REPLAYED {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", "REPLAY")
-	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", eventType)
-	}
-}
-
-func printConfigurationHeader(writer *os.File, verbose bool, event bool) {
-	if event {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", "Event Type")
-	}
-	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t%-8s\t%s\n",
-			"ID", "Target ID", "Version", "Type", "Status", "Revision", "Index", "Values")
-	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t%-8s\n",
-			"ID", "Target ID", "Version", "Type", "Status", "Revision", "Index")
-	}
 }

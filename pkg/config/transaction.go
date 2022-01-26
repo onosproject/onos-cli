@@ -19,12 +19,64 @@ import (
 	"fmt"
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	v2 "github.com/onosproject/onos-api/go/onos/config/v2"
+	"github.com/onosproject/onos-cli/pkg/format"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
-	"os"
 	"time"
 )
+
+const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Revision}}\t{{.Status.State}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Atomic}}"
+var transactionListTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
+const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.Index}}\t{{.Transaction.Revision}}\t{{.Transaction.Status.State}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Atomic}}"
+var transactionEventTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
+
+type transactionEventWidths struct {
+	Type          int
+	Transaction struct {
+		ID       int
+		Created  int
+		Updated  int
+		Deleted  int
+		Username int
+		Atomic   int
+		Status   struct {
+			State int
+		}
+		Revision int
+		Index    int
+		Transaction   int
+	}
+}
+
+var transactionWidths = transactionEventWidths{
+	Type: 30,
+	Transaction: struct {
+		ID       int
+		Created  int
+		Updated  int
+		Deleted  int
+		Username int
+		Atomic   int
+		Status   struct {
+			State int
+		}
+		Revision    int
+		Index       int
+		Transaction int
+	}{
+		ID: 13,
+		Created: 13,
+		Updated: 13,
+		Deleted: 13,
+		Username: 13,
+		Atomic: 6,
+		Status: struct{ State int }{State: 40},
+		Revision: 5,
+		Index: 5,
+		Transaction: 50,
+	},
+}
 
 func getListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -55,9 +107,9 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 
-	writer := os.Stdout
-	if !noHeaders {
-		printTransactionHeader(writer, verbose, false)
+	f := format.Format(transactionListTemplate)
+	if verbose {
+		f = format.Format(transactionListTemplateVerbose)
 	}
 
 	conn, err := cli.GetConnection(cmd)
@@ -76,19 +128,21 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	allTx := []*v2.Transaction{}
+
 	for {
 		resp, err := response.Recv()
 		if err == io.EOF {
-			break
+			if e := f.Execute(cli.GetOutput(), !noHeaders, 0, allTx); e != nil {
+				return e
+			}
+			return nil
 		} else if err != nil {
 			cli.Output("Unable to read transaction: %s", err)
 			return err
-		} else {
-			printTransaction(writer, resp.Transaction, verbose)
 		}
+		allTx = append(allTx, resp.Transaction)
 	}
-
-	return nil
 }
 
 func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
@@ -113,9 +167,17 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	writer := os.Stdout
+	f := format.Format(transactionEventTemplate)
+	if verbose {
+		f = format.Format(transactionEventTemplateVerbose)
+	}
+
 	if !noHeaders {
-		printTransactionHeader(writer, verbose, true)
+		output, err := f.ExecuteFixedWidth(transactionWidths, true, nil)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s\n", output)
 	}
 
 	for {
@@ -128,42 +190,15 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		event := res.Event
+		event := res.TransactionEvent
 		if len(id) == 0 || id == event.Transaction.ID {
-			printTransactionUpdateType(writer, event.Type)
-			printTransaction(writer, &event.Transaction, false)
+			output, err := f.ExecuteFixedWidth(transactionWidths, false, res)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("%s\n", output)
 		}
 	}
 
 	return nil
-}
-
-func printTransaction(writer io.Writer, t *v2.Transaction, verbose bool) {
-	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%16d\t%8d\t%-8d\t%-12s\t%-12s\t%-8t\t%-10s\t%-8t\n",
-			t.ID, t.Index, t.Status.State, t.Revision, t.Created, t.Updated, t.Deleted, t.Username, t.Atomic)
-	} else {
-		_, _ = fmt.Fprintf(writer, "ID: %s\n", t.ID)
-	}
-}
-
-func printTransactionUpdateType(writer io.Writer, eventType v2.TransactionEventType) {
-	if eventType == v2.TransactionEventType_TRANSACTION_REPLAYED {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", "REPLAY")
-	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", eventType)
-	}
-}
-
-func printTransactionHeader(writer *os.File, verbose bool, event bool) {
-	if event {
-		_, _ = fmt.Fprintf(writer, "%-12s\t", "Event Type")
-	}
-	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-8s\t%-12s\t%-12s\t%-8s\t%-10s\t%-8s\n",
-			"Transaction ID", "Status", "Revision", "Index", "Created", "Updated", "Deleted", "User Name", "Atomic")
-	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%8s\t%-8s\n",
-			"Transaction ID", "Status", "Revision", "Index")
-	}
 }
