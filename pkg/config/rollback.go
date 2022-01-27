@@ -16,21 +16,28 @@ package config
 
 import (
 	"github.com/onosproject/onos-api/go/onos/config/admin"
+	v2 "github.com/onosproject/onos-api/go/onos/config/v2"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
+	"strconv"
 )
 
 func getRollbackCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "rollback <changeId>",
-		Short: "Rolls-back a network change",
-		Args:  cobra.MaximumNArgs(1),
+		Use:   "rollback <index>",
+		Short: "Rolls-back a transaction",
+		Args:  cobra.ExactArgs(1),
 		RunE:  runRollbackCommand,
 	}
 	return cmd
 }
 
 func runRollbackCommand(cmd *cobra.Command, args []string) error {
+	index, err := strconv.ParseUint(args[0], 10, 64)
+	if err != nil {
+		cli.Output("Index must be a number: %+v", err)
+	}
+
 	clientConnection, clientConnectionError := cli.GetConnection(cmd)
 
 	if clientConnectionError != nil {
@@ -38,17 +45,10 @@ func runRollbackCommand(cmd *cobra.Command, args []string) error {
 	}
 	client := admin.CreateConfigAdminServiceClient(clientConnection)
 
-	changeID := ""
-	if len(args) == 1 {
-		changeID = args[0]
-	}
-
 	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
-	resp, err := client.RollbackNetworkChange(
-		ctx, &admin.RollbackRequest{Name: changeID})
-	if err != nil {
+	if _, err := client.RollbackNetworkChange(ctx, &admin.RollbackRequest{Index: v2.Index(index)}); err != nil {
+		cli.Output("Rollback failed: %+v\n", err)
 		return err
 	}
-	cli.Output("Rollback success %s\n", resp.Message)
 	return nil
 }

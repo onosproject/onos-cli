@@ -30,14 +30,11 @@ import (
 
 var nameFinder = regexp.MustCompile(`\.([\._A-Za-z0-9]*)}}`)
 
+// Format defines a type for a string that can be used as template to format data.
 type Format string
 
-/* TrimAndPad
- *
- * Modify `s` so that it is exactly `l` characters long, removing
- * characters from the end, or adding spaces as necessary.
- */
-
+// TrimAndPad modifies `s` so that it is exactly `l` characters long, removing
+// characters from the end, or adding spaces as necessary.
 func TrimAndPad(s string, l int) string {
 	// TODO: support right justification if a negative number is passed
 	if len(s) > l {
@@ -46,11 +43,7 @@ func TrimAndPad(s string, l int) string {
 	return s + strings.Repeat(" ", l-len(s))
 }
 
-/* GetHeaderString
- *
- * From a template, extract the set of column names.
- */
-
+// GetHeaderString extract the set of column names from a template.
 func GetHeaderString(tmpl *template.Template, nameLimit int) string {
 	var header string
 	for _, n := range tmpl.Tree.Root.Nodes {
@@ -78,12 +71,14 @@ func GetHeaderString(tmpl *template.Template, nameLimit int) string {
 	return header
 }
 
+// IsTable returns a bool if the template is a table
 func (f Format) IsTable() bool {
 	return strings.HasPrefix(string(f), "table")
 }
 
+// Execute compiles the template and prints the output
 func (f Format) Execute(writer io.Writer, withHeaders bool, nameLimit int, data interface{}) error {
-	var tabWriter *tabwriter.Writer = nil
+	var tabWriter *tabwriter.Writer
 	format := f
 
 	if f.IsTable() {
@@ -155,27 +150,23 @@ func (f Format) Execute(writer io.Writer, withHeaders bool, nameLimit int, data 
 
 }
 
-/*
- * ExecuteFixedWidth
- *
- * Formats a table row using a set of fixed column widths. Used for streaming
- * output where column widths cannot be automatically determined because only
- * one line of the output is available at a time.
- *
- * Assumes the format uses tab as a field delimiter.
- *
- * columnWidths: struct that contains column widths
- * header: If true return the header. If false then evaluate data and return data.
- * data: Data to evaluate
- */
-
+// ExecuteFixedWidth Formats a table row using a set of fixed column widths.
+// Used for streaming
+// output where column widths cannot be automatically determined because only
+// one line of the output is available at a time.
+//
+// Assumes the format uses tab as a field delimiter.
+//
+// columnWidths: struct that contains column widths
+// header: If true return the header. If false then evaluate data and return data.
+// data: Data to evaluate
 func (f Format) ExecuteFixedWidth(columnWidths interface{}, header bool, data interface{}) (string, error) {
 	if !f.IsTable() {
 		return "", errors.New("Fixed width is only available on table format")
 	}
 
 	outputAs := strings.TrimPrefix(string(f), "table")
-	tmpl, err := template.New("output").Parse(string(outputAs))
+	tmpl, err := template.New("output").Parse(outputAs)
 	if err != nil {
 		return "", fmt.Errorf("Failed to parse template: %v", err)
 	}

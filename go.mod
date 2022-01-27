@@ -7,7 +7,7 @@ require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.5.2
-	github.com/onosproject/onos-api/go v0.8.35
+	github.com/onosproject/onos-api/go v0.8.36
 	github.com/onosproject/onos-lib-go v0.7.22
 	github.com/onosproject/onos-ric-sdk-go v0.7.34
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802
@@ -21,4 +21,3 @@ require (
 )
 
 //replace github.com/docker/docker => github.com/docker/engine v1.4.2-0.20200229013735-71373c6105e3
-replace github.com/onosproject/onos-api/go => github.com/teone/onos-api/go v0.8.25-0.20220127201358-74c3d4a488fc

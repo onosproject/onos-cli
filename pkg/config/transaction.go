@@ -27,12 +27,13 @@ import (
 )
 
 const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Revision}}\t{{.Status.State}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Atomic}}"
+
 var transactionListTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
-const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.Index}}\t{{.Transaction.Revision}}\t{{.Transaction.Status.State}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Atomic}}"
-var transactionEventTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
+
+const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Revision}}\t{{.Transaction.Status.State}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Atomic}}"
 
 type transactionEventWidths struct {
-	Type          int
+	Type        int
 	Transaction struct {
 		ID       int
 		Created  int
@@ -45,7 +46,6 @@ type transactionEventWidths struct {
 		}
 		Revision int
 		Index    int
-		Transaction   int
 	}
 }
 
@@ -61,20 +61,18 @@ var transactionWidths = transactionEventWidths{
 		Status   struct {
 			State int
 		}
-		Revision    int
-		Index       int
-		Transaction int
+		Revision int
+		Index    int
 	}{
-		ID: 13,
-		Created: 13,
-		Updated: 13,
-		Deleted: 13,
+		ID:       42,
+		Created:  13,
+		Updated:  13,
+		Deleted:  13,
 		Username: 13,
-		Atomic: 6,
-		Status: struct{ State int }{State: 40},
+		Atomic:   6,
+		Status:   struct{ State int }{State: 40},
 		Revision: 5,
-		Index: 5,
-		Transaction: 50,
+		Index:    5,
 	},
 }
 
@@ -92,25 +90,18 @@ func getListTransactionsCommand() *cobra.Command {
 
 func getWatchTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "transactions [transactionID wildcard]",
+		Use:   "transactions",
 		Short: "Watch configuration transaction changes",
-		Args:  cobra.MaximumNArgs(1),
 		RunE:  runWatchTransactionsCommand,
 	}
-	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing UE state")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing transactions")
 	return cmd
 }
 
 func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-
-	f := format.Format(transactionListTemplate)
-	if verbose {
-		f = format.Format(transactionListTemplateVerbose)
-	}
 
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -122,16 +113,45 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	response, err := client.ListTransactions(ctx, &admin.ListTransactionsRequest{})
+	if len(args) > 0 {
+		return getTransactions(ctx, client, v2.TransactionID(args[0]), noHeaders, verbose)
+	}
+	return listTransactions(ctx, client, noHeaders, verbose)
+}
+
+func getTransactions(ctx context.Context, client admin.TransactionServiceClient, id v2.TransactionID, noHeaders bool, verbose bool) error {
+	resp, err := client.GetTransaction(ctx, &admin.GetTransactionRequest{ID: id})
 	if err != nil {
 		cli.Output("Unable to list transactions: %s", err)
 		return err
 	}
 
+	f := format.Format(transactionListTemplate)
+	if verbose {
+		f = format.Format(transactionListTemplateVerbose)
+	}
+	if e := f.Execute(cli.GetOutput(), !noHeaders, 0, resp.Transaction); e != nil {
+		return e
+	}
+	return nil
+}
+
+func listTransactions(ctx context.Context, client admin.TransactionServiceClient, noHeaders bool, verbose bool) error {
+	stream, err := client.ListTransactions(ctx, &admin.ListTransactionsRequest{})
+	if err != nil {
+		cli.Output("Unable to list transactions: %s", err)
+		return err
+	}
+
+	f := format.Format(transactionListTemplate)
+	if verbose {
+		f = format.Format(transactionListTemplateVerbose)
+	}
+
 	allTx := []*v2.Transaction{}
 
 	for {
-		resp, err := response.Recv()
+		resp, err := stream.Recv()
 		if err == io.EOF {
 			if e := f.Execute(cli.GetOutput(), !noHeaders, 0, allTx); e != nil {
 				return e
@@ -146,7 +166,6 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 }
 
 func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
-	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noReplay, _ := cmd.Flags().GetBool("no-replay")
 
@@ -168,9 +187,6 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	f := format.Format(transactionEventTemplate)
-	if verbose {
-		f = format.Format(transactionEventTemplateVerbose)
-	}
 
 	if !noHeaders {
 		output, err := f.ExecuteFixedWidth(transactionWidths, true, nil)

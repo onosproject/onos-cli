@@ -26,11 +26,13 @@ import (
 	"time"
 )
 
-
 const configurationListTemplate = "table{{.ID}}\t{{.TargetID}}\t{{.TargetVersion}}\t{{.TargetType}}\t{{.Status.State}}"
+
 var configurationListTemplateVerbose = fmt.Sprintf("%s\t{{.Values}}", configurationListTemplate)
+
 const configurationEventTemplate = "table{{.Type}}\t{{.Configuration.ID}}\t{{.Configuration.TargetID}}\t{{.Configuration.TargetVersion}}\t{{.Configuration.TargetType}}\t{{.Configuration.Status.State}}"
-var configurationEventTemplateVerbose = fmt.Sprintf("s\t{{.Configuration.Values}}", configurationEventTemplate)
+
+var configurationEventTemplateVerbose = fmt.Sprintf("%s\t{{.Configuration.Values}}", configurationEventTemplate)
 
 type configurationEventWidths struct {
 	Type          int
@@ -73,10 +75,11 @@ var configWidths = configurationEventWidths{
 
 func getListConfigurationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configurations [targetID]",
-		Short: "List target configurations",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  runListConfigurationsCommand,
+		Use:     "configurations [configurationID]",
+		Short:   "List target configurations",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"configuration"},
+		RunE:    runListConfigurationsCommand,
 	}
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
@@ -85,13 +88,15 @@ func getListConfigurationsCommand() *cobra.Command {
 
 func getWatchConfigurationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configurations [targetID]",
-		Short: "Watch target configurations",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  runWatchConfigurationsCommand,
+		Use:     "configurations [configurationID]",
+		Short:   "Watch target configurations",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"configuration"},
+		RunE:    runWatchConfigurationsCommand,
 	}
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing configurations")
 	return cmd
 }
 
@@ -109,7 +114,34 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	response, err := client.ListConfigurations(ctx, &admin.ListConfigurationsRequest{})
+	if len(args) > 0 {
+		return getConfigurations(ctx, client, v2.ConfigurationID(args[0]), noHeaders, verbose)
+	}
+	return listConfigurations(ctx, client, noHeaders, verbose)
+}
+
+func getConfigurations(ctx context.Context, client admin.ConfigurationServiceClient, id v2.ConfigurationID, noHeaders bool, verbose bool) error {
+	resp, err := client.GetConfiguration(ctx, &admin.GetConfigurationRequest{ConfigurationID: id})
+	if err != nil {
+		cli.Output("Unable to get configuration: %s", err)
+		return err
+	}
+	var tableFormat format.Format
+	if verbose {
+		tableFormat = format.Format(configurationListTemplateVerbose)
+	} else {
+		tableFormat = format.Format(configurationListTemplate)
+	}
+
+	if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, resp.Configuration); e != nil {
+		return e
+	}
+	return nil
+
+}
+
+func listConfigurations(ctx context.Context, client admin.ConfigurationServiceClient, noHeaders bool, verbose bool) error {
+	stream, err := client.ListConfigurations(ctx, &admin.ListConfigurationsRequest{})
 	if err != nil {
 		cli.Output("Unable to list configurations: %s", err)
 		return err
@@ -125,7 +157,7 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	allConfigurations := []*v2.Configuration{}
 
 	for {
-		resp, err := response.Recv()
+		resp, err := stream.Recv()
 		if err == io.EOF {
 			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allConfigurations); e != nil {
 				return e
@@ -157,7 +189,8 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	client := admin.NewConfigurationServiceClient(conn)
-	stream, err := client.WatchConfigurations(context.Background(), &admin.WatchConfigurationsRequest{Noreplay: noReplay})
+	request := &admin.WatchConfigurationsRequest{Noreplay: noReplay, ConfigurationID: id}
+	stream, err := client.WatchConfigurations(context.Background(), request)
 	if err != nil {
 		return err
 	}
