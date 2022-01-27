@@ -30,7 +30,7 @@ func Test_RootUsage(t *testing.T) {
 		description string
 		expected    string
 	}{
-		{description: "Roll back command", expected: `Rolls-back a network change`},
+		{description: "Roll back command", expected: `Rolls-back a transaction`},
 		{description: "Usage header", expected: `Usage:`},
 		{description: "Usage config command", expected: `config [command]`},
 	}
@@ -60,7 +60,7 @@ func Test_SubCommands(t *testing.T) {
 		expectedShort string
 	}{
 		{commandName: "Config", expectedShort: "Manage the CLI configuration"},
-		{commandName: "Rollback", expectedShort: "Rolls-back a network change"},
+		{commandName: "Rollback", expectedShort: "Rolls-back a transaction"},
 		{commandName: "Get", expectedShort: "Get config resources"},
 		{commandName: "Compact-Changes", expectedShort: "Takes a snapshot of network and device changes"},
 		{commandName: "Watch", expectedShort: "Watch for updates to a config resource type"},

@@ -40,9 +40,8 @@ func getListTransactionsCommand() *cobra.Command {
 
 func getWatchTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "transactions [transactionID wildcard]",
+		Use:   "transactions",
 		Short: "Watch configuration transaction changes",
-		Args:  cobra.MaximumNArgs(1),
 		RunE:  runWatchTransactionsCommand,
 	}
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
@@ -70,14 +69,31 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	response, err := client.ListTransactions(ctx, &admin.ListTransactionsRequest{})
+	if len(args) > 0 {
+		return getTransactions(ctx, writer, client, v2.TransactionID(args[0]), verbose)
+	}
+	return listTransactions(ctx, writer, client, verbose)
+}
+
+func getTransactions(ctx context.Context, writer *os.File, client admin.TransactionServiceClient, id v2.TransactionID, verbose bool) error {
+	resp, err := client.GetTransaction(ctx, &admin.GetTransactionRequest{ID: id})
+	if err != nil {
+		cli.Output("Unable to list transactions: %s", err)
+		return err
+	}
+	printTransaction(writer, resp.Transaction, verbose)
+	return nil
+}
+
+func listTransactions(ctx context.Context, writer *os.File, client admin.TransactionServiceClient, verbose bool) error {
+	stream, err := client.ListTransactions(ctx, &admin.ListTransactionsRequest{})
 	if err != nil {
 		cli.Output("Unable to list transactions: %s", err)
 		return err
 	}
 
 	for {
-		resp, err := response.Recv()
+		resp, err := stream.Recv()
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -140,10 +156,11 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 
 func printTransaction(writer io.Writer, t *v2.Transaction, verbose bool) {
 	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%16d\t%8d\t%-8d\t%-12s\t%-12s\t%-8t\t%-10s\t%-8t\n",
+		_, _ = fmt.Fprintf(writer, "%-12s\t%16d\t%8d\t%-8d\t%-12s\t%-12s\t%-12s\t%-10s\t%-8t\n",
 			t.ID, t.Index, t.Status.State, t.Revision, t.Created, t.Updated, t.Deleted, t.Username, t.Atomic)
 	} else {
-		_, _ = fmt.Fprintf(writer, "ID: %s\n", t.ID)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%16d\t%8d\t%-8d\n",
+			t.ID, t.Index, t.Status.State, t.Revision)
 	}
 }
 
@@ -160,10 +177,10 @@ func printTransactionHeader(writer *os.File, verbose bool, event bool) {
 		_, _ = fmt.Fprintf(writer, "%-12s\t", "Event Type")
 	}
 	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-8s\t%-12s\t%-12s\t%-8s\t%-10s\t%-8s\n",
-			"Transaction ID", "Status", "Revision", "Index", "Created", "Updated", "Deleted", "User Name", "Atomic")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-16s\t%-8s\t%-8s\t%-12s\t%-12s\t%-12s\t%-10s\t%-8s\n",
+			"Transaction ID", "Index", "Status", "Revision", "Created", "Updated", "Deleted", "User Name", "Atomic")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%8s\t%-8s\n",
-			"Transaction ID", "Status", "Revision", "Index")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-16s\t%-8s\t%-8s\n",
+			"Transaction ID", "Index", "Status", "Revision")
 	}
 }

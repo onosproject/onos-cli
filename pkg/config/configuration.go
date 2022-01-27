@@ -28,10 +28,11 @@ import (
 
 func getListConfigurationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configurations [targetID]",
-		Short: "List target configurations",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  runListConfigurationsCommand,
+		Use:     "configurations [configurationID]",
+		Short:   "List target configurations",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"configuration"},
+		RunE:    runListConfigurationsCommand,
 	}
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
@@ -40,10 +41,11 @@ func getListConfigurationsCommand() *cobra.Command {
 
 func getWatchConfigurationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configurations [targetID]",
-		Short: "Watch target configurations",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  runWatchConfigurationsCommand,
+		Use:     "configurations [configurationID]",
+		Short:   "Watch target configurations",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"configuration"},
+		RunE:    runWatchConfigurationsCommand,
 	}
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
@@ -69,14 +71,32 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	response, err := client.ListConfigurations(ctx, &admin.ListConfigurationsRequest{})
+	if len(args) > 0 {
+		return getConfigurations(ctx, writer, client, v2.ConfigurationID(args[0]), verbose)
+	}
+	return listConfigurations(ctx, writer, client, verbose)
+}
+
+func getConfigurations(ctx context.Context, writer *os.File, client admin.ConfigurationServiceClient, id v2.ConfigurationID, verbose bool) error {
+	resp, err := client.GetConfiguration(ctx, &admin.GetConfigurationRequest{ConfigurationID: id})
+	if err != nil {
+		cli.Output("Unable to get configuration: %s", err)
+		return err
+	}
+	printConfiguration(writer, resp.Configuration, verbose)
+	return nil
+
+}
+
+func listConfigurations(ctx context.Context, writer *os.File, client admin.ConfigurationServiceClient, verbose bool) error {
+	stream, err := client.ListConfigurations(ctx, &admin.ListConfigurationsRequest{})
 	if err != nil {
 		cli.Output("Unable to list configurations: %s", err)
 		return err
 	}
 
 	for {
-		resp, err := response.Recv()
+		resp, err := stream.Recv()
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -107,7 +127,8 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	client := admin.NewConfigurationServiceClient(conn)
-	stream, err := client.WatchConfigurations(context.Background(), &admin.WatchConfigurationsRequest{Noreplay: noReplay})
+	request := &admin.WatchConfigurationsRequest{Noreplay: noReplay, ConfigurationID: id}
+	stream, err := client.WatchConfigurations(context.Background(), request)
 	if err != nil {
 		return err
 	}
@@ -139,11 +160,11 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 
 func printConfiguration(writer io.Writer, c *v2.Configuration, verbose bool) {
 	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t%v\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index, c.Values)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%v\n",
+			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Values)
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\n",
+			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision)
 	}
 }
 
