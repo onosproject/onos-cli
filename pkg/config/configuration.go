@@ -17,13 +17,14 @@ package config
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"time"
+
 	"github.com/onosproject/onos-api/go/onos/config/admin"
 	v2 "github.com/onosproject/onos-api/go/onos/config/v2"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
-	"io"
-	"os"
-	"time"
 )
 
 func getListConfigurationsCommand() *cobra.Command {
@@ -139,11 +140,11 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 
 func printConfiguration(writer io.Writer, c *v2.Configuration, verbose bool) {
 	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t%v\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index, c.Values)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%v\t\n",
+			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Values)
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t%-8d\t\n",
-			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision, c.Index)
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8d\t\n",
+			c.ID, c.TargetID, c.TargetVersion, c.TargetType, c.Status.State, c.Revision)
 	}
 }
 
@@ -160,10 +161,10 @@ func printConfigurationHeader(writer *os.File, verbose bool, event bool) {
 		_, _ = fmt.Fprintf(writer, "%-12s\t", "Event Type")
 	}
 	if verbose {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t%-8s\t%s\n",
-			"ID", "Target ID", "Version", "Type", "Status", "Revision", "Index", "Values")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t%-8s\t\n",
+			"ID", "Target ID", "Version", "Type", "Status", "Revision", "Values")
 	} else {
-		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t%-8s\n",
-			"ID", "Target ID", "Version", "Type", "Status", "Revision", "Index")
+		_, _ = fmt.Fprintf(writer, "%-12s\t%-12s\t%-8s\t%-10s\t%-10s\t%-8s\t\n",
+			"ID", "Target ID", "Version", "Type", "Status", "Revision")
 	}
 }
