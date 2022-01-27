@@ -16,8 +16,8 @@ package config
 
 import (
 	"github.com/onosproject/onos-api/go/onos/config/admin"
+	"github.com/onosproject/onos-cli/pkg/format"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
-	"github.com/opencord/cordctl/pkg/format" // NOTE cordctl is not really maintained anymore, consider importing this code
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -70,7 +70,7 @@ func runListPluginsCommand(cmd *cobra.Command, args []string) error {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
-			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, allPlugins); e != nil {
+			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allPlugins); e != nil {
 				return e
 			}
 			return nil
