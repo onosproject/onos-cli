@@ -78,11 +78,13 @@ var transactionWidths = transactionEventWidths{
 
 func getListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "transactions [transactionID]",
-		Short: "Get list of configuration transactions",
-		Args:  cobra.MaximumNArgs(1),
-		RunE:  runListTransactionsCommand,
+		Use:     "transactions [transactionID]",
+		Short:   "Get list of configuration transactions",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"transaction"},
+		RunE:    runListTransactionsCommand,
 	}
+	cmd.Flags().Uint64("index", 0, "optional index for transaction lookup; takes precedence over ID")
 	cmd.Flags().BoolP("verbose", "v", false, "whether to print the change with verbose output")
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
@@ -90,9 +92,11 @@ func getListTransactionsCommand() *cobra.Command {
 
 func getWatchTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "transactions",
-		Short: "Watch configuration transaction changes",
-		RunE:  runWatchTransactionsCommand,
+		Use:     "transactions [transactionID]",
+		Short:   "Watch configuration transaction changes",
+		Args:    cobra.MaximumNArgs(1),
+		Aliases: []string{"transaction"},
+		RunE:    runWatchTransactionsCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("no-replay", "r", false, "do not replay existing transactions")
@@ -102,6 +106,7 @@ func getWatchTransactionsCommand() *cobra.Command {
 func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	index, _ := cmd.Flags().GetUint64("index")
 
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -113,14 +118,18 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	if index > 0 {
+		return getTransaction(ctx, client, &admin.GetTransactionRequest{Index: v2.Index(index)}, noHeaders, verbose)
+	}
 	if len(args) > 0 {
-		return getTransactions(ctx, client, v2.TransactionID(args[0]), noHeaders, verbose)
+		return getTransaction(ctx, client, &admin.GetTransactionRequest{ID: v2.TransactionID(args[0])}, noHeaders, verbose)
 	}
 	return listTransactions(ctx, client, noHeaders, verbose)
 }
 
-func getTransactions(ctx context.Context, client admin.TransactionServiceClient, id v2.TransactionID, noHeaders bool, verbose bool) error {
-	resp, err := client.GetTransaction(ctx, &admin.GetTransactionRequest{ID: id})
+func getTransaction(ctx context.Context, client admin.TransactionServiceClient,
+	req *admin.GetTransactionRequest, noHeaders bool, verbose bool) error {
+	resp, err := client.GetTransaction(ctx, req)
 	if err != nil {
 		cli.Output("Unable to list transactions: %s", err)
 		return err
@@ -181,7 +190,8 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	client := admin.NewTransactionServiceClient(conn)
-	stream, err := client.WatchTransactions(context.Background(), &admin.WatchTransactionsRequest{Noreplay: noReplay})
+	request := &admin.WatchTransactionsRequest{Noreplay: noReplay, ID: id}
+	stream, err := client.WatchTransactions(context.Background(), request)
 	if err != nil {
 		return err
 	}

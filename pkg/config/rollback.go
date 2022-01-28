@@ -46,9 +46,11 @@ func runRollbackCommand(cmd *cobra.Command, args []string) error {
 	client := admin.CreateConfigAdminServiceClient(clientConnection)
 
 	ctx := cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag))
-	if _, err := client.RollbackNetworkChange(ctx, &admin.RollbackRequest{Index: v2.Index(index)}); err != nil {
+	resp, err := client.RollbackTransaction(ctx, &admin.RollbackRequest{Index: v2.Index(index)})
+	if err != nil {
 		cli.Output("Rollback failed: %+v\n", err)
 		return err
 	}
+	cli.Output("Rollback transaction ID %s; Index %d\n", resp.ID, resp.Index)
 	return nil
 }
