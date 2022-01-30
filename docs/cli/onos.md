@@ -16,7 +16,6 @@ ONOS command line client
 * [onos kpimon](onos_kpimon.md)	 - ONOS KPIMON subsystem commands
 * [onos mho](onos_mho.md)	 - ONOS MHO subsystem commands
 * [onos mlb](onos_mlb.md)	 - ONOS MLB subsystem commands
-* [onos modelregistry](onos_modelregistry.md)	 - ONOS Config Model Registry subsystem commands
 * [onos pci](onos_pci.md)	 - ONOS PCI subsystem commands
 * [onos perf](onos_perf.md)	 - simple gRPC performance measurement client
 * [onos ransim](onos_ransim.md)	 - ONOS RAN simulator commands

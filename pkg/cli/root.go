@@ -16,7 +16,6 @@ package cli
 
 import (
 	"fmt"
-
 	"github.com/onosproject/onos-cli/pkg/mlb"
 	"github.com/onosproject/onos-cli/pkg/perf"
 	"github.com/onosproject/onos-cli/pkg/rsm"
@@ -25,7 +24,6 @@ import (
 	"github.com/onosproject/onos-cli/pkg/e2t"
 	"github.com/onosproject/onos-cli/pkg/kpimon"
 	"github.com/onosproject/onos-cli/pkg/mho"
-	"github.com/onosproject/onos-cli/pkg/modelregistry"
 	"github.com/onosproject/onos-cli/pkg/pci"
 	"github.com/onosproject/onos-cli/pkg/topo"
 	"github.com/onosproject/onos-cli/pkg/uenib"
@@ -79,7 +77,6 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(pci.GetCommand())
 	cmd.AddCommand(mlb.GetCommand())
 	cmd.AddCommand(rsm.GetCommand())
-	cmd.AddCommand(modelregistry.GetCommand())
 	cmd.AddCommand(perf.GetCommand())
 	cmd.AddCommand()
 
