@@ -26,11 +26,11 @@ import (
 	"time"
 )
 
-const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Revision}}\t{{.Status.State}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Atomic}}\t{{.TransactionType}}"
+const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Status.State}}\t{{.TransactionType}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Strategy.Isolation}}\t{{.Strategy.Synchronicity}}"
 
 var transactionListTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
 
-const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Revision}}\t{{.Transaction.Status.State}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Atomic}}"
+const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Status.State}}\t{{.Transaction.TransactionType}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Strategy.Isolation}}\t{{.Transaction.Strategy.Synchronicity}}"
 
 type cliTransaction struct {
 	v2.Transaction
@@ -49,8 +49,11 @@ type transactionEventWidths struct {
 		Status   struct {
 			State int
 		}
-		Revision int
-		Index    int
+		Strategy struct {
+			Synchronicity int
+			Isolation     int
+		}
+		Index int
 	}
 }
 
@@ -66,8 +69,11 @@ var transactionWidths = transactionEventWidths{
 		Status   struct {
 			State int
 		}
-		Revision int
-		Index    int
+		Strategy struct {
+			Synchronicity int
+			Isolation     int
+		}
+		Index int
 	}{
 		ID:       42,
 		Created:  13,
@@ -76,8 +82,14 @@ var transactionWidths = transactionEventWidths{
 		Username: 13,
 		Atomic:   6,
 		Status:   struct{ State int }{State: 40},
-		Revision: 5,
-		Index:    5,
+		Strategy: struct {
+			Synchronicity int
+			Isolation     int
+		}{
+			Synchronicity: 12,
+			Isolation:     12,
+		},
+		Index: 5,
 	},
 }
 
@@ -186,7 +198,7 @@ func listTransactions(ctx context.Context, client admin.TransactionServiceClient
 func prepareTransactionOutput(tx *v2.Transaction) *cliTransaction {
 	var txType string
 
-	switch tx.GetTransaction().(type) {
+	switch tx.GetDetails().(type) {
 	case *v2.Transaction_Change:
 		txType = "Change"
 	case *v2.Transaction_Rollback:
