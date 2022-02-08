@@ -26,50 +26,41 @@ import (
 	"time"
 )
 
-const configurationListTemplate = "table{{.ID}}\t{{.TargetID}}\t{{.TargetVersion}}\t{{.TargetType}}\t{{.Status.State}}"
+const configurationListTemplate = "table{{.ID}}\t{{.TargetID}}\t{{.Status.State}}\t{{.Index}}"
 
 var configurationListTemplateVerbose = fmt.Sprintf("%s\t{{.Values}}", configurationListTemplate)
 
-const configurationEventTemplate = "table{{.Type}}\t{{.Configuration.ID}}\t{{.Configuration.TargetID}}\t{{.Configuration.TargetVersion}}\t{{.Configuration.TargetType}}\t{{.Configuration.Status.State}}"
+const configurationEventTemplate = "table{{.Type}}\t{{.Configuration.ID}}\t{{.Configuration.TargetID}}\t{{.Configuration.Status.State}}\t{{.Configuration.Index}}"
 
 var configurationEventTemplateVerbose = fmt.Sprintf("%s\t{{.Configuration.Values}}", configurationEventTemplate)
 
 type configurationEventWidths struct {
 	Type          int
 	Configuration struct {
-		ID            int
-		TargetID      int
-		TargetVersion int
-		TargetType    int
-		Status        struct {
+		ID       int
+		TargetID int
+		Status   struct {
 			State int
 		}
-		Revision int
-		Index    int
-		Values   int
+		Index  int
+		Values int
 	}
 }
 
 var configWidths = configurationEventWidths{
 	Type: 30,
 	Configuration: struct {
-		ID            int
-		TargetID      int
-		TargetVersion int
-		TargetType    int
-		Status        struct{ State int }
-		Revision      int
-		Index         int
-		Values        int
+		ID       int
+		TargetID int
+		Status   struct{ State int }
+		Index    int
+		Values   int
 	}{
-		ID:            13,
-		TargetID:      13,
-		TargetVersion: 15,
-		TargetType:    13,
-		Status:        struct{ State int }{State: 40},
-		Revision:      5,
-		Index:         5,
-		Values:        50,
+		ID:       13,
+		TargetID: 13,
+		Status:   struct{ State int }{State: 40},
+		Index:    5,
+		Values:   50,
 	},
 }
 
@@ -154,7 +145,7 @@ func listConfigurations(ctx context.Context, client admin.ConfigurationServiceCl
 		tableFormat = format.Format(configurationListTemplate)
 	}
 
-	allConfigurations := []*v2.Configuration{}
+	var allConfigurations []*v2.Configuration
 
 	for {
 		resp, err := stream.Recv()
