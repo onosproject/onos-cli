@@ -145,7 +145,7 @@ func listConfigurations(ctx context.Context, client admin.ConfigurationServiceCl
 		tableFormat = format.Format(configurationListTemplate)
 	}
 
-	allConfigurations := []*v2.Configuration{}
+	var allConfigurations []*v2.Configuration
 
 	for {
 		resp, err := stream.Recv()

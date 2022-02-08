@@ -30,7 +30,7 @@ const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Status.State}}\t{{
 
 var transactionListTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
 
-const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Status.State}}\t{{.Transaction.TransactionType}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Strategy.Isolation}}\t{{.Transaction.Strategy.Synchronicity}}"
+const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Status.State}}\t{{.TransactionType}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Strategy.Isolation}}\t{{.Transaction.Strategy.Synchronicity}}"
 
 type cliTransaction struct {
 	v2.Transaction
@@ -41,19 +41,18 @@ type transactionEventWidths struct {
 	Type        int
 	Transaction struct {
 		ID       int
+		Index    int
 		Created  int
 		Updated  int
 		Deleted  int
 		Username int
-		Atomic   int
 		Status   struct {
 			State int
 		}
-		Strategy struct {
+		TransactionStrategy struct {
 			Synchronicity int
 			Isolation     int
 		}
-		Index int
 	}
 }
 
@@ -61,35 +60,33 @@ var transactionWidths = transactionEventWidths{
 	Type: 30,
 	Transaction: struct {
 		ID       int
+		Index    int
 		Created  int
 		Updated  int
 		Deleted  int
 		Username int
-		Atomic   int
 		Status   struct {
 			State int
 		}
-		Strategy struct {
+		TransactionStrategy struct {
 			Synchronicity int
 			Isolation     int
 		}
-		Index int
 	}{
 		ID:       42,
+		Index:    5,
 		Created:  13,
 		Updated:  13,
 		Deleted:  13,
 		Username: 13,
-		Atomic:   6,
 		Status:   struct{ State int }{State: 40},
-		Strategy: struct {
+		TransactionStrategy: struct {
 			Synchronicity int
 			Isolation     int
 		}{
 			Synchronicity: 12,
 			Isolation:     12,
 		},
-		Index: 5,
 	},
 }
 
@@ -175,7 +172,7 @@ func listTransactions(ctx context.Context, client admin.TransactionServiceClient
 		f = format.Format(transactionListTemplateVerbose)
 	}
 
-	allTx := []*cliTransaction{}
+	var allTx []*cliTransaction
 
 	for {
 		resp, err := stream.Recv()
@@ -235,6 +232,7 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 
 	f := format.Format(transactionEventTemplate)
 
+	fmt.Printf("A\n")
 	if !noHeaders {
 		output, err := f.ExecuteFixedWidth(transactionWidths, true, nil)
 		if err != nil {
@@ -242,6 +240,8 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Printf("%s\n", output)
 	}
+
+	fmt.Printf("B\n")
 
 	for {
 		res, err := stream.Recv()
@@ -252,6 +252,7 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 			cli.Output("Error receiving notification : %v", err)
 			return err
 		}
+		fmt.Printf(". ")
 
 		event := res.TransactionEvent
 		if len(id) == 0 || id == event.Transaction.ID {
