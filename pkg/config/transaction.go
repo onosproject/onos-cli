@@ -26,11 +26,16 @@ import (
 	"time"
 )
 
-const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Revision}}\t{{.Status.State}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Atomic}}"
+const transactionListTemplate = "table{{.ID}}\t{{.Index}}\t{{.Revision}}\t{{.Status.State}}\t{{.Created}}\t{{.Updated}}\t{{.Deleted}}\t{{.Username}}\t{{.Atomic}}\t{{.TransactionType}}"
 
 var transactionListTemplateVerbose = fmt.Sprintf("%s\t{{.Transaction}}", transactionListTemplate)
 
 const transactionEventTemplate = "table{{.Type}}\t{{.Transaction.ID}}\t{{.Transaction.Index}}\t{{.Transaction.Revision}}\t{{.Transaction.Status.State}}\t{{.Transaction.Created}}\t{{.Transaction.Updated}}\t{{.Transaction.Deleted}}\t{{.Transaction.Username}}\t{{.Transaction.Atomic}}"
+
+type cliTransaction struct {
+	v2.Transaction
+	TransactionType string
+}
 
 type transactionEventWidths struct {
 	Type        int
@@ -104,8 +109,8 @@ func getWatchTransactionsCommand() *cobra.Command {
 }
 
 func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
-	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	verbose, _ := cmd.Flags().GetBool("verbose")
 	index, _ := cmd.Flags().GetUint64("index")
 
 	conn, err := cli.GetConnection(cmd)
@@ -139,7 +144,8 @@ func getTransaction(ctx context.Context, client admin.TransactionServiceClient,
 	if verbose {
 		f = format.Format(transactionListTemplateVerbose)
 	}
-	if e := f.Execute(cli.GetOutput(), !noHeaders, 0, resp.Transaction); e != nil {
+
+	if e := f.Execute(cli.GetOutput(), !noHeaders, 0, prepareTransactionOutput(resp.Transaction)); e != nil {
 		return e
 	}
 	return nil
@@ -157,7 +163,7 @@ func listTransactions(ctx context.Context, client admin.TransactionServiceClient
 		f = format.Format(transactionListTemplateVerbose)
 	}
 
-	allTx := []*v2.Transaction{}
+	allTx := []*cliTransaction{}
 
 	for {
 		resp, err := stream.Recv()
@@ -170,7 +176,26 @@ func listTransactions(ctx context.Context, client admin.TransactionServiceClient
 			cli.Output("Unable to read transaction: %s", err)
 			return err
 		}
-		allTx = append(allTx, resp.Transaction)
+
+		tx := prepareTransactionOutput(resp.Transaction)
+
+		allTx = append(allTx, tx)
+	}
+}
+
+func prepareTransactionOutput(tx *v2.Transaction) *cliTransaction {
+	var txType string
+
+	switch tx.GetTransaction().(type) {
+	case *v2.Transaction_Change:
+		txType = "Change"
+	case *v2.Transaction_Rollback:
+		txType = "Rollback"
+	}
+
+	return &cliTransaction{
+		TransactionType: txType,
+		Transaction:     *tx,
 	}
 }
 
