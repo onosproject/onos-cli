@@ -127,11 +127,11 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
-	scope := topoapi.RelationFilterScope_TARGET_ONLY
+	scope := topoapi.RelationFilterScope_TARGETS_ONLY
 	aspects, _ := cmd.Flags().GetStringSlice("with-aspect")
 
 	if scopeString == "source_and_target" {
-		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGET
+		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGETS
 	}
 
 	if (len(to) > 0 || len(toTgt) > 0) && len(via) > 0 {
@@ -240,13 +240,17 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
-	scope := topoapi.RelationFilterScope_TARGET_ONLY
+	scope := topoapi.RelationFilterScope_TARGETS_ONLY
 	aspects, _ := cmd.Flags().GetStringSlice("with-aspect")
 
 	if scopeString == "all" {
 		scope = topoapi.RelationFilterScope_ALL
 	} else if scopeString == "source_and_target" {
-		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGET
+		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGETS
+	} else if scopeString == "relations" {
+		scope = topoapi.RelationFilterScope_RELATIONS_ONLY
+	} else if scopeString == "relations_and_target" {
+		scope = topoapi.RelationFilterScope_RELATIONS_AND_TARGETS
 	}
 
 	if len(to) > 0 && len(via) > 0 {
