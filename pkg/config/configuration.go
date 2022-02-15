@@ -102,7 +102,7 @@ func runListConfigurationsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	client := admin.NewConfigurationServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag)), 15*time.Second)
 	defer cancel()
 
 	if len(args) > 0 {
@@ -181,7 +181,7 @@ func runWatchConfigurationsCommand(cmd *cobra.Command, args []string) error {
 
 	client := admin.NewConfigurationServiceClient(conn)
 	request := &admin.WatchConfigurationsRequest{Noreplay: noReplay, ConfigurationID: id}
-	stream, err := client.WatchConfigurations(context.Background(), request)
+	stream, err := client.WatchConfigurations(cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag)), request)
 	if err != nil {
 		return err
 	}

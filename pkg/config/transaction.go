@@ -114,7 +114,7 @@ func runListTransactionsCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	client := admin.NewTransactionServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag)), 15*time.Second)
 	defer cancel()
 
 	if index > 0 {
@@ -211,7 +211,7 @@ func runWatchTransactionsCommand(cmd *cobra.Command, args []string) error {
 
 	client := admin.NewTransactionServiceClient(conn)
 	request := &admin.WatchTransactionsRequest{Noreplay: noReplay, ID: id}
-	stream, err := client.WatchTransactions(context.Background(), request)
+	stream, err := client.WatchTransactions(cli.NewContextWithAuthHeaderFromFlag(cmd.Context(), cmd.Flag(cli.AuthHeaderFlag)), request)
 	if err != nil {
 		return err
 	}
