@@ -62,7 +62,6 @@ func Test_SubCommands(t *testing.T) {
 		{commandName: "Config", expectedShort: "Manage the CLI configuration"},
 		{commandName: "Rollback", expectedShort: "Rolls-back a transaction"},
 		{commandName: "Get", expectedShort: "Get config resources"},
-		{commandName: "Compact-Changes", expectedShort: "Takes a snapshot of network and device changes"},
 		{commandName: "Watch", expectedShort: "Watch for updates to a config resource type"},
 		{commandName: "Log", expectedShort: "logging api commands"},
 	}
