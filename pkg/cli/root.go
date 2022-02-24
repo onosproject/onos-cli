@@ -16,6 +16,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/onosproject/onos-cli/pkg/a1t"
 	"github.com/onosproject/onos-cli/pkg/mlb"
 	"github.com/onosproject/onos-cli/pkg/perf"
 	"github.com/onosproject/onos-cli/pkg/rsm"
@@ -78,6 +79,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(mlb.GetCommand())
 	cmd.AddCommand(rsm.GetCommand())
 	cmd.AddCommand(perf.GetCommand())
+	cmd.AddCommand(a1t.GetCommand())
 	cmd.AddCommand()
 
 	cmd.AddCommand(getCompletionCommand())
