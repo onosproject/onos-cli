@@ -40,9 +40,9 @@ func displaySubscription(writer io.Writer, resp *a1.GetXAppConnectionResponse) {
 
 func getGetSubscriptionCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "subscription",
+		Use:   "subscription",
 		Short: "Get A1 subscription(s)",
-		RunE: runGetSubscriptionCommand,
+		RunE:  runGetSubscriptionCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().String("xAppID", "", "xApp ID (optional)")
@@ -52,10 +52,10 @@ func getGetSubscriptionCommand() *cobra.Command {
 func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
-	defer conn.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -83,6 +83,9 @@ func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	stream, err := client.GetXAppConnections(ctx, req)
+	if err != nil {
+		return err
+	}
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {

@@ -27,14 +27,14 @@ import (
 )
 
 const (
-	policyTypeFormat = "%-50s\t%s\n"
+	policyTypeFormat   = "%-50s\t%s\n"
 	policyObjectFormat = "%-50s\t%-30s\n"
 	policyStatusFormat = "%-50s\t%-30s\t%s\n"
-	verboseFormat = "%s:\t%s\n"
-	jsonFormat = "%s:\n%s\n"
+	verboseFormat      = "%s:\t%s\n"
+	jsonFormat         = "%s:\n%s\n"
 )
 
-func addIndentJsonString(jsonStringObj string) string {
+func addIndentJSONString(jsonStringObj string) string {
 	var out bytes.Buffer
 	err := json.Indent(&out, []byte(jsonStringObj), "", "\t")
 	if err != nil {
@@ -67,7 +67,7 @@ func displayPolicyTypeListElement(writer io.Writer, resp *a1.GetPolicyTypeObject
 func displayPolicyType(writer io.Writer, resp *a1.GetPolicyTypeObjectResponse) {
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyTypeID", resp.PolicyTypeId)
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyObjectIDs", resp.PolicyIds)
-	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJsonString(resp.PolicyTypeObject))
+	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJSONString(resp.PolicyTypeObject))
 }
 
 func displayPolicyObjectListElement(writer io.Writer, resp *a1.GetPolicyObjectResponse) {
@@ -78,7 +78,7 @@ func displayPolicyObjectListElement(writer io.Writer, resp *a1.GetPolicyObjectRe
 func displayPolicyObject(writer io.Writer, resp *a1.GetPolicyObjectResponse) {
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyTypeID", resp.PolicyTypeId)
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyObjectIDs", resp.PolicyObjectId)
-	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJsonString(resp.PolicyObject))
+	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJSONString(resp.PolicyObject))
 }
 
 func displayPolicyStatusListElement(writer io.Writer, resp *a1.GetPolicyObjectStatusResponse) {
@@ -89,12 +89,12 @@ func displayPolicyStatusListElement(writer io.Writer, resp *a1.GetPolicyObjectSt
 func displayPolicyStatus(writer io.Writer, resp *a1.GetPolicyObjectStatusResponse) {
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyTypeID", resp.PolicyTypeId)
 	_, _ = fmt.Fprintf(writer, verboseFormat, "PolicyObjectIDs", resp.PolicyObjectId)
-	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJsonString(resp.PolicyObjectStatus))
+	_, _ = fmt.Fprintf(writer, jsonFormat, "PolicyTypeObject", addIndentJSONString(resp.PolicyObjectStatus))
 }
 
 func getPolicyCommand() *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "policy {type/object/status} [args]",
+	cmd := &cobra.Command{
+		Use:   "policy {type/object/status} [args]",
 		Short: "Policy command",
 	}
 
@@ -105,10 +105,10 @@ func getPolicyCommand() *cobra.Command {
 }
 
 func getGetPolicyType() *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "type [args]",
+	cmd := &cobra.Command{
+		Use:   "type [args]",
 		Short: "Get policy type",
-		RunE: runGetPolicyType,
+		RunE:  runGetPolicyType,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().String("policyTypeID", "", "Policy Type ID")
@@ -116,10 +116,10 @@ func getGetPolicyType() *cobra.Command {
 }
 
 func getGetPolicyObject() *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "object [args]",
+	cmd := &cobra.Command{
+		Use:   "object [args]",
 		Short: "Get policy object",
-		RunE: runGetPolicyObject,
+		RunE:  runGetPolicyObject,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().String("policyTypeID", "", "Policy Type ID")
@@ -129,9 +129,9 @@ func getGetPolicyObject() *cobra.Command {
 
 func getGetPolicyStatus() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "status [args]",
+		Use:   "status [args]",
 		Short: "Get policy status",
-		RunE: runGetPolicyStatus,
+		RunE:  runGetPolicyStatus,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().String("policyTypeID", "", "Policy Type ID")
@@ -142,10 +142,10 @@ func getGetPolicyStatus() *cobra.Command {
 func runGetPolicyType(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
-	defer conn.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -204,10 +204,10 @@ func runGetPolicyType(cmd *cobra.Command, args []string) error {
 func runGetPolicyObject(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
-	defer conn.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -248,7 +248,7 @@ func runGetPolicyObject(cmd *cobra.Command, args []string) error {
 	}
 
 	req := &a1.GetPolicyObjectRequest{
-		PolicyTypeId: policyTypeID,
+		PolicyTypeId:   policyTypeID,
 		PolicyObjectId: policyObjectID,
 	}
 
@@ -280,10 +280,10 @@ func runGetPolicyObject(cmd *cobra.Command, args []string) error {
 func runGetPolicyStatus(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
-	defer conn.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -324,7 +324,7 @@ func runGetPolicyStatus(cmd *cobra.Command, args []string) error {
 	}
 
 	req := &a1.GetPolicyObjectStatusRequest{
-		PolicyTypeId: policyTypeID,
+		PolicyTypeId:   policyTypeID,
 		PolicyObjectId: policyObjectID,
 	}
 

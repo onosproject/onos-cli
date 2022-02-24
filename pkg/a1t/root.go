@@ -21,8 +21,10 @@ import (
 )
 
 const (
-	configName = "a1t"
+	configName     = "a1t"
 	defaultAddress = "onos-a1t:5150"
+
+	// TimeoutTimer is a timer time
 	TimeoutTimer = time.Second * 5
 )
 
@@ -30,13 +32,15 @@ func init() {
 	cli.InitConfig(configName)
 }
 
+// Init is a hook called after cobra initialization
 func Init() {
 	// noop for now
 }
 
+// GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "a1t {get} [args]",
+		Use:   "a1t {get} [args]",
 		Short: "ONOS a1t subsystem commands",
 	}
 
@@ -46,9 +50,9 @@ func GetCommand() *cobra.Command {
 }
 
 func getGetCommand() *cobra.Command {
-	cmd := &cobra.Command {
-		Use: "get {subscriptions/subscription/policy} [args]",
-		Short: "Get command",
+	cmd := &cobra.Command{
+		Use:     "get {subscriptions/subscription/policy} [args]",
+		Short:   "Get command",
 		Aliases: []string{"list"},
 	}
 
