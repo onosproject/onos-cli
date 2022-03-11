@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 export CGO_ENABLED=1
 export GO111MODULE=on
 
@@ -11,39 +15,28 @@ build:
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 	go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
 
+build-tools:=$(shell if [ ! -d "./build/build-tools" ]; then cd build && git clone https://github.com/onosproject/build-tools.git; fi)
+include ./build/build-tools/make/onf-common.mk
+
+mod-update: # @HELP Download the dependencies to the vendor folder
+	go mod tidy
+	go mod vendor
+mod-lint: mod-update # @HELP ensure that the required dependencies are in place
+	# dependencies are vendored, but not committed, go.sum is the only thing we need to check
+	bash -c "diff -u <(echo -n) <(git diff go.sum)"
+
 test: # @HELP run the unit tests and source code validation
-test: build deps license_check linters
+test: mod-lint build license_check_apache linters license
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
-jenkins-test: build-tools deps license_check linters
+jenkins-test: mod-lint build license_check_apache linters license
 	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./../build-tools/build/jenkins/make-unit
 
 coverage: # @HELP generate unit test coverage data
 coverage: build deps linters license_check
 	./../build-tools/build/coveralls/coveralls-coverage onos-cli
-
-deps: # @HELP ensure that the required dependencies are in place
-	go build -v ./...
-	bash -c "diff -u <(echo -n) <(git diff go.mod)"
-	bash -c "diff -u <(echo -n) <(git diff go.sum)"
-
-linters: golang-ci # @HELP examines Go source code and reports coding problems
-	golangci-lint run
-
-build-tools: # @HELP install the ONOS build tools if needed
-	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
-
-jenkins-tools: # @HELP installs tooling needed for Jenkins
-	cd .. && go get -u github.com/jstemmer/go-junit-report && go get github.com/t-yuki/gocover-cobertura
-
-golang-ci: # @HELP install golang-ci if not present
-	golangci-lint --version || curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b `go env GOPATH`/bin v1.42.0
-
-license_check: # @HELP examine and ensure license headers exist
-	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
-	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR}
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker:
@@ -69,16 +62,5 @@ jenkins-publish: build-tools jenkins-tools # @HELP Jenkins calls this to publish
 	../build-tools/release-merge-commit
 	../build-tools/build/docs/push-docs
 
-bumponosdeps: # @HELP update "onosproject" go dependencies and push patch to git.
-	./../build-tools/bump-onos-deps ${VERSION}
-
-clean: # @HELP remove all the build artifacts
+clean:: # @HELP remove all the build artifacts
 	rm -rf ./build/_output ./vendor
-
-help:
-	@grep -E '^.*: *# *@HELP' $(MAKEFILE_LIST) \
-    | sort \
-    | awk ' \
-        BEGIN {FS = ": *# *@HELP"}; \
-        {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}; \
-    '
