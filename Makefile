@@ -63,4 +63,4 @@ jenkins-publish: build-tools jenkins-tools # @HELP Jenkins calls this to publish
 	../build-tools/build/docs/push-docs
 
 clean:: # @HELP remove all the build artifacts
-	rm -rf ./build/_output ./vendor
+	rm -rf ./build/_output ./vendor ./cmd/onos/onos ./cmd/dummy/dummy

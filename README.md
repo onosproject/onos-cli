@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # onos-cli
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/onosproject/onos-cli/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/onosproject/onos-cli)](https://goreportcard.com/report/github.com/onosproject/onos-cli)
