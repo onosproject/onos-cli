@@ -29,6 +29,8 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
+const apacheSPDXLIcense = "<!--\nSPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>\n\nSPDX-License-Identifier: Apache-2.0\n-->\n\n"
+
 // Execute runs the root command and any sub-commands.
 func Execute() {
 	rootCmd := GetRootCommand()
@@ -41,7 +43,9 @@ func Execute() {
 // GenerateCliDocs generate markdown files for onos-cli commands
 func GenerateCliDocs() {
 	cmd := GetRootCommand()
-	err := doc.GenMarkdownTree(cmd, "docs/cli")
+	identity := func(s string) string { return s }
+	licenseStr := func(s string) string { return apacheSPDXLIcense }
+	err := doc.GenMarkdownTreeCustom(cmd, "docs/cli", licenseStr, identity)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

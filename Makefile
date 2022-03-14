@@ -5,7 +5,7 @@
 export CGO_ENABLED=1
 export GO111MODULE=on
 
-.PHONY: build
+.PHONY: build docs
 
 ONOS_CLI_VERSION := latest
 
@@ -29,6 +29,10 @@ test: # @HELP run the unit tests and source code validation
 test: mod-lint build license_check_apache linters license
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
+
+docs: # @HELP generate CLI docs
+docs:
+	go run cmd/onos-cli-docs-gen/main.go
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
 jenkins-test: mod-lint build license_check_apache linters license
