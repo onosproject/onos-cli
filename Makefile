@@ -36,11 +36,7 @@ docs:
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
 jenkins-test: mod-lint build license_check_apache linters license
-	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./../build-tools/build/jenkins/make-unit
-
-coverage: # @HELP generate unit test coverage data
-coverage: build deps linters license_check
-	./../build-tools/build/coveralls/coveralls-coverage onos-cli
+	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./build/build-tools/build/jenkins/make-unit
 
 onos-cli-docker: # @HELP build onos CLI Docker image
 onos-cli-docker:
@@ -59,12 +55,12 @@ kind: images
 all: build images
 
 publish: # @HELP publish version on github and dockerhub
-	./../build-tools/publish-version ${VERSION} onosproject/onos-cli
+	./build/build-tools/publish-version ${VERSION} onosproject/onos-cli
 
 jenkins-publish: build-tools jenkins-tools # @HELP Jenkins calls this to publish artifacts
 	./build/bin/push-images
-	../build-tools/release-merge-commit
-	../build-tools/build/docs/push-docs
+	./build/build-tools/release-merge-commit
+	./build/build-tools/build/docs/push-docs
 
 clean:: # @HELP remove all the build artifacts
 	rm -rf ./build/_output ./vendor ./cmd/onos/onos ./cmd/dummy/dummy
