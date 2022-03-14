@@ -26,7 +26,7 @@ mod-lint: mod-update # @HELP ensure that the required dependencies are in place
 	bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
 test: # @HELP run the unit tests and source code validation
-test: mod-lint build license_check_apache linters license
+test: mod-lint build linters license
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
 
@@ -35,7 +35,7 @@ docs:
 	go run cmd/onos-cli-docs-gen/main.go
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
-jenkins-test: mod-lint build license_check_apache linters license
+jenkins-test: mod-lint build linters license
 	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./build/build-tools/build/jenkins/make-unit
 
 onos-cli-docker: # @HELP build onos CLI Docker image
