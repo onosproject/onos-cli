@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Deploying onos-cli with Helm
 
 This guide deploys `onos-cli` through it's [Helm] chart assumes you have a [Kubernetes] cluster running 

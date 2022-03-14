@@ -9,4 +9,4 @@ coverage.txt
 *.coverprofile
 .idea
 vendor
-build/build-tools
+build/build-tools/**
