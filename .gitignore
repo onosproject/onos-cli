@@ -3,10 +3,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 cmd/onos/onos
+vendor
 **/_output
 *.DS_Store
 coverage.txt
 *.coverprofile
+*report*.xml
+*coverage*.xml
+*-output.out
 .idea
-vendor
-build/build-tools/**
+build/build-tools
