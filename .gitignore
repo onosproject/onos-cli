@@ -1,7 +1,15 @@
+# SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 cmd/onos/onos
-build/_output
+vendor
+**/_output
 *.DS_Store
 coverage.txt
 *.coverprofile
+*report*.xml
+*coverage*.xml
+*-output.out
 .idea
-vendor
+build/build-tools
