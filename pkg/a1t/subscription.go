@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	a1 "github.com/onosproject/onos-api/go/onos/a1t/admin"
+	"github.com/onosproject/onos-cli/pkg/utils"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"io"
@@ -25,7 +26,7 @@ func displaySubscriptionHeaders(writer io.Writer) {
 
 func displaySubscription(writer io.Writer, resp *a1.GetXAppConnectionResponse) {
 	_, _ = fmt.Fprintf(writer, subscriptionFormat,
-		resp.XappId, resp.XappA1Endpoint, resp.SupportedA1Service, resp.SupportedA1ServiceTypeId)
+		resp.XappId, resp.XappA1Endpoint, resp.SupportedA1Service, utils.None(resp.SupportedA1ServiceTypeId))
 }
 
 func getGetSubscriptionCommand() *cobra.Command {
