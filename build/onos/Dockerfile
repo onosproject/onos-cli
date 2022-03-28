@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM onosproject/golang-build:v1.0 AS build
+FROM onosproject/golang-build:v2 AS build
 ENV GO111MODULE=on
 RUN go get github.com/atomix/cli/cmd/atomix
 COPY . /go/src/github.com/onosproject/onos-cli
