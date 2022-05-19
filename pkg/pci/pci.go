@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2022-present Intel Corporation
 // SPDX-FileCopyrightText: 2020-present Open Networking Foundation <info@opennetworking.org>
 //
 // SPDX-License-Identifier: Apache-2.0
@@ -193,12 +194,12 @@ func runGetCells(cmd *cobra.Command, args []string) error {
 
 func printTableHeader(noHeaders bool, writer *tabwriter.Writer) {
 	if !noHeaders {
-		_, _ = fmt.Fprintf(writer, "ID\tNode ID\tDlearfcn\tCell Type\tPCI\tPCI Pool\n")
+		_, _ = fmt.Fprintf(writer, "ID\tNode ID\tARFCN\tCell Type\tPCI\tPCI Pool\n")
 	}
 }
 
 func printTableCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
-	_, _ = fmt.Fprintf(writer, "%x\t%s\t%d\t%s\t%d\t", cell.Id, cell.NodeId, cell.Dlearfcn, cell.CellType.String(), cell.Pci)
+	_, _ = fmt.Fprintf(writer, "%x\t%s\t%d\t%s\t%d\t", cell.Id, cell.NodeId, cell.Arfcn, cell.CellType.String(), cell.Pci)
 
 	// print pci pools
 	_, _ = fmt.Fprint(writer, "[")
@@ -222,7 +223,7 @@ func printResolvedCell(cell *pciapi.CellResolution, writer *tabwriter.Writer) {
 }
 
 func printSingleCell(cell *pciapi.PciCell, writer *tabwriter.Writer) {
-	_, _ = fmt.Fprintf(writer, "ID: %x\nNode ID: %s\nDlearfcn: %d\nCell Type: %s\nPCI: %d\n", cell.Id, cell.NodeId, cell.Dlearfcn, cell.CellType.String(), cell.Pci)
+	_, _ = fmt.Fprintf(writer, "ID: %x\nNode ID: %s\nARFCN: %d\nCell Type: %s\nPCI: %d\n", cell.Id, cell.NodeId, cell.Arfcn, cell.CellType.String(), cell.Pci)
 
 	// print neighbors
 	_, _ = fmt.Fprint(writer, "Neighbors: [")
