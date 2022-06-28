@@ -149,7 +149,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
-				printObject(writer, object, verbose, false)
+				printObject(writer, object, verbose, false, false)
 			}
 		}
 		_ = writer.Flush()
@@ -205,7 +205,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 		objects, err := listObjects(cmd, filters, sortOrder)
 		if err == nil {
 			for _, object := range objects {
-				printObject(writer, object, verbose, false)
+				printObject(writer, object, verbose, false, false)
 			}
 		}
 	} else {
@@ -218,7 +218,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 			return err
 		}
 		if object != nil {
-			printObject(writer, *object, verbose, false)
+			printObject(writer, *object, verbose, false, true)
 		}
 	}
 
@@ -263,7 +263,7 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &relationFilter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
 		if err == nil {
 			for _, object := range objects {
-				printObject(writer, object, verbose, false)
+				printObject(writer, object, verbose, false, true)
 			}
 		}
 		_ = writer.Flush()
@@ -311,7 +311,7 @@ func listAllObjectTypes(cmd *cobra.Command, args []string) error {
 		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "Object Type", "Object ID", "Kind ID", "Source ID", "Target ID", "Labels", "Aspects")
 	}
 	for _, object := range objects {
-		printObject(writer, object, verbose, true)
+		printObject(writer, object, verbose, true, true)
 	}
 	_ = writer.Flush()
 	return nil
@@ -372,7 +372,7 @@ func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool,
 	_, _ = fmt.Fprintf(writer, "\n")
 }
 
-func printObject(writer io.Writer, object topoapi.Object, verbose bool, printType bool) {
+func printObject(writer io.Writer, object topoapi.Object, verbose bool, printType bool, printSrcAndTarget bool) {
 	labels := utils.None(labelsAsCSV(object))
 	sourceID := utils.None("")
 	targetID := utils.None("")
@@ -392,7 +392,11 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 			kindID = e.KindID
 		}
 		if !verbose {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, kindID, sourceID, targetID, labels)
+			if printSrcAndTarget {
+				_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, kindID, sourceID, targetID, labels)
+			} else {
+				_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, kindID, labels)
+			}
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID: %s\nKind ID: %s\nLabels: %s\n", object.ID, kindID, labels)
 			if e := object.GetEntity(); e != nil {
@@ -431,7 +435,11 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 	case topoapi.Object_KIND:
 		k := object.GetKind()
 		if !verbose {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, k.GetName(), sourceID, targetID, labels)
+			if printSrcAndTarget {
+				_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, k.GetName(), sourceID, targetID, labels)
+			} else {
+				_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, k.GetName(), labels)
+			}
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID:\t%s\nName:\t%s\nLabels:\t%s\n", object.ID, k.GetName(), labels)
 		}
