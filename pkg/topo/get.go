@@ -374,6 +374,8 @@ func printHeader(writer io.Writer, objectType topoapi.Object_Type, verbose bool,
 
 func printObject(writer io.Writer, object topoapi.Object, verbose bool, printType bool) {
 	labels := utils.None(labelsAsCSV(object))
+	sourceID := utils.None("")
+	targetID := utils.None("")
 
 	if printType {
 		if verbose {
@@ -390,7 +392,7 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 			kindID = e.KindID
 		}
 		if !verbose {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, kindID, labels)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, kindID, sourceID, targetID, labels)
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID: %s\nKind ID: %s\nLabels: %s\n", object.ID, kindID, labels)
 			if e := object.GetEntity(); e != nil {
@@ -429,7 +431,7 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 	case topoapi.Object_KIND:
 		k := object.GetKind()
 		if !verbose {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s", object.ID, k.GetName(), labels)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s", object.ID, k.GetName(), sourceID, targetID, labels)
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID:\t%s\nName:\t%s\nLabels:\t%s\n", object.ID, k.GetName(), labels)
 		}
