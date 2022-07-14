@@ -28,13 +28,15 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fabricsim {get,start,stop,enable,disable} [args]",
+		Use:   "fabricsim {create,delete,get,start,stop,enable,disable} [args]",
 		Short: "ONOS fabric simulator commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
 	cmd.AddCommand(cli.GetConfigCommand())
 
+	cmd.AddCommand(getCreateCommand())
+	cmd.AddCommand(getDeleteCommand())
 	cmd.AddCommand(getGetCommand())
 
 	//cmd.AddCommand(startDeviceCommand())
@@ -44,6 +46,30 @@ func GetCommand() *cobra.Command {
 	//cmd.AddCommand(disablePortCommand())
 
 	cmd.AddCommand(loglib.GetCommand())
+	return cmd
+}
+
+func getCreateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create {device,link} [args]",
+		Short: "Commands for creating simulated entities",
+	}
+
+	cmd.AddCommand(createDeviceCommand())
+	//cmd.AddCommand(createLinkCommand())
+	//cmd.AddCommand(createHostCommand())
+	return cmd
+}
+
+func getDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete {device,link} [args]",
+		Short: "Commands for deleting simulated entities",
+	}
+
+	cmd.AddCommand(deleteDeviceCommand())
+	//cmd.AddCommand(createLinkCommand())
+	//cmd.AddCommand(createHostCommand())
 	return cmd
 }
 
