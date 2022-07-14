@@ -7,6 +7,7 @@ package cli
 import (
 	"fmt"
 	"github.com/onosproject/onos-cli/pkg/a1t"
+	"github.com/onosproject/onos-cli/pkg/fabricsim"
 	"github.com/onosproject/onos-cli/pkg/mlb"
 	"github.com/onosproject/onos-cli/pkg/perf"
 	"github.com/onosproject/onos-cli/pkg/rsm"
@@ -67,6 +68,7 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(topo.GetCommand())
 	cmd.AddCommand(uenib.GetCommand())
 	cmd.AddCommand(config.GetCommand())
+	cmd.AddCommand(fabricsim.GetCommand())
 	cmd.AddCommand(e2t.GetCommand())
 	cmd.AddCommand(ransim.GetCommand())
 	cmd.AddCommand(kpimon.GetCommand())
