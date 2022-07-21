@@ -42,8 +42,8 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getStartCommand())
 	cmd.AddCommand(getStopCommand())
 
-	//cmd.AddCommand(enablePortCommand())
-	//cmd.AddCommand(disablePortCommand())
+	cmd.AddCommand(getEnableCommand())
+	cmd.AddCommand(getDisableCommand())
 
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
@@ -107,5 +107,25 @@ func getStopCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(stopDeviceCommand())
+	return cmd
+}
+
+func getEnableCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "enable {port} [args]",
+		Short: "Commands for enabling simulated entities",
+	}
+
+	cmd.AddCommand(enablePortCommand())
+	return cmd
+}
+
+func getDisableCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "disable {port} [args]",
+		Short: "Commands for disabling simulated entities",
+	}
+
+	cmd.AddCommand(disablePortCommand())
 	return cmd
 }
