@@ -56,8 +56,8 @@ func getCreateCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(createDeviceCommand())
-	//cmd.AddCommand(createLinkCommand())
-	//cmd.AddCommand(createHostCommand())
+	cmd.AddCommand(createLinkCommand())
+	cmd.AddCommand(createHostCommand())
 	return cmd
 }
 
@@ -68,8 +68,8 @@ func getDeleteCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(deleteDeviceCommand())
-	//cmd.AddCommand(createLinkCommand())
-	//cmd.AddCommand(createHostCommand())
+	cmd.AddCommand(deleteLinkCommand())
+	cmd.AddCommand(deleteHostCommand())
 	return cmd
 }
 
@@ -82,10 +82,10 @@ func getGetCommand() *cobra.Command {
 	cmd.AddCommand(getDevicesCommand())
 	//cmd.AddCommand(getDeviceCommand())
 	//
-	//cmd.AddCommand(getLinksCommand())
+	cmd.AddCommand(getLinksCommand())
 	//cmd.AddCommand(getLinkCommand())
 	//
-	//cmd.AddCommand(getHostsCommand())
+	cmd.AddCommand(getHostsCommand())
 	//cmd.AddCommand(getHostCommand())
 	return cmd
 }
