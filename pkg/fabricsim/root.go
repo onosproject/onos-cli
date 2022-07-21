@@ -39,8 +39,8 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getDeleteCommand())
 	cmd.AddCommand(getGetCommand())
 
-	//cmd.AddCommand(startDeviceCommand())
-	//cmd.AddCommand(stopDeviceCommand())
+	cmd.AddCommand(getStartCommand())
+	cmd.AddCommand(getStopCommand())
 
 	//cmd.AddCommand(enablePortCommand())
 	//cmd.AddCommand(disablePortCommand())
@@ -56,8 +56,8 @@ func getCreateCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(createDeviceCommand())
-	//cmd.AddCommand(createLinkCommand())
-	//cmd.AddCommand(createHostCommand())
+	cmd.AddCommand(createLinkCommand())
+	cmd.AddCommand(createHostCommand())
 	return cmd
 }
 
@@ -68,8 +68,8 @@ func getDeleteCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(deleteDeviceCommand())
-	//cmd.AddCommand(createLinkCommand())
-	//cmd.AddCommand(createHostCommand())
+	cmd.AddCommand(deleteLinkCommand())
+	cmd.AddCommand(deleteHostCommand())
 	return cmd
 }
 
@@ -80,12 +80,32 @@ func getGetCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(getDevicesCommand())
-	//cmd.AddCommand(getDeviceCommand())
-	//
-	//cmd.AddCommand(getLinksCommand())
-	//cmd.AddCommand(getLinkCommand())
-	//
-	//cmd.AddCommand(getHostsCommand())
-	//cmd.AddCommand(getHostCommand())
+	cmd.AddCommand(getDeviceCommand())
+
+	cmd.AddCommand(getLinksCommand())
+	cmd.AddCommand(getLinkCommand())
+
+	cmd.AddCommand(getHostsCommand())
+	cmd.AddCommand(getHostCommand())
+	return cmd
+}
+
+func getStartCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "start {device} [args]",
+		Short: "Commands for starting simulated entities",
+	}
+
+	cmd.AddCommand(startDeviceCommand())
+	return cmd
+}
+
+func getStopCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "stop {device} [args]",
+		Short: "Commands for stopping simulated entities",
+	}
+
+	cmd.AddCommand(stopDeviceCommand())
 	return cmd
 }

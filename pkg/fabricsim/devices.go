@@ -39,6 +39,18 @@ func getDevicesCommand() *cobra.Command {
 	return cmd
 }
 
+func getDeviceCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "device <id>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Get a simulated device",
+		RunE:  runGetDeviceCommand,
+	}
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
+	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
+	return cmd
+}
+
 func deleteDeviceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "device <id>",
@@ -50,15 +62,26 @@ func deleteDeviceCommand() *cobra.Command {
 	return cmd
 }
 
-//func getDeviceCommand() *cobra.Command {
-//	cmd := &cobra.Command{
-//		Use:   "device <id>",
-//		Args:  cobra.ExactArgs(1),
-//		Short: "Get a simulated device",
-//		RunE:  runGetDeviceCommand,
-//	}
-//	return cmd
-//}
+func startDeviceCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "device <id>",
+		Short: "Start a simulated device",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runStartDeviceCommand,
+	}
+	return cmd
+}
+
+func stopDeviceCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "device <id>",
+		Short: "Stop a simulated device",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runStopDeviceCommand,
+	}
+	cmd.Flags().Bool("chaotic", false, "use chaotic stop mode")
+	return cmd
+}
 
 func getDeviceClient(cmd *cobra.Command) (simapi.DeviceServiceClient, *grpc.ClientConn, error) {
 	conn, err := cli.GetConnection(cmd)
@@ -97,25 +120,21 @@ func runCreateDeviceCommand(cmd *cobra.Command, args []string) error {
 		})
 	}
 
-	_, err = client.AddDevice(context.Background(), &simapi.AddDeviceRequest{
-		Device: &simapi.Device{
-			ID:          id,
-			Type:        deviceType,
-			Ports:       ports,
-			ControlPort: int32(agentPort),
-		},
-	})
-	if err != nil {
+	device := &simapi.Device{
+		ID:          id,
+		Type:        deviceType,
+		Ports:       ports,
+		ControlPort: int32(agentPort),
+	}
+
+	if _, err = client.AddDevice(context.Background(), &simapi.AddDeviceRequest{Device: device}); err != nil {
 		cli.Output("Unable to create device: %+v", err)
 		return err
 	}
 
 	startAgent, _ := cmd.Flags().GetBool("start-agent")
 	if startAgent {
-		_, err := client.StartDevice(context.Background(), &simapi.StartDeviceRequest{
-			ID: id,
-		})
-		if err != nil {
+		if _, err := client.StartDevice(context.Background(), &simapi.StartDeviceRequest{ID: id}); err != nil {
 			cli.Output("Unable to start device agent: %+v", err)
 			return err
 		}
@@ -133,9 +152,7 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noPorts, _ := cmd.Flags().GetBool("no-ports")
 
-	if !noHeaders {
-		cli.Output("%-16s %-8s %-16s %10s\n", "ID", "Type", "Agent Port", "# of Ports")
-	}
+	printDeviceHeaders(noHeaders)
 
 	resp, err := client.GetDevices(context.Background(), &simapi.GetDevicesRequest{})
 	if err != nil {
@@ -143,17 +160,28 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, d := range resp.Devices {
-		cli.Output("%-16s %-8s %8d %10d\n", d.ID, d.Type, d.ControlPort, len(d.Ports))
-		if !noPorts {
-			if !noHeaders {
-				cli.Output("\t%-16s %8s %8s %-12s %16s\n", "Port ID", "Port #", "SDN #", "Name", "Speed")
-			}
-			for _, p := range d.Ports {
-				cli.Output("\t%-16s %8d %8d %-12s %-16s\n", p.ID, p.Number, p.InternalNumber, p.Name, p.Speed)
-			}
-		}
+		printDevice(d, noHeaders, noPorts)
+	}
+	return nil
+}
+
+func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	resp, err := client.GetDevice(context.Background(), &simapi.GetDeviceRequest{ID: simapi.DeviceID(args[0])})
+	if err != nil {
+		return err
 	}
 
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+	noPorts, _ := cmd.Flags().GetBool("no-ports")
+
+	printDeviceHeaders(noHeaders)
+	printDevice(resp.Device, noHeaders, noPorts)
 	return nil
 }
 
@@ -164,11 +192,66 @@ func runDeleteDeviceCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 
-	_, err = client.RemoveDevice(context.Background(), &simapi.RemoveDeviceRequest{
-		ID: simapi.DeviceID(args[0]),
-	})
-	if err != nil {
+	id := simapi.DeviceID(args[0])
+	if _, err = client.RemoveDevice(context.Background(), &simapi.RemoveDeviceRequest{ID: id}); err != nil {
 		cli.Output("Unable to remove device: %+v", err)
 	}
 	return err
+}
+
+func runStartDeviceCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	id := simapi.DeviceID(args[0])
+	if _, err = client.StartDevice(context.Background(), &simapi.StartDeviceRequest{ID: id}); err != nil {
+		cli.Output("Unable to start device: %+v", err)
+	}
+	return err
+}
+
+func runStopDeviceCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	id := simapi.DeviceID(args[0])
+	chaotic, _ := cmd.Flags().GetBool("chaotic")
+
+	mode := simapi.StopMode_ORDERLY_STOP
+	if chaotic {
+		mode = simapi.StopMode_CHAOTIC_STOP
+	}
+
+	if _, err = client.StopDevice(context.Background(), &simapi.StopDeviceRequest{ID: id, Mode: mode}); err != nil {
+		cli.Output("Unable to stop device: %+v", err)
+	}
+	return err
+}
+
+func printDeviceHeaders(noHeaders bool) {
+	if !noHeaders {
+		cli.Output("%-16s %-8s %-16s %10s\n", "ID", "Type", "Agent Port", "# of Ports")
+	}
+}
+
+func printDevicePortHeaders(noHeaders bool) {
+	if !noHeaders {
+		cli.Output("\t%-16s %8s %8s %-16s %s\n", "Port ID", "Port #", "SDN #", "Speed", "Name")
+	}
+}
+
+func printDevice(d *simapi.Device, noHeaders bool, noPorts bool) {
+	cli.Output("%-16s %-8s %8d %10d\n", d.ID, d.Type, d.ControlPort, len(d.Ports))
+	if !noPorts {
+		printDevicePortHeaders(noHeaders)
+		for _, p := range d.Ports {
+			cli.Output("\t%-16s %8d %8d %-16s %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Name)
+		}
+	}
 }
