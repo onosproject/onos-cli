@@ -83,6 +83,27 @@ func stopDeviceCommand() *cobra.Command {
 	return cmd
 }
 
+func enablePortCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "port <id>",
+		Short: "Enable a simulated device port",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runEnablePortCommand,
+	}
+	return cmd
+}
+
+func disablePortCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "port <id>",
+		Short: "Disable a simulated device port",
+		Args:  cobra.ExactArgs(1),
+		RunE:  runDisablePortCommand,
+	}
+	cmd.Flags().Bool("chaotic", false, "use chaotic stop mode")
+	return cmd
+}
+
 func getDeviceClient(cmd *cobra.Command) (simapi.DeviceServiceClient, *grpc.ClientConn, error) {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -230,6 +251,41 @@ func runStopDeviceCommand(cmd *cobra.Command, args []string) error {
 
 	if _, err = client.StopDevice(context.Background(), &simapi.StopDeviceRequest{ID: id, Mode: mode}); err != nil {
 		cli.Output("Unable to stop device: %+v", err)
+	}
+	return err
+}
+
+func runEnablePortCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	id := simapi.PortID(args[0])
+	if _, err = client.EnablePort(context.Background(), &simapi.EnablePortRequest{ID: id}); err != nil {
+		cli.Output("Unable to enable port: %+v", err)
+	}
+	return err
+}
+
+func runDisablePortCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	id := simapi.PortID(args[0])
+	chaotic, _ := cmd.Flags().GetBool("chaotic")
+
+	mode := simapi.StopMode_ORDERLY_STOP
+	if chaotic {
+		mode = simapi.StopMode_CHAOTIC_STOP
+	}
+
+	if _, err = client.DisablePort(context.Background(), &simapi.DisablePortRequest{ID: id, Mode: mode}); err != nil {
+		cli.Output("Unable to disable port: %+v", err)
 	}
 	return err
 }
