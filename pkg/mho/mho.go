@@ -53,16 +53,16 @@ func runGetUesCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-8s %-16s %-8s\n", "UeID", "CellGlobalID", "RrcState")
+		cli.Output("%-20s %-16s %-8s\n", "AMF-UE-NGAP-ID", "CellGlobalID", "HOState")
 	}
 
 	for _, ue := range ueList.Ues {
 		ueID, _ := strconv.Atoi(ue.UeId)
-		rrcState := ue.RrcState
-		if len(rrcState) >= 10 {
-			rrcState = rrcState[10:]
+		hoState := ue.HoState
+		if len(hoState) >= 10 {
+			hoState = hoState[10:]
 		}
-		cli.Output("%-8x %-16s %-8s\n", ueID, ue.Cgi, rrcState)
+		cli.Output("%-20x %-16s %-8s\n", ueID, ue.Cgi, hoState)
 	}
 
 	return nil
@@ -88,13 +88,11 @@ func runGetCellsCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
-		cli.Output("%-16s %-16s %-16s %-16s\n", "CGI", "Num UEs", "Handovers-in", "Handovers-out")
+		cli.Output("%-16s %-16s\n", "CGI", "Num UEs")
 	}
 
 	for _, cell := range cellList.Cells {
-		cumulativeHandoversIn := cell.CumulativeHandoversIn
-		cumulativeHandoversOut := cell.CumulativeHandoversOut
-		cli.Output("%-16s %-16d %-16d %-16d\n", cell.Cgi, cell.NumUes, cumulativeHandoversIn, cumulativeHandoversOut)
+		cli.Output("%-16s %-16d\n", cell.Cgi, cell.NumUes)
 	}
 
 	return nil

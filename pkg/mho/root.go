@@ -28,7 +28,7 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mho {get/set} [args]",
+		Use:   "mho get [args]",
 		Short: "ONOS MHO subsystem commands",
 	}
 
