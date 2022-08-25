@@ -24,7 +24,6 @@ func createDeviceCommand() *cobra.Command {
 	cmd.Flags().Uint16("agent-port", 20000, "agent gRPC (TCP) port")
 	cmd.Flags().Uint16("port-count", 32, "number of ports to create; default 32")
 	cmd.Flags().Bool("start-agent", true, "starts agent upon creation")
-
 	return cmd
 }
 
@@ -36,6 +35,8 @@ func getDevicesCommand() *cobra.Command {
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
+	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
+	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
 	return cmd
 }
 
@@ -48,6 +49,8 @@ func getDeviceCommand() *cobra.Command {
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
+	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
+	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
 	return cmd
 }
 
@@ -172,6 +175,8 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noPorts, _ := cmd.Flags().GetBool("no-ports")
+	noInfo, _ := cmd.Flags().GetBool("no-info")
+	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
 
 	printDeviceHeaders(noHeaders)
 
@@ -181,7 +186,7 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, d := range resp.Devices {
-		printDevice(d, noHeaders, noPorts)
+		printDevice(d, noHeaders, noPorts, noInfo, noEmptyInfo)
 	}
 	return nil
 }
@@ -200,9 +205,11 @@ func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noPorts, _ := cmd.Flags().GetBool("no-ports")
+	noInfo, _ := cmd.Flags().GetBool("no-info")
+	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
 
 	printDeviceHeaders(noHeaders)
-	printDevice(resp.Device, noHeaders, noPorts)
+	printDevice(resp.Device, noHeaders, noPorts, noInfo, noEmptyInfo)
 	return nil
 }
 
@@ -296,18 +303,46 @@ func printDeviceHeaders(noHeaders bool) {
 	}
 }
 
+func printEntityInfoHeaders(noHeaders bool) {
+	if !noHeaders {
+		cli.Output("\t%7s %10s %12s\n", "Kind", "ID", "Size")
+	}
+}
+
 func printDevicePortHeaders(noHeaders bool) {
 	if !noHeaders {
 		cli.Output("\t%-16s %8s %8s %-16s %s\n", "Port ID", "Port #", "SDN #", "Speed", "Name")
 	}
 }
 
-func printDevice(d *simapi.Device, noHeaders bool, noPorts bool) {
+func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, noEmptyInfo bool) {
 	cli.Output("%-16s %-8s %8d %10d\n", d.ID, d.Type, d.ControlPort, len(d.Ports))
+	if !noInfo {
+		printEntityInfoHeaders(noHeaders)
+		for _, t := range d.PipelineInfo.Tables {
+			printEntitiesInfo("table", t, noEmptyInfo)
+		}
+		for _, c := range d.PipelineInfo.Counters {
+			printEntitiesInfo("counter", c, noEmptyInfo)
+		}
+		for _, m := range d.PipelineInfo.Meters {
+			printEntitiesInfo("meter", m, noEmptyInfo)
+		}
+	}
 	if !noPorts {
 		printDevicePortHeaders(noHeaders)
 		for _, p := range d.Ports {
-			cli.Output("\t%-16s %8d %8d %-16s %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Name)
+			printPort(p)
 		}
+	}
+}
+
+func printPort(p *simapi.Port) {
+	cli.Output("\t%-16s %8d %8d %-16s %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Name)
+}
+
+func printEntitiesInfo(kind string, ei *simapi.EntitiesInfo, noEmptyInfo bool) {
+	if !noEmptyInfo || ei.Size_ > 0 {
+		cli.Output("\t%7s %10d %12d\n", kind, ei.ID, ei.Size_)
 	}
 }
