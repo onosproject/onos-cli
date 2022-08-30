@@ -25,7 +25,7 @@ func getDeleteEntityCommand() *cobra.Command {
 
 func getDeleteRelationCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "object <id>",
+		Use:   "relation <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete Relation",
 		RunE:  runDeleteRelationCommand,
