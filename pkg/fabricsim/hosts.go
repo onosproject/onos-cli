@@ -58,6 +58,17 @@ func getHostCommand() *cobra.Command {
 	return cmd
 }
 
+func emitARPsCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "arp <id> <mac> <ip1> <ip2>...",
+		Args:  cobra.MinimumNArgs(3),
+		Short: "Emit ARP request(s) via specified host NIC",
+		RunE:  runEmitARPsCommand,
+	}
+	return cmd
+
+}
+
 func getHostClient(cmd *cobra.Command) (simapi.HostServiceClient, *grpc.ClientConn, error) {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -133,6 +144,24 @@ func runDeleteHostCommand(cmd *cobra.Command, args []string) error {
 	})
 	if err != nil {
 		cli.Output("Unable to remove host: %+v", err)
+	}
+	return err
+}
+
+func runEmitARPsCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getHostClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = client.EmitARPs(context.Background(), &simapi.EmitARPsRequest{
+		ID:          simapi.HostID(args[0]),
+		MacAddress:  args[1],
+		IpAddresses: args[2:],
+	})
+	if err != nil {
+		cli.Output("Unable to emit ARP requests: %+v", err)
 	}
 	return err
 }

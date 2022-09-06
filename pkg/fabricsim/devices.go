@@ -305,13 +305,13 @@ func printDeviceHeaders(noHeaders bool) {
 
 func printEntityInfoHeaders(noHeaders bool) {
 	if !noHeaders {
-		cli.Output("\t%7s %10s %12s\n", "Kind", "ID", "Size")
+		cli.Output("\t%7s %10s %12s  %s\n", "Kind", "ID", "Size", "Name")
 	}
 }
 
 func printDevicePortHeaders(noHeaders bool) {
 	if !noHeaders {
-		cli.Output("\t%-16s %8s %8s %-16s %s\n", "Port ID", "Port #", "SDN #", "Speed", "Name")
+		cli.Output("\t%-16s %8s %8s %-12s %7s  %s\n", "Port ID", "Port #", "SDN #", "Speed", "Enabled", "Name")
 	}
 }
 
@@ -338,11 +338,11 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 }
 
 func printPort(p *simapi.Port) {
-	cli.Output("\t%-16s %8d %8d %-16s %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Name)
+	cli.Output("\t%-16s %8d %8d %-12s %7t  %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Enabled, p.Name)
 }
 
 func printEntitiesInfo(kind string, ei *simapi.EntitiesInfo, noEmptyInfo bool) {
 	if !noEmptyInfo || ei.Size_ > 0 {
-		cli.Output("\t%7s %10d %12d\n", kind, ei.ID, ei.Size_)
+		cli.Output("\t%7s %10d %12d  %s\n", kind, ei.ID, ei.Size_, ei.Name)
 	}
 }
