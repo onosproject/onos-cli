@@ -28,8 +28,9 @@ func Init() {
 // GetCommand returns the root command for the RAN service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fabricsim {create,delete,get,start,stop,enable,disable} [args]",
-		Short: "ONOS fabric simulator commands",
+		Use:     "fabric-sim {create,delete,get,start,stop,enable,disable,emit} [args]",
+		Short:   "ONOS fabric simulator commands",
+		Aliases: []string{"fabricsim", "fabsim", "fsim"},
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
@@ -44,6 +45,7 @@ func GetCommand() *cobra.Command {
 
 	cmd.AddCommand(getEnableCommand())
 	cmd.AddCommand(getDisableCommand())
+	cmd.AddCommand(getEmitCommand())
 
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
@@ -127,5 +129,15 @@ func getDisableCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(disablePortCommand())
+	return cmd
+}
+
+func getEmitCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "emit {arp} [args]",
+		Short: "Emit ARP, DHCP requests, etc",
+	}
+
+	cmd.AddCommand(emitARPsCommand())
 	return cmd
 }
