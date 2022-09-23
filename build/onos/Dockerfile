@@ -12,6 +12,7 @@ FROM alpine:3.14
 RUN apk add bash bash-completion curl libc6-compat gettext jq
 
 RUN addgroup -S onos && adduser -S -G onos onos --home /home/onos
+RUN /bin/bash -c "$(curl -sL https://get-gnmic.kmrd.dev)"
 USER onos
 WORKDIR /home/onos
 
