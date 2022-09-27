@@ -28,7 +28,7 @@ func Init() {
 // GetCommand returns the root command for the topo service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "topo {create,get,set,delete,watch,load} [args]",
+		Use:   "topo {create,get,set,delete,watch,import,export} [args]",
 		Short: "ONOS topology resource commands",
 	}
 
@@ -41,7 +41,8 @@ func GetCommand() *cobra.Command {
 	cmd.AddCommand(getDeleteCommand())
 	cmd.AddCommand(getWipeoutCommand())
 	cmd.AddCommand(getWatchCommand())
-	cmd.AddCommand(getLoadTopoCommand())
+	cmd.AddCommand(getImportCommand())
+	cmd.AddCommand(getExportCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }

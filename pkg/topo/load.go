@@ -16,21 +16,22 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-	"time"
 )
 
-func getLoadTopoCommand() *cobra.Command {
+func getImportCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "load [jsonFilePath|-]",
-		Args:  cobra.MaximumNArgs(1),
-		Short: "Load topology resources in JSON format",
-		RunE:  runLoadTopoCommand,
+		Use:     "import [jsonFilePath|-]",
+		Aliases: []string{"load"},
+		Args:    cobra.MaximumNArgs(1),
+		Short:   "Import topology resources in JSON format",
+		RunE:    runImportCommand,
 	}
 	cmd.Flags().StringP("data", "d", "{}", "JSON data")
+	cmd.Flags().BoolP("ignore-errors", "i", false, "ignore errors and continue")
 	return cmd
 }
 
-func runLoadTopoCommand(cmd *cobra.Command, args []string) error {
+func runImportCommand(cmd *cobra.Command, args []string) error {
 	var err error
 	var data []byte
 
@@ -51,7 +52,81 @@ func runLoadTopoCommand(cmd *cobra.Command, args []string) error {
 	return loadFromBytes(cmd, data)
 }
 
+func getExportCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "export [jsonFilePath|-]",
+		Aliases: []string{"unload"},
+		Args:    cobra.MaximumNArgs(1),
+		Short:   "Export topology resources in JSON format",
+		RunE:    runExportCommand,
+	}
+	cmd.Flags().StringP("data", "d", "{}", "JSON data")
+	return cmd
+}
+
+func runExportCommand(cmd *cobra.Command, args []string) error {
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := topoapi.CreateTopoClient(conn)
+
+	resp, err := client.List(context.Background(), &topoapi.ListRequest{})
+	if err != nil {
+		return err
+	}
+
+	data := make(map[string]interface{})
+	for _, o := range resp.Objects {
+		d := make(map[string]interface{})
+		switch o.Type {
+		case topoapi.Object_ENTITY:
+			e := o.GetEntity()
+			d["type"] = "entity"
+			d["kind"] = e.KindID
+		case topoapi.Object_RELATION:
+			r := o.GetRelation()
+			d["type"] = "relation"
+			d["source"] = r.SrcEntityID
+			d["target"] = r.TgtEntityID
+			d["kind"] = r.KindID
+		case topoapi.Object_KIND:
+			k := o.GetKind()
+			d["name"] = k.Name
+		}
+		if err = exportAspects(d, o); err != nil {
+			return err
+		}
+		data[string(o.ID)] = d
+	}
+
+	b, err := json.MarshalIndent(&data, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s", string(b))
+	return nil
+}
+
+func exportAspects(d map[string]interface{}, o topoapi.Object) error {
+	for k, a := range o.Aspects {
+		var ad interface{}
+		err := json.Unmarshal(a.Value, &ad)
+		if err != nil {
+			return err
+		}
+		ajo := ad.(map[string]interface{})
+		d[k] = ajo
+	}
+	return nil
+}
+
 func loadFromBytes(cmd *cobra.Command, jsonData []byte) error {
+	ignoreErrors, _ := cmd.Flags().GetBool("ignore-errors")
+
 	// Load the JSON data
 	var data interface{}
 	err := json.Unmarshal(jsonData, &data)
@@ -67,19 +142,33 @@ func loadFromBytes(cmd *cobra.Command, jsonData []byte) error {
 	defer conn.Close()
 
 	client := topoapi.CreateTopoClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
+	ctx := context.Background()
 
 	// Iterate over the top-level objects and create either kind, entity or relation accordingly
 	jsonObjects := data.(map[string]interface{})
+	relations := make([]*topoapi.Object, 0)
 	for k, v := range jsonObjects {
 		object, err := parseObject(topoapi.ID(k), v)
 		if err != nil {
 			return err
 		}
+		if object.Type == topoapi.Object_RELATION {
+			// Stow away relations for last
+			relations = append(relations, object)
+		} else {
+			_, _ = fmt.Fprintf(os.Stdout, "Creating %s...\n", object.ID)
+			_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
+			if !ignoreErrors && err != nil {
+				return err
+			}
+		}
+	}
+
+	// Create all relations that have been recorded
+	for _, object := range relations {
 		_, _ = fmt.Fprintf(os.Stdout, "Creating %s...\n", object.ID)
 		_, err = client.Create(ctx, &topoapi.CreateRequest{Object: object})
-		if err != nil {
+		if !ignoreErrors && err != nil {
 			return err
 		}
 	}
@@ -92,11 +181,12 @@ func parseObject(id topoapi.ID, v interface{}) (*topoapi.Object, error) {
 	case map[string]interface{}:
 		jsonObject := v.(map[string]interface{})
 		objectType := jsonObject["type"].(string)
-		if objectType == "kind" {
+		switch objectType {
+		case "kind":
 			return createKind(id, jsonObject), nil
-		} else if objectType == "entity" {
+		case "entity":
 			return createEntity(id, jsonObject), nil
-		} else if objectType == "relation" {
+		case "relation":
 			return createRelation(id, jsonObject), nil
 		}
 	}
