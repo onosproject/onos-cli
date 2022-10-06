@@ -326,7 +326,7 @@ func printDevicePortHeaders(noHeaders bool) {
 
 func printConnectionHeaders(noHeaders bool, tc int32) {
 	if !noHeaders {
-		cli.Output("\t%8s %-16s %12s\t\tLifetime Total: %d\n", "Protocol", "Address", "Age", tc)
+		cli.Output("\t%8s %-20s %-12s\t\tLifetime Total: %d\n", "Protocol", "Address", "Age", tc)
 	}
 }
 
@@ -359,7 +359,7 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 }
 
 func printConnection(c *simapi.Connection) {
-	cli.Output("\t%8s %-16s %12s\n", c.Protocol, c.FromAddress, time.Since(time.Unix(c.Time, 0)))
+	cli.Output("\t%8s %-20s %-12s\n", c.Protocol, c.FromAddress, time.Since(time.Unix(c.Time, 0)).Round(time.Second))
 }
 
 func printPort(p *simapi.Port) {
