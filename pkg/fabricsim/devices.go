@@ -11,6 +11,8 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"sort"
+	"time"
 )
 
 func createDeviceCommand() *cobra.Command {
@@ -37,6 +39,7 @@ func getDevicesCommand() *cobra.Command {
 	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
 	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
 	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
+	cmd.Flags().Bool("no-connections", false, "disables listing of current connections")
 	return cmd
 }
 
@@ -51,6 +54,7 @@ func getDeviceCommand() *cobra.Command {
 	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
 	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
 	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
+	cmd.Flags().Bool("no-connections", false, "disables listing of current connections")
 	return cmd
 }
 
@@ -177,6 +181,7 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 	noPorts, _ := cmd.Flags().GetBool("no-ports")
 	noInfo, _ := cmd.Flags().GetBool("no-info")
 	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
+	noConnections, _ := cmd.Flags().GetBool("no-connections")
 
 	printDeviceHeaders(noHeaders)
 
@@ -185,8 +190,11 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	sort.SliceStable(resp.Devices, func(i, j int) bool {
+		return resp.Devices[i].ID < resp.Devices[j].ID
+	})
 	for _, d := range resp.Devices {
-		printDevice(d, noHeaders, noPorts, noInfo, noEmptyInfo)
+		printDevice(d, noHeaders, noPorts, noInfo, noEmptyInfo, noConnections)
 	}
 	return nil
 }
@@ -207,9 +215,10 @@ func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
 	noPorts, _ := cmd.Flags().GetBool("no-ports")
 	noInfo, _ := cmd.Flags().GetBool("no-info")
 	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
+	noConnections, _ := cmd.Flags().GetBool("no-connections")
 
 	printDeviceHeaders(noHeaders)
-	printDevice(resp.Device, noHeaders, noPorts, noInfo, noEmptyInfo)
+	printDevice(resp.Device, noHeaders, noPorts, noInfo, noEmptyInfo, noConnections)
 	return nil
 }
 
@@ -315,8 +324,20 @@ func printDevicePortHeaders(noHeaders bool) {
 	}
 }
 
-func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, noEmptyInfo bool) {
+func printConnectionHeaders(noHeaders bool, tc int32) {
+	if !noHeaders {
+		cli.Output("\t%8s %-16s %12s\t\tLifetime Total: %d\n", "Protocol", "Address", "Age", tc)
+	}
+}
+
+func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, noEmptyInfo bool, noConnections bool) {
 	cli.Output("%-16s %-8s %8d %10d\n", d.ID, d.Type, d.ControlPort, len(d.Ports))
+	if !noConnections {
+		printConnectionHeaders(noHeaders, d.TotalConnections)
+		for _, c := range d.Connections {
+			printConnection(c)
+		}
+	}
 	if !noInfo {
 		printEntityInfoHeaders(noHeaders)
 		for _, t := range d.PipelineInfo.Tables {
@@ -335,6 +356,10 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 			printPort(p)
 		}
 	}
+}
+
+func printConnection(c *simapi.Connection) {
+	cli.Output("\t%8s %-16s %12s\n", c.Protocol, c.FromAddress, time.Since(time.Unix(c.Time, 0)))
 }
 
 func printPort(p *simapi.Port) {

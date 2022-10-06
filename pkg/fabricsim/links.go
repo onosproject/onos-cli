@@ -10,6 +10,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"sort"
 )
 
 func createLinkCommand() *cobra.Command {
@@ -120,6 +121,9 @@ func runGetLinksCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	sort.SliceStable(resp.Links, func(i, j int) bool {
+		return resp.Links[i].ID < resp.Links[j].ID
+	})
 	for _, link := range resp.Links {
 		printLink(link)
 	}
