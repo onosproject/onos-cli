@@ -10,6 +10,7 @@ import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"sort"
 )
 
 func createHostCommand() *cobra.Command {
@@ -105,6 +106,9 @@ func runGetHostsCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	sort.SliceStable(resp.Hosts, func(i, j int) bool {
+		return resp.Hosts[i].ID < resp.Hosts[j].ID
+	})
 	for _, h := range resp.Hosts {
 		printHost(h, noHeaders, noNICs)
 	}
