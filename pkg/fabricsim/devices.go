@@ -312,10 +312,23 @@ func printDeviceHeaders(noHeaders bool) {
 	}
 }
 
-func printEntityInfoHeaders(noHeaders bool) {
+func printEntityInfoHeaders(noHeaders bool, info *simapi.PipelineInfo) {
 	if !noHeaders {
-		cli.Output("\t%7s %10s %12s  %s\n", "Kind", "ID", "Size", "Name")
+		cli.Output("\t%12s %10s %12s  %s\t\tEntries: %d\n", "Info Kind", "ID", "Size", "Name", sumInfoEntries(info))
 	}
+}
+
+func sumInfoEntries(info *simapi.PipelineInfo) int {
+	return sum(info.Tables) + sum(info.Counters) + sum(info.Meters) +
+		sum(info.Groups) + sum(info.MulticastGroups) + sum(info.CloneSessions)
+}
+
+func sum(list []*simapi.EntitiesInfo) int {
+	total := 0
+	for _, item := range list {
+		total += int(item.Size_)
+	}
+	return total
 }
 
 func printDevicePortHeaders(noHeaders bool) {
@@ -339,16 +352,13 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 		}
 	}
 	if !noInfo {
-		printEntityInfoHeaders(noHeaders)
-		for _, t := range d.PipelineInfo.Tables {
-			printEntitiesInfo("table", t, noEmptyInfo)
-		}
-		for _, c := range d.PipelineInfo.Counters {
-			printEntitiesInfo("counter", c, noEmptyInfo)
-		}
-		for _, m := range d.PipelineInfo.Meters {
-			printEntitiesInfo("meter", m, noEmptyInfo)
-		}
+		printEntityInfoHeaders(noHeaders, d.PipelineInfo)
+		printEntitiesInfo("table", d.PipelineInfo.Tables, noEmptyInfo)
+		printEntitiesInfo("counter", d.PipelineInfo.Counters, noEmptyInfo)
+		printEntitiesInfo("meter", d.PipelineInfo.Meters, noEmptyInfo)
+		printEntitiesInfo("group", d.PipelineInfo.Groups, noEmptyInfo)
+		printEntitiesInfo("mcast", d.PipelineInfo.MulticastGroups, noEmptyInfo)
+		printEntitiesInfo("clone", d.PipelineInfo.CloneSessions, noEmptyInfo)
 	}
 	if !noPorts {
 		printDevicePortHeaders(noHeaders)
@@ -366,8 +376,13 @@ func printPort(p *simapi.Port) {
 	cli.Output("\t%-16s %8d %8d %-12s %7t  %s\n", p.ID, p.Number, p.InternalNumber, p.Speed, p.Enabled, p.Name)
 }
 
-func printEntitiesInfo(kind string, ei *simapi.EntitiesInfo, noEmptyInfo bool) {
-	if !noEmptyInfo || ei.Size_ > 0 {
-		cli.Output("\t%7s %10d %12d  %s\n", kind, ei.ID, ei.Size_, ei.Name)
+func printEntitiesInfo(kind string, infos []*simapi.EntitiesInfo, noEmptyInfo bool) {
+	sort.SliceStable(infos, func(i, j int) bool {
+		return infos[i].ID < infos[j].ID
+	})
+	for _, info := range infos {
+		if !noEmptyInfo || info.Size_ > 0 {
+			cli.Output("\t%12s %10d %12d  %s\n", kind, info.ID, info.Size_, info.Name)
+		}
 	}
 }
