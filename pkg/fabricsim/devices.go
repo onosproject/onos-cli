@@ -314,7 +314,7 @@ func printDeviceHeaders(noHeaders bool) {
 
 func printEntityInfoHeaders(noHeaders bool, info *simapi.PipelineInfo) {
 	if !noHeaders {
-		cli.Output("\t%12s %10s %12s  %s\t\tEntries: %d\n", "Info Kind", "ID", "Size", "Name", sumInfoEntries(info))
+		cli.Output("\t%-9s %10s %12s  %s\t\t\tEntries: %d\n", "Info Kind", "ID", "Size", "Name", sumInfoEntries(info))
 	}
 }
 
@@ -339,7 +339,7 @@ func printDevicePortHeaders(noHeaders bool) {
 
 func printConnectionHeaders(noHeaders bool, tc int32) {
 	if !noHeaders {
-		cli.Output("\t%8s %-20s %-12s\t\tLifetime Total: %d\n", "Protocol", "Address", "Age", tc)
+		cli.Output("\t%-8s %-20s %-12s\t\tLifetime Total: %d\n", "Protocol", "Address", "Age", tc)
 	}
 }
 
@@ -382,7 +382,7 @@ func printEntitiesInfo(kind string, infos []*simapi.EntitiesInfo, noEmptyInfo bo
 	})
 	for _, info := range infos {
 		if !noEmptyInfo || info.Size_ > 0 {
-			cli.Output("\t%12s %10d %12d  %s\n", kind, info.ID, info.Size_, info.Name)
+			cli.Output("\t%9s %10d %12d  %s\n", kind, info.ID, info.Size_, info.Name)
 		}
 	}
 }
