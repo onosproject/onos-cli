@@ -21,10 +21,11 @@ limitations under the License.
 // The gnmi_cli program implements the GNMI CLI.
 //
 // usage:
-// gnmi_cli --address=<ADDRESS>                            \
-//            -q=<OPENCONFIG_PATH[,OPENCONFIG_PATH[,...]]> \
-//            [-qt=<QUERY_TYPE>]                           \
-//            [-<ADDITIONAL_OPTION(s)>]
+//
+//	gnmi_cli --address=<ADDRESS>                            \
+//	           -q=<OPENCONFIG_PATH[,OPENCONFIG_PATH[,...]]> \
+//	           [-qt=<QUERY_TYPE>]                           \
+//	           [-<ADDITIONAL_OPTION(s)>]
 package main
 
 import (

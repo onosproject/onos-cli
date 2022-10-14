@@ -14,6 +14,10 @@ linters:
     - unconvert
     - nakedret
     - exportloopref
+linters-settings:
+  staticcheck:
+    checks:
+      - '-SA1019'
 issues:
   exclude-use-default: false
   exclude:
@@ -21,6 +25,7 @@ issues:
     - Error return value of `.*Flush` is not checked
     - Error return value of `.*Write` is not checked
     - Error return value of `` is not checked
+    - 'package-comments:'
   exclude-rules:
     - path: cmd/gnmi_cli
       linters:
