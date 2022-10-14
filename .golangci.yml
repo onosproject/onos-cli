@@ -26,3 +26,4 @@ issues:
       linters:
         - staticcheck
         - scopelint
+        - gofmt
