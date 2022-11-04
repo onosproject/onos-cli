@@ -77,7 +77,7 @@ func getDeleteCommand() *cobra.Command {
 
 func getGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get {device(s),link(s),host(s)} [args]",
+		Use:   "get {device(s),link(s),host(s), stats} [args]",
 		Short: "Commands for retrieving simulated entities related information",
 	}
 
@@ -89,6 +89,8 @@ func getGetCommand() *cobra.Command {
 
 	cmd.AddCommand(getHostsCommand())
 	cmd.AddCommand(getHostCommand())
+
+	cmd.AddCommand(getStatsCommand())
 	return cmd
 }
 
