@@ -36,10 +36,11 @@ func getDevicesCommand() *cobra.Command {
 		RunE:  runGetDevicesCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
-	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
+	cmd.Flags().Bool("ports", false, "enables listing of ports")
+	cmd.Flags().Bool("info", false, "enables listing of entity info")
 	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
-	cmd.Flags().Bool("no-connections", false, "disables listing of current connections")
+	cmd.Flags().Bool("connections", false, "enables listing of current connections")
+	cmd.Flags().Bool("stats", false, "enables listing of I/O stats")
 	return cmd
 }
 
@@ -51,10 +52,11 @@ func getDeviceCommand() *cobra.Command {
 		RunE:  runGetDeviceCommand,
 	}
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
-	cmd.Flags().Bool("no-ports", false, "disables listing of ports")
-	cmd.Flags().Bool("no-info", false, "disables listing of entity info")
+	cmd.Flags().Bool("ports", false, "enables listing of ports")
+	cmd.Flags().Bool("info", false, "enables listing of entity info")
 	cmd.Flags().Bool("no-empty-info", false, "disables listing of entities with size 0")
-	cmd.Flags().Bool("no-connections", false, "disables listing of current connections")
+	cmd.Flags().Bool("connections", false, "enables listing of current connections")
+	cmd.Flags().Bool("stats", false, "enables listing of I/O stats")
 	return cmd
 }
 
@@ -108,6 +110,15 @@ func disablePortCommand() *cobra.Command {
 		RunE:  runDisablePortCommand,
 	}
 	cmd.Flags().Bool("chaotic", false, "use chaotic stop mode")
+	return cmd
+}
+
+func getStatsCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "stats",
+		Short: "Get cumulative I/O stats",
+		RunE:  runGetStatsCommand,
+	}
 	return cmd
 }
 
@@ -178,10 +189,19 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 	defer conn.Close()
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	noPorts, _ := cmd.Flags().GetBool("no-ports")
-	noInfo, _ := cmd.Flags().GetBool("no-info")
+	showPorts, _ := cmd.Flags().GetBool("ports")
+	showInfo, _ := cmd.Flags().GetBool("info")
 	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
-	noConnections, _ := cmd.Flags().GetBool("no-connections")
+	showConnections, _ := cmd.Flags().GetBool("connections")
+	showStats, _ := cmd.Flags().GetBool("stats")
+
+	// If the user did not ask for anything specific, show it all
+	if !showPorts && !showInfo && !showConnections && !showStats {
+		showPorts = true
+		showInfo = true
+		showConnections = true
+		showStats = true
+	}
 
 	printDeviceHeaders(noHeaders)
 
@@ -194,7 +214,7 @@ func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
 		return resp.Devices[i].ID < resp.Devices[j].ID
 	})
 	for _, d := range resp.Devices {
-		printDevice(d, noHeaders, noPorts, noInfo, noEmptyInfo, noConnections)
+		printDevice(d, noHeaders, showPorts, showInfo, noEmptyInfo, showConnections, showStats)
 	}
 	return nil
 }
@@ -212,13 +232,22 @@ func runGetDeviceCommand(cmd *cobra.Command, args []string) error {
 	}
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
-	noPorts, _ := cmd.Flags().GetBool("no-ports")
-	noInfo, _ := cmd.Flags().GetBool("no-info")
+	showPorts, _ := cmd.Flags().GetBool("ports")
+	showInfo, _ := cmd.Flags().GetBool("info")
 	noEmptyInfo, _ := cmd.Flags().GetBool("no-empty-info")
-	noConnections, _ := cmd.Flags().GetBool("no-connections")
+	showConnections, _ := cmd.Flags().GetBool("connections")
+	showStats, _ := cmd.Flags().GetBool("stats")
+
+	// If the user did not ask for anything specific, show it all
+	if !showPorts && !showInfo && !showConnections && !showStats {
+		showPorts = true
+		showInfo = true
+		showConnections = true
+		showStats = true
+	}
 
 	printDeviceHeaders(noHeaders)
-	printDevice(resp.Device, noHeaders, noPorts, noInfo, noEmptyInfo, noConnections)
+	printDevice(resp.Device, noHeaders, showPorts, showInfo, noEmptyInfo, showConnections, showStats)
 	return nil
 }
 
@@ -343,15 +372,26 @@ func printConnectionHeaders(noHeaders bool, tc int32) {
 	}
 }
 
-func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, noEmptyInfo bool, noConnections bool) {
+func printStatsHeaders(noHeaders bool, stats *simapi.IOStats) {
+	if !noHeaders {
+		cli.Output("\t%16s %12s %12s %12s\t\tDuration: %s\n", "Bytes", "Messages", "Bytes/s", "Messages/s",
+			time.Unix(0, int64(stats.LastUpdateTime)).Sub(time.Unix(0, int64(stats.FirstUpdateTime))).Round(time.Second))
+	}
+}
+
+func printDevice(d *simapi.Device, noHeaders bool, showPorts bool, showInfo bool, noEmptyInfo bool, showConnections bool, showStats bool) {
 	cli.Output("%-16s %-8s %8d %10d\n", d.ID, d.Type, d.ControlPort, len(d.Ports))
-	if !noConnections {
+	if showConnections {
 		printConnectionHeaders(noHeaders, d.TotalConnections)
 		for _, c := range d.Connections {
 			printConnection(c)
 		}
 	}
-	if !noInfo {
+	if showStats {
+		printStatsHeaders(noHeaders, d.IOStats)
+		printStats(d.IOStats)
+	}
+	if showInfo {
 		printEntityInfoHeaders(noHeaders, d.PipelineInfo)
 		printEntitiesInfo("table", d.PipelineInfo.Tables, noEmptyInfo)
 		printEntitiesInfo("counter", d.PipelineInfo.Counters, noEmptyInfo)
@@ -360,7 +400,7 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 		printEntitiesInfo("mcast", d.PipelineInfo.MulticastGroups, noEmptyInfo)
 		printEntitiesInfo("clone", d.PipelineInfo.CloneSessions, noEmptyInfo)
 	}
-	if !noPorts {
+	if showPorts {
 		printDevicePortHeaders(noHeaders)
 		for _, p := range d.Ports {
 			printPort(p)
@@ -370,6 +410,13 @@ func printDevice(d *simapi.Device, noHeaders bool, noPorts bool, noInfo bool, no
 
 func printConnection(c *simapi.Connection) {
 	cli.Output("\t%8s %-20s %-12s\n", c.Protocol, c.FromAddress, time.Since(time.Unix(c.Time, 0)).Round(time.Second))
+}
+
+func printStats(stats *simapi.IOStats) {
+	secs := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000000)
+	bc := stats.InBytes + stats.OutBytes
+	mc := stats.InMessages + stats.OutMessages
+	cli.Output("\t%16d %12d 12d %12d\n", bc, mc, bc/secs, mc/secs)
 }
 
 func printPort(p *simapi.Port) {
@@ -385,4 +432,43 @@ func printEntitiesInfo(kind string, infos []*simapi.EntitiesInfo, noEmptyInfo bo
 			cli.Output("\t%9s %10d %12d  %s\n", kind, info.ID, info.Size_, info.Name)
 		}
 	}
+}
+
+func runGetStatsCommand(cmd *cobra.Command, args []string) error {
+	client, conn, err := getDeviceClient(cmd)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	resp, err := client.GetDevices(context.Background(), &simapi.GetDevicesRequest{})
+	if err != nil {
+		return err
+	}
+
+	stats := &simapi.IOStats{FirstUpdateTime: uint64(time.Now().UnixNano())}
+	for _, device := range resp.Devices {
+		stats.InBytes += device.IOStats.InBytes
+		stats.InMessages += device.IOStats.InMessages
+		stats.OutBytes += device.IOStats.OutBytes
+		stats.OutMessages += device.IOStats.OutMessages
+		if device.IOStats.FirstUpdateTime < stats.FirstUpdateTime {
+			stats.FirstUpdateTime = device.IOStats.FirstUpdateTime
+		}
+		if device.IOStats.LastUpdateTime > stats.LastUpdateTime {
+			stats.LastUpdateTime = device.IOStats.LastUpdateTime
+		}
+	}
+
+	duration := time.Unix(0, int64(stats.LastUpdateTime)).Sub(time.Unix(0, int64(stats.FirstUpdateTime)))
+	secs := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000000)
+	if secs == 0 {
+		secs = 1
+	}
+	cli.Output("Bytes:      %16d\n", stats.InBytes+stats.OutBytes)
+	cli.Output("Messages:   %16d\n", stats.InMessages+stats.OutMessages)
+	cli.Output("Bytes/s:    %16d\n", (stats.InBytes+stats.OutBytes)/secs)
+	cli.Output("Messages/s: %16d\n", (stats.InMessages+stats.OutMessages)/secs)
+	cli.Output("Duration:   %16s\n", duration.Round(time.Second))
+	return nil
 }
