@@ -416,7 +416,7 @@ func printStats(stats *simapi.IOStats) {
 	secs := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000000)
 	bc := stats.InBytes + stats.OutBytes
 	mc := stats.InMessages + stats.OutMessages
-	cli.Output("\t%16d %12d 12d %12d\n", bc, mc, bc/secs, mc/secs)
+	cli.Output("\t%16d %12d %12d %12d\n", bc, mc, bc/secs, mc/secs)
 }
 
 func printPort(p *simapi.Port) {
