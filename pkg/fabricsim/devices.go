@@ -119,6 +119,7 @@ func getStatsCommand() *cobra.Command {
 		Short: "Get cumulative I/O stats",
 		RunE:  runGetStatsCommand,
 	}
+	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	return cmd
 }
 
@@ -128,6 +129,14 @@ func getDeviceClient(cmd *cobra.Command) (simapi.DeviceServiceClient, *grpc.Clie
 		return nil, nil, err
 	}
 	return simapi.NewDeviceServiceClient(conn), conn, nil
+}
+
+func getFabricSimClient(cmd *cobra.Command) (simapi.FabricSimulatorClient, *grpc.ClientConn, error) {
+	conn, err := cli.GetConnection(cmd)
+	if err != nil {
+		return nil, nil, err
+	}
+	return simapi.NewFabricSimulatorClient(conn), conn, nil
 }
 
 func runCreateDeviceCommand(cmd *cobra.Command, args []string) error {
@@ -435,40 +444,30 @@ func printEntitiesInfo(kind string, infos []*simapi.EntitiesInfo, noEmptyInfo bo
 }
 
 func runGetStatsCommand(cmd *cobra.Command, args []string) error {
-	client, conn, err := getDeviceClient(cmd)
+	client, conn, err := getFabricSimClient(cmd)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	resp, err := client.GetDevices(context.Background(), &simapi.GetDevicesRequest{})
+	noHeaders, _ := cmd.Flags().GetBool("no-headers")
+
+	resp, err := client.GetIOStats(context.Background(), &simapi.GetIOStatsRequest{})
 	if err != nil {
 		return err
 	}
 
-	stats := &simapi.IOStats{FirstUpdateTime: uint64(time.Now().UnixNano())}
-	for _, device := range resp.Devices {
-		stats.InBytes += device.IOStats.InBytes
-		stats.InMessages += device.IOStats.InMessages
-		stats.OutBytes += device.IOStats.OutBytes
-		stats.OutMessages += device.IOStats.OutMessages
-		if device.IOStats.FirstUpdateTime < stats.FirstUpdateTime {
-			stats.FirstUpdateTime = device.IOStats.FirstUpdateTime
-		}
-		if device.IOStats.LastUpdateTime > stats.LastUpdateTime {
-			stats.LastUpdateTime = device.IOStats.LastUpdateTime
-		}
+	if !noHeaders {
+		cli.Output("%15s %16s %12s %12s %12s %14s\n", "Time", "Bytes", "Messages", "Bytes/s", "Messages/s", "Duration (ms)")
 	}
 
-	duration := time.Unix(0, int64(stats.LastUpdateTime)).Sub(time.Unix(0, int64(stats.FirstUpdateTime)))
-	secs := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000000)
-	if secs == 0 {
-		secs = 1
+	for _, stats := range resp.Stats {
+		ms := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000)
+		secs := ms / 1000.0
+		bc := stats.InBytes + stats.OutBytes
+		mc := stats.InMessages + stats.OutMessages
+		ts := time.Unix(0, int64(stats.LastUpdateTime)).Format(time.Stamp)
+		cli.Output("%15s %16d %12d %12d %12d %14d\n", ts, bc, mc, bc/secs, mc/secs, ms)
 	}
-	cli.Output("Bytes:      %16d\n", stats.InBytes+stats.OutBytes)
-	cli.Output("Messages:   %16d\n", stats.InMessages+stats.OutMessages)
-	cli.Output("Bytes/s:    %16d\n", (stats.InBytes+stats.OutBytes)/secs)
-	cli.Output("Messages/s: %16d\n", (stats.InMessages+stats.OutMessages)/secs)
-	cli.Output("Duration:   %16s\n", duration.Round(time.Second))
 	return nil
 }
