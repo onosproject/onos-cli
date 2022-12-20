@@ -33,15 +33,12 @@ func runWipeoutCommand(cmd *cobra.Command, args []string) error {
 
 	// delete relations first, to avoid an error where relations are already deleted
 
-	relations, err := listObjects(cmd, &topoapi.Filters{ObjectTypes: []topoapi.Object_Type{topoapi.Object_RELATION}}, topoapi.SortOrder_UNORDERED)
+	err := listObjects(cmd, &topoapi.Filters{ObjectTypes: []topoapi.Object_Type{topoapi.Object_RELATION}},
+		func(object *topoapi.Object) {
+			_ = deleteObject(cmd, *object)
+		})
 	if err != nil {
 		return err
-	}
-	for _, relation := range relations {
-		err = deleteObject(cmd, relation)
-		if err != nil {
-			return err
-		}
 	}
 
 	filters := topoapi.Filters{
@@ -51,17 +48,11 @@ func runWipeoutCommand(cmd *cobra.Command, args []string) error {
 		filters.ObjectTypes = append(filters.ObjectTypes, topoapi.Object_KIND)
 	}
 
-	objects, err := listObjects(cmd, &filters, topoapi.SortOrder_UNORDERED)
-	if err != nil {
-		return err
-	}
-	for _, object := range objects {
-		err = deleteObject(cmd, object)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	err = listObjects(cmd, &filters,
+		func(object *topoapi.Object) {
+			_ = deleteObject(cmd, *object)
+		})
+	return err
 }
 
 func deleteObject(cmd *cobra.Command, object topoapi.Object) error {

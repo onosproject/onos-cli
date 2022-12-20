@@ -37,7 +37,6 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().StringSlice("with-aspect", nil, "aspect entity must have")
-	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|source_and_target")
 	return cmd
 }
@@ -54,7 +53,6 @@ func getGetRelationCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
-	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().StringSlice("with-aspect", nil, "aspect relation must have")
 	return cmd
 }
@@ -70,7 +68,7 @@ func getGetKindCommand() *cobra.Command {
 	cmd.Flags().Bool("no-headers", false, "disables output headers")
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("label", "", "label query")
-	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
+	cmd.Flags().String("sort-", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().StringSlice("with-aspect", nil, "aspect relation must have")
 	return cmd
 }
@@ -91,7 +89,6 @@ func getGetObjectsCommand() *cobra.Command {
 	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
-	cmd.Flags().String("sort-order", "unordered", "sort order: ascending|descending|unordered(default)")
 	cmd.Flags().String("scope", "target_only", "target_only|all|source_and_target")
 	cmd.Flags().StringSlice("with-aspect", nil, "aspect object must have")
 	return cmd
@@ -124,7 +121,7 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 		scope = topoapi.RelationFilterScope_SOURCE_AND_TARGETS
 	}
 
-	if (len(to) > 0 || len(toTgt) > 0) && len(via) > 0 {
+	if len(to) > 0 || len(toTgt) > 0 {
 		outputWriter := cli.GetOutput()
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
@@ -146,14 +143,12 @@ func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, t
 			filter.TargetId = toTgt
 		}
 
-		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
-		if err == nil {
-			for _, object := range objects {
-				printObject(writer, object, verbose, false, false)
-			}
-		}
+		err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects},
+			func(object *topoapi.Object) {
+				printObject(writer, *object, verbose, false, false)
+			})
 		_ = writer.Flush()
-		return nil
+		return err
 	}
 	return errors.NewInvalid("missing 'related-to', 'related-to-tgt' and/or 'related-via' flags")
 }
@@ -181,20 +176,11 @@ func runGetObjectsCommand(cmd *cobra.Command, args []string) error {
 func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_Type) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
-	sortString, _ := cmd.Flags().GetString("sort-order")
-	// sort order selection
-	sortOrder := topoapi.SortOrder_UNORDERED
-	if sortString == "ascending" {
-		sortOrder = topoapi.SortOrder_ASCENDING
-	} else if sortString == "descending" {
-		sortOrder = topoapi.SortOrder_DESCENDING
-	} else if sortString == "unordered" {
-		sortOrder = topoapi.SortOrder_UNORDERED
-	}
 
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', 0)
+	var err error
 	if len(args) == 0 {
 		filters := compileFilters(cmd, objectType)
 
@@ -202,12 +188,10 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 			printHeader(writer, objectType, verbose, false)
 		}
 
-		objects, err := listObjects(cmd, filters, sortOrder)
-		if err == nil {
-			for _, object := range objects {
-				printObject(writer, object, verbose, false, false)
-			}
-		}
+		err = listObjects(cmd, filters,
+			func(object *topoapi.Object) {
+				printObject(writer, *object, verbose, false, false)
+			})
 	} else {
 		id := args[0]
 		object, err := getObject(cmd, topoapi.ID(id))
@@ -223,7 +207,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	}
 
 	_ = writer.Flush()
-	return nil
+	return err
 }
 
 func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string) error {
@@ -260,14 +244,11 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 			TargetKind:   tgt,
 			Scope:        scope,
 		}
-		objects, err := listObjects(cmd, &topoapi.Filters{RelationFilter: &relationFilter, WithAspects: aspects}, topoapi.SortOrder_UNORDERED)
-		if err == nil {
-			for _, object := range objects {
-				printObject(writer, object, verbose, false, true)
-			}
-		}
-		_ = writer.Flush()
-		return nil
+		err := listObjects(cmd, &topoapi.Filters{RelationFilter: &relationFilter, WithAspects: aspects},
+			func(object *topoapi.Object) {
+				printObject(writer, *object, verbose, false, true)
+			})
+		return err
 	}
 	return errors.NewInvalid("missing related-to and/or related-via flags")
 }
@@ -275,62 +256,58 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 func listAllObjectTypes(cmd *cobra.Command, args []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	verbose, _ := cmd.Flags().GetBool("verbose")
-	sortString, _ := cmd.Flags().GetString("sort-order")
-	sortOrder := topoapi.SortOrder_UNORDERED
-	if sortString == "ascending" {
-		sortOrder = topoapi.SortOrder_ASCENDING
-	} else if sortString == "descending" {
-		sortOrder = topoapi.SortOrder_DESCENDING
-	} else if sortString == "unordered" {
-		sortOrder = topoapi.SortOrder_UNORDERED
-	}
 
 	outputWriter := cli.GetOutput()
 	writer := new(tabwriter.Writer)
 	writer.Init(outputWriter, 0, 0, 3, ' ', 0)
-	objects := make([]topoapi.Object, 0)
-	if len(args) == 0 {
-		filters := compileFilters(cmd, topoapi.Object_ENTITY)
-		filters.ObjectTypes = []topoapi.Object_Type{topoapi.Object_ENTITY, topoapi.Object_RELATION, topoapi.Object_KIND}
-
-		listedObjects, err := listObjects(cmd, filters, sortOrder)
-		if err != nil {
-			return err
-		}
-		objects = append(objects, listedObjects...)
-	} else {
-		id := args[0]
-		object, err := getObject(cmd, topoapi.ID(id))
-		if err != nil {
-			return err
-		}
-		objects = append(objects, *object)
-	}
 
 	if !noHeaders && !verbose {
 		_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "Object Type", "Object ID", "Kind ID", "Source ID", "Target ID", "Labels", "Aspects")
 	}
-	for _, object := range objects {
-		printObject(writer, object, verbose, true, true)
+	if len(args) == 0 {
+		filters := compileFilters(cmd, topoapi.Object_ENTITY)
+		filters.ObjectTypes = []topoapi.Object_Type{topoapi.Object_ENTITY, topoapi.Object_RELATION, topoapi.Object_KIND}
+
+		if err := listObjects(cmd, filters,
+			func(object *topoapi.Object) {
+				printObject(writer, *object, verbose, true, true)
+			}); err != nil {
+			return err
+		}
+	} else {
+		object, err := getObject(cmd, topoapi.ID(args[0]))
+		if err != nil {
+			return err
+		}
+		printObject(writer, *object, verbose, true, true)
 	}
 	_ = writer.Flush()
 	return nil
 }
 
-func listObjects(cmd *cobra.Command, filters *topoapi.Filters, order topoapi.SortOrder) ([]topoapi.Object, error) {
+func listObjects(cmd *cobra.Command, filters *topoapi.Filters, processObject func(object *topoapi.Object)) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer conn.Close()
 
 	client := topoapi.CreateTopoClient(conn)
 
-	resp, err := client.List(context.Background(), &topoapi.ListRequest{Filters: filters, SortOrder: order})
+	stream, err := client.Query(context.Background(), &topoapi.QueryRequest{Filters: filters})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return resp.Objects, nil
+	for {
+		resp, err1 := stream.Recv()
+		if err1 != nil {
+			if err1 == io.EOF {
+				return nil
+			}
+			return err1
+		}
+		processObject(resp.Object)
+	}
 }
 
 func getObject(cmd *cobra.Command, id topoapi.ID) (*topoapi.Object, error) {
