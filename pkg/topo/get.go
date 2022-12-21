@@ -32,8 +32,8 @@ func getGetEntityCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
-	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
-	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
+	cmd.Flags().String("related-to", "", "use relation filter")
+	cmd.Flags().String("related-to-tgt", "", "use relation filter")
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().StringSlice("with-aspect", nil, "aspect entity must have")
@@ -75,8 +75,8 @@ func getGetKindCommand() *cobra.Command {
 
 func getGetObjectsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "objects id",
-		Aliases: []string{"objs"},
+		Use:     "object id",
+		Aliases: []string{"objects", "objs"},
 		Args:    cobra.MaximumNArgs(1),
 		Short:   "Get Objects",
 		RunE:    runGetObjectsCommand,
@@ -85,8 +85,8 @@ func getGetObjectsCommand() *cobra.Command {
 	cmd.Flags().BoolP("verbose", "v", false, "verbose output")
 	cmd.Flags().String("kind", "", "kind query")
 	cmd.Flags().String("label", "", "label query")
-	cmd.Flags().String("related-to", "", "use relation filter, must also specify related-via")
-	cmd.Flags().String("related-to-tgt", "", "use relation filter, must also specify related-via")
+	cmd.Flags().String("related-to", "", "use relation filter")
+	cmd.Flags().String("related-to-tgt", "", "use relation filter")
 	cmd.Flags().String("related-via", "", "use relation filter, must also specify related-to or related-to-tgt")
 	cmd.Flags().String("tgt-kind", "", "optional target kind for relation filter")
 	cmd.Flags().String("scope", "target_only", "target_only|all|source_and_target")
@@ -164,11 +164,12 @@ func runGetKindCommand(cmd *cobra.Command, args []string) error {
 func runGetObjectsCommand(cmd *cobra.Command, args []string) error {
 	// if any flag relating to the entity-relation filter is set, call the corresponding function (which checks if all necessary flags are set)
 	to, _ := cmd.Flags().GetString("related-to")
+	toTgt, _ := cmd.Flags().GetString("related-to-tgt")
 	via, _ := cmd.Flags().GetString("related-via")
 	tgt, _ := cmd.Flags().GetString("tgt-kind")
 
 	if len(to) != 0 || len(via) != 0 || len(tgt) != 0 {
-		return listObjectsRelations(cmd, to, via, tgt)
+		return listObjectsRelations(cmd, to, toTgt, via, tgt)
 	}
 	return listAllObjectTypes(cmd, args)
 }
@@ -210,7 +211,7 @@ func runGetCommand(cmd *cobra.Command, args []string, objectType topoapi.Object_
 	return err
 }
 
-func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string) error {
+func listObjectsRelations(cmd *cobra.Command, to string, toTgt string, via string, tgt string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")
@@ -227,27 +228,32 @@ func listObjectsRelations(cmd *cobra.Command, to string, via string, tgt string)
 		scope = topoapi.RelationFilterScope_RELATIONS_AND_TARGETS
 	}
 
-	if len(to) > 0 && len(via) > 0 {
+	if len(to) > 0 || len(toTgt) > 0 {
 		outputWriter := cli.GetOutput()
 		writer := new(tabwriter.Writer)
 		writer.Init(outputWriter, 0, 0, 3, ' ', tabwriter.FilterHTML)
-		if !noHeaders {
-			printHeader(writer, topoapi.Object_RELATION, verbose, false)
+		if !noHeaders && !verbose {
+			_, _ = fmt.Fprintf(writer, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "Object Type", "Object ID", "Kind ID", "Source ID", "Target ID", "Labels", "Aspects")
 		}
 		if len(tgt) == 0 {
 			tgt = ""
 		}
 
-		relationFilter := topoapi.RelationFilter{
-			SrcId:        to,
+		filter := topoapi.RelationFilter{
 			RelationKind: via,
 			TargetKind:   tgt,
 			Scope:        scope,
 		}
-		err := listObjects(cmd, &topoapi.Filters{RelationFilter: &relationFilter, WithAspects: aspects},
+		if len(to) > 0 {
+			filter.SrcId = to
+		} else {
+			filter.TargetId = toTgt
+		}
+		err := listObjects(cmd, &topoapi.Filters{RelationFilter: &filter, WithAspects: aspects},
 			func(object *topoapi.Object) {
-				printObject(writer, *object, verbose, false, true)
+				printObject(writer, *object, verbose, true, true)
 			})
+		_ = writer.Flush()
 		return err
 	}
 	return errors.NewInvalid("missing related-to and/or related-via flags")
