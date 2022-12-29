@@ -95,6 +95,9 @@ func updateObject(cmd *cobra.Command, args []string, objectType topoapi.Object_T
 		return err
 	}
 
+	if object.Labels == nil && len(labels) > 0 {
+		object.Labels = make(map[string]string)
+	}
 	for labelKey, labelValue := range labels {
 		if len(labelValue) > 0 && labelValue != deleteKeyword {
 			object.Labels[labelKey] = labelValue
