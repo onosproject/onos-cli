@@ -76,6 +76,6 @@ func runDeleteObjectCommand(cmd *cobra.Command, args []string, typeName string) 
 	if err != nil {
 		return err
 	}
-	cli.Output("Deleted %s %s", typeName, id)
+	cli.Output("Deleted %s %s\n", typeName, id)
 	return nil
 }
