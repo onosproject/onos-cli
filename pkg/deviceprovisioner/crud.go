@@ -14,11 +14,13 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"os"
+	"strings"
 )
 
 const (
 	kindFlag          = "kind"
 	artifactsPathFlag = "artifacts"
+	noHeadersFlag     = "no-headers"
 )
 
 func getAddCommand() *cobra.Command {
@@ -54,6 +56,7 @@ func getGetCommand() *cobra.Command {
 	}
 	cmd.Flags().String(kindFlag, provisioner.PipelineConfigKind, "kind of configuration: pipeline or chassis")
 	cmd.Flags().String(artifactsPathFlag, "", "artifacts tar file; - for stdin")
+	cmd.Flags().Bool(noHeadersFlag, false, "disables output headers")
 	return cmd
 }
 
@@ -110,6 +113,8 @@ func runGetConfigCommand(cmd *cobra.Command, args []string) error {
 }
 
 func listConfigs(cmd *cobra.Command) error {
+	noHeaders, _ := cmd.Flags().GetBool(noHeadersFlag)
+
 	client, conn, err := getProvisionerClient(cmd)
 	if err != nil {
 		return err
@@ -121,6 +126,7 @@ func listConfigs(cmd *cobra.Command) error {
 		return err
 	}
 
+	printConfigHeaders(noHeaders)
 	for {
 		resp, err1 := stream.Recv()
 		if err1 != nil {
@@ -129,12 +135,14 @@ func listConfigs(cmd *cobra.Command) error {
 			}
 			return err1
 		}
-		cli.Output("%+v\n", resp.Config.Record)
+		printConfigRecord(resp.Config.Record)
 	}
 }
 
 func getConfig(cmd *cobra.Command, configID provisioner.ConfigID) error {
+	noHeaders, _ := cmd.Flags().GetBool(noHeadersFlag)
 	artifactsPath, _ := cmd.Flags().GetString(artifactsPathFlag)
+	includeArtifacts := len(artifactsPath) > 0
 
 	client, conn, err := getProvisionerClient(cmd)
 	if err != nil {
@@ -142,19 +150,29 @@ func getConfig(cmd *cobra.Command, configID provisioner.ConfigID) error {
 	}
 	defer conn.Close()
 
-	req := &provisioner.GetConfigRequest{
-		ConfigID:         configID,
-		IncludeArtifacts: len(artifactsPath) > 0,
-	}
+	req := &provisioner.GetConfigRequest{ConfigID: configID, IncludeArtifacts: includeArtifacts}
 	resp, err := client.Get(context.Background(), req)
 	if err != nil {
 		return err
 	}
-	if len(artifactsPath) > 0 {
+	if includeArtifacts {
 		return writeArtifacts(artifactsPath, resp.Config.Artifacts)
 	}
-	cli.Output("%+v\n", resp.Config.Record)
+
+	printConfigHeaders(noHeaders)
+	printConfigRecord(resp.Config.Record)
 	return nil
+}
+
+func printConfigHeaders(noHeaders bool) {
+	if !noHeaders {
+		cli.Output("%-32s\t%-12s\t%s\n", "Config ID", "Kind", "Artifacts")
+	}
+}
+
+func printConfigRecord(record *provisioner.ConfigRecord) {
+	artifacts := strings.Join(record.Artifacts, ", ")
+	cli.Output("%-32s\t%-12s\t%s\n", record.ConfigID, record.Kind, artifacts)
 }
 
 // Reads artifacts from the given gzip tar archive (stdin if "-") into an artifact map
