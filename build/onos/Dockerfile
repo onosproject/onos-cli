@@ -2,11 +2,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM onosproject/golang-build:v1.0 AS build
+FROM onosproject/golang-build:v1.3.0 as build
+
 ENV GO111MODULE=on
-RUN go get github.com/atomix/cli/cmd/atomix
-COPY . /go/src/github.com/onosproject/onos-cli
-RUN cd /go/src/github.com/onosproject/onos-cli && GOFLAGS=-mod=vendor make build
+WORKDIR /build
+
+# copy only the files that are needed for the build, exclude everything else to make better use of the docker cache
+COPY ./cmd /build/cmd
+COPY ./pkg /build/pkg
+COPY ./vendor /build/vendor
+COPY ./go.mod /build
+COPY ./go.sum /build
+
+# build the executable(s)
+RUN go build -mod=vendor -o build/_output/onos ./cmd/onos
+RUN	go build -mod=vendor -o build/_output/gnmi_cli ./cmd/gnmi_cli
+RUN go install github.com/atomix/cli/cmd/atomix@latest
 
 FROM alpine:3.14
 RUN apk add bash bash-completion curl libc6-compat gettext jq
@@ -16,10 +27,10 @@ RUN /bin/bash -c "$(curl -sL https://get-gnmic.kmrd.dev)"
 USER onos
 WORKDIR /home/onos
 
-COPY --from=build /go/src/github.com/onosproject/onos-cli/build/_output/onos /usr/local/bin/onos
-COPY --from=build /go/src/github.com/onosproject/onos-cli/build/_output/gnmi_cli /usr/local/bin/gnmi_cli
+COPY --from=build /build/build/_output/onos /usr/local/bin/onos
+COPY --from=build /build/build/_output/gnmi_cli /usr/local/bin/gnmi_cli
+COPY --from=build /build/pkg/certs/* /etc/ssl/certs/
 COPY --from=build /go/bin/atomix /usr/local/bin/atomix
-COPY --from=build /go/src/github.com/onosproject/onos-cli/pkg/certs/* /etc/ssl/certs/
 
 RUN mkdir /home/onos/.onos && \
     cp /etc/profile /home/onos/.bashrc && \
