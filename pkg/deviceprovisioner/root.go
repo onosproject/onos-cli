@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configName     = "kpimon"
+	configName     = "provisioner"
 	defaultAddress = "device-provisioner:5150"
 )
 
@@ -28,13 +28,17 @@ func Init() {
 // GetCommand returns the root command for the device provisioner service
 func GetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "device-provisioner {get, watch} [args]",
-		Short: "Device provisioner subsystem commands",
+		Use:     "provisioner {add, delete, get} [args]",
+		Aliases: []string{"device-provisioner"},
+		Short:   "Device provisioner subsystem commands",
 	}
 
 	cli.AddConfigFlags(cmd, defaultAddress)
+	cmd.AddCommand(cli.GetConfigCommand())
+
+	cmd.AddCommand(getAddCommand())
+	cmd.AddCommand(getDeleteCommand())
 	cmd.AddCommand(getGetCommand())
-	cmd.AddCommand(getWatchCommand())
 	cmd.AddCommand(loglib.GetCommand())
 	return cmd
 }
