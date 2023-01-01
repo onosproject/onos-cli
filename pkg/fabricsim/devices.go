@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	simapi "github.com/onosproject/onos-api/go/onos/fabricsim"
+	"github.com/onosproject/onos-api/go/onos/misc"
 	"github.com/onosproject/onos-lib-go/pkg/cli"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -381,7 +382,7 @@ func printConnectionHeaders(noHeaders bool, tc int32) {
 	}
 }
 
-func printStatsHeaders(noHeaders bool, stats *simapi.IOStats) {
+func printStatsHeaders(noHeaders bool, stats *misc.IOStats) {
 	if !noHeaders {
 		cli.Output("\t%16s %12s %12s %12s\t\tDuration: %s\n", "Bytes", "Messages", "Bytes/s", "Messages/s",
 			time.Unix(0, int64(stats.LastUpdateTime)).Sub(time.Unix(0, int64(stats.FirstUpdateTime))).Round(time.Second))
@@ -417,11 +418,11 @@ func printDevice(d *simapi.Device, noHeaders bool, showPorts bool, showInfo bool
 	}
 }
 
-func printConnection(c *simapi.Connection) {
+func printConnection(c *misc.Connection) {
 	cli.Output("\t%8s %-20s %-12s\n", c.Protocol, c.FromAddress, time.Since(time.Unix(c.Time, 0)).Round(time.Second))
 }
 
-func printStats(stats *simapi.IOStats) {
+func printStats(stats *misc.IOStats) {
 	msecs := uint32((stats.LastUpdateTime - stats.FirstUpdateTime) / 1000000)
 	bc := stats.InBytes + stats.OutBytes
 	mc := stats.InMessages + stats.OutMessages
