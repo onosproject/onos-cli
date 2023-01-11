@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package deviceprovisioner
+package provisioner
 
 import (
 	"github.com/onosproject/onos-lib-go/pkg/cli"

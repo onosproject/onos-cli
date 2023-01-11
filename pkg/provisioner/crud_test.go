@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package deviceprovisioner
+package provisioner
 
 import (
 	"github.com/stretchr/testify/assert"
