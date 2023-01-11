@@ -7,10 +7,11 @@ package cli
 import (
 	"fmt"
 	"github.com/onosproject/onos-cli/pkg/a1t"
-	"github.com/onosproject/onos-cli/pkg/deviceprovisioner"
+	"github.com/onosproject/onos-cli/pkg/discovery"
 	"github.com/onosproject/onos-cli/pkg/fabricsim"
 	"github.com/onosproject/onos-cli/pkg/mlb"
 	"github.com/onosproject/onos-cli/pkg/perf"
+	"github.com/onosproject/onos-cli/pkg/provisioner"
 	"github.com/onosproject/onos-cli/pkg/rsm"
 
 	"github.com/onosproject/onos-cli/pkg/config"
@@ -79,7 +80,8 @@ func GetRootCommand() *cobra.Command {
 	cmd.AddCommand(rsm.GetCommand())
 	cmd.AddCommand(perf.GetCommand())
 	cmd.AddCommand(a1t.GetCommand())
-	cmd.AddCommand(deviceprovisioner.GetCommand())
+	cmd.AddCommand(provisioner.GetCommand())
+	cmd.AddCommand(discovery.GetCommand())
 	cmd.AddCommand()
 
 	cmd.AddCommand(getCompletionCommand())
