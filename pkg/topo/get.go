@@ -383,7 +383,7 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 		} else {
 			_, _ = fmt.Fprintf(writer, "ID: %s\nKind ID: %s\nLabels: %s\n", object.ID, kindID, labels)
 			if e := object.GetEntity(); e != nil {
-				_, _ = fmt.Fprintf(writer, "Source Id's: ")
+				_, _ = fmt.Fprintf(writer, "Source of: ")
 				for i, id := range e.SrcRelationIDs {
 					if i == 0 {
 						_, _ = fmt.Fprintf(writer, "%s", id)
@@ -392,7 +392,7 @@ func printObject(writer io.Writer, object topoapi.Object, verbose bool, printTyp
 					}
 				}
 				_, _ = fmt.Fprintf(writer, "\n")
-				_, _ = fmt.Fprintf(writer, "Target Id's: ")
+				_, _ = fmt.Fprintf(writer, "Target of: ")
 				for i, id := range e.TgtRelationIDs {
 					if i == 0 {
 						_, _ = fmt.Fprintf(writer, "%s", id)

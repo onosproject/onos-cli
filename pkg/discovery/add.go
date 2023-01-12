@@ -16,10 +16,14 @@ const (
 	podIDFlag  = "pod"
 	rackIDFlag = "rack"
 
-	p4endpointFlag       = "p4rt-endpoint"
-	gNMIendpointFlag     = "gnmi-endpoint"
-	pipelineConfigIDFlag = "pipeline-config"
-	chassisConfigIDFlag  = "chassis-config"
+	p4endpointFlag        = "p4rt-endpoint"
+	gNMIendpointFlag      = "gnmi-endpoint"
+	pipelineConfigIDFlag  = "pipeline-config"
+	chassisConfigIDFlag   = "chassis-config"
+	linkAgentEndpointFlag = "link-agent-endpoint"
+	hostAgentEndpointFlag = "host-agent-endpoint"
+	natAgentEndpointFlag  = "nat-agent-endpoint"
+	p4rtDeviceIDFlag      = "p4rt-device-id"
 )
 
 func getAddCommand() *cobra.Command {
@@ -83,9 +87,13 @@ func addStratumFlags(cmd *cobra.Command) {
 	cmd.Flags().String(podIDFlag, "", "ID of the parent pod")
 	cmd.Flags().String(rackIDFlag, "", "ID of the parent rack")
 	cmd.Flags().String(p4endpointFlag, "", "P4Runtime endpoint as host:port")
+	cmd.Flags().Uint64(p4rtDeviceIDFlag, 0, "P4Runtime device ID as a number")
 	cmd.Flags().String(gNMIendpointFlag, "", "gNMI endpoint as host:port")
 	cmd.Flags().String(pipelineConfigIDFlag, "", "pipeline configuration ID")
 	cmd.Flags().String(chassisConfigIDFlag, "", "chassis configuration ID")
+	cmd.Flags().String(linkAgentEndpointFlag, "", "link agent endpoint as host:port")
+	cmd.Flags().String(hostAgentEndpointFlag, "", "host agent endpoint as host:port")
+	cmd.Flags().String(natAgentEndpointFlag, "", "NAT agent endpoint as host:port")
 }
 
 func getDiscoveryClient(cmd *cobra.Command) (discovery.DiscoveryServiceClient, *grpc.ClientConn, error) {
@@ -126,13 +134,10 @@ func runAddSwitchCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 	_, err = client.AddSwitch(context.Background(), &discovery.AddSwitchRequest{
-		ID:               args[0],
-		PodID:            getFlag(cmd, podIDFlag),
-		RackID:           getFlag(cmd, rackIDFlag),
-		P4Endpoint:       getFlag(cmd, p4endpointFlag),
-		GNMIEndpoint:     getFlag(cmd, gNMIendpointFlag),
-		PipelineConfigID: getFlag(cmd, pipelineConfigIDFlag),
-		ChassisConfigID:  getFlag(cmd, chassisConfigIDFlag),
+		ID:             args[0],
+		PodID:          getFlag(cmd, podIDFlag),
+		RackID:         getFlag(cmd, rackIDFlag),
+		ManagementInfo: getManagementInfo(cmd),
 	})
 	return err
 }
@@ -144,15 +149,26 @@ func runAddServerIPUCommand(cmd *cobra.Command, args []string) error {
 	}
 	defer conn.Close()
 	_, err = client.AddServerIPU(context.Background(), &discovery.AddServerIPURequest{
-		ID:               args[0],
-		PodID:            getFlag(cmd, podIDFlag),
-		RackID:           getFlag(cmd, rackIDFlag),
-		P4Endpoint:       getFlag(cmd, p4endpointFlag),
-		GNMIEndpoint:     getFlag(cmd, gNMIendpointFlag),
-		PipelineConfigID: getFlag(cmd, pipelineConfigIDFlag),
-		ChassisConfigID:  getFlag(cmd, chassisConfigIDFlag),
+		ID:             args[0],
+		PodID:          getFlag(cmd, podIDFlag),
+		RackID:         getFlag(cmd, rackIDFlag),
+		ManagementInfo: getManagementInfo(cmd),
 	})
 	return err
+}
+
+func getManagementInfo(cmd *cobra.Command) *discovery.ManagementInfo {
+	deviceID, _ := cmd.Flags().GetUint64(p4rtDeviceIDFlag)
+	return &discovery.ManagementInfo{
+		P4RTEndpoint:      getFlag(cmd, p4endpointFlag),
+		GNMIEndpoint:      getFlag(cmd, gNMIendpointFlag),
+		PipelineConfigID:  getFlag(cmd, pipelineConfigIDFlag),
+		ChassisConfigID:   getFlag(cmd, chassisConfigIDFlag),
+		LinkAgentEndpoint: getFlag(cmd, linkAgentEndpointFlag),
+		HostAgentEndpoint: getFlag(cmd, hostAgentEndpointFlag),
+		NatAgentEndpoint:  getFlag(cmd, natAgentEndpointFlag),
+		DeviceID:          deviceID,
+	}
 }
 
 func getFlag(cmd *cobra.Command, flag string) string {
