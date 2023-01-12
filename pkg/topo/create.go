@@ -27,13 +27,12 @@ func getCreateEntityCommand() *cobra.Command {
 
 func getCreateRelationCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relation <id> <src-entity-id> <tgt-entity-id> [args]",
-		Args:  cobra.MinimumNArgs(3),
+		Use:   "relation <src-entity-id> <tgt-entity-id> [args]",
+		Args:  cobra.MinimumNArgs(2),
 		Short: "Create Relation",
 		RunE:  runCreateRelationCommand,
 	}
 	cmd.Flags().StringP("kind", "k", "", "Kind ID")
-	//_ = cmd.MarkFlagRequired("kind")
 	cmd.Flags().StringToStringP("aspect", "a", map[string]string{}, "aspect of this relation")
 	cmd.Flags().StringToStringP("label", "l", map[string]string{}, "classification label")
 	return cmd
@@ -53,30 +52,12 @@ func getCreateKindCommand() *cobra.Command {
 
 func runCreateEntityCommand(cmd *cobra.Command, args []string) error {
 	kindID, _ := cmd.Flags().GetString("kind")
-	return createObject(&topoapi.Object{
-		ID:   topoapi.ID(args[0]),
-		Type: topoapi.Object_ENTITY,
-		Obj: &topoapi.Object_Entity{
-			Entity: &topoapi.Entity{
-				KindID: topoapi.ID(kindID),
-			},
-		},
-	}, cmd)
+	return createObject(topoapi.NewEntity(topoapi.ID(args[0]), topoapi.ID(kindID)), cmd)
 }
 
 func runCreateRelationCommand(cmd *cobra.Command, args []string) error {
 	kindID, _ := cmd.Flags().GetString("kind")
-	return createObject(&topoapi.Object{
-		ID:   topoapi.ID(args[0]),
-		Type: topoapi.Object_RELATION,
-		Obj: &topoapi.Object_Relation{
-			Relation: &topoapi.Relation{
-				KindID:      topoapi.ID(kindID),
-				SrcEntityID: topoapi.ID(args[1]),
-				TgtEntityID: topoapi.ID(args[2]),
-			},
-		},
-	}, cmd)
+	return createObject(topoapi.NewRelation(topoapi.ID(args[0]), topoapi.ID(args[2]), topoapi.ID(kindID)), cmd)
 }
 
 func runCreateKindCommand(cmd *cobra.Command, args []string) error {
