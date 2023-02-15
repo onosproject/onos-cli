@@ -24,6 +24,8 @@ const (
 	hostAgentEndpointFlag = "host-agent-endpoint"
 	natAgentEndpointFlag  = "nat-agent-endpoint"
 	p4rtDeviceIDFlag      = "p4rt-device-id"
+	realmFlag             = "realm"
+	roleFlag              = "role"
 )
 
 func getAddCommand() *cobra.Command {
@@ -94,6 +96,8 @@ func addStratumFlags(cmd *cobra.Command) {
 	cmd.Flags().String(linkAgentEndpointFlag, "", "link agent endpoint as host:port")
 	cmd.Flags().String(hostAgentEndpointFlag, "", "host agent endpoint as host:port")
 	cmd.Flags().String(natAgentEndpointFlag, "", "NAT agent endpoint as host:port")
+	cmd.Flags().String(realmFlag, "", "optional realm label value")
+	cmd.Flags().String(roleFlag, "", "optional role label value")
 }
 
 func getDiscoveryClient(cmd *cobra.Command) (discovery.DiscoveryServiceClient, *grpc.ClientConn, error) {
@@ -167,6 +171,8 @@ func getManagementInfo(cmd *cobra.Command) *discovery.ManagementInfo {
 		LinkAgentEndpoint: getFlag(cmd, linkAgentEndpointFlag),
 		HostAgentEndpoint: getFlag(cmd, hostAgentEndpointFlag),
 		NatAgentEndpoint:  getFlag(cmd, natAgentEndpointFlag),
+		Realm:             getFlag(cmd, realmFlag),
+		Role:              getFlag(cmd, roleFlag),
 		DeviceID:          deviceID,
 	}
 }
