@@ -208,9 +208,12 @@ func readArtifacts(path string) (map[string][]byte, error) {
 		}
 
 		data := make([]byte, header.Size)
-		_, err1 = tr.Read(data)
-		if err1 != nil && err1 != io.EOF {
-			return nil, err1
+		for total := 0; total < int(header.Size); {
+			l, err1 := tr.Read(data[total:])
+			if err1 != nil && err1 != io.EOF {
+				return nil, err1
+			}
+			total = total + l
 		}
 		artifacts[header.Name] = data
 	}
