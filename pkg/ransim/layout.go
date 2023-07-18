@@ -22,7 +22,7 @@ func getLayoutCommand() *cobra.Command {
 	return cmd
 }
 
-func runGetLayoutCommand(cmd *cobra.Command, args []string) error {
+func runGetLayoutCommand(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

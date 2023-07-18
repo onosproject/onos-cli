@@ -40,7 +40,7 @@ func getGetSubscriptionCommand() *cobra.Command {
 	return cmd
 }
 
-func runGetSubscriptionCommand(cmd *cobra.Command, args []string) error {
+func runGetSubscriptionCommand(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {

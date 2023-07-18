@@ -85,7 +85,7 @@ func getUEClient(cmd *cobra.Command) (modelapi.UEModelClient, *grpc.ClientConn, 
 	return modelapi.NewUEModelClient(conn), conn, nil
 }
 
-func runGetUEsCommand(cmd *cobra.Command, args []string) error {
+func runGetUEsCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getUEClient(cmd)
 	if err != nil {
 		return err
@@ -211,7 +211,7 @@ func countUEs(stream simapi.Traffic_ListUesClient) int {
 	return count
 }
 
-func runGetUECountCommand(cmd *cobra.Command, args []string) error {
+func runGetUECountCommand(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

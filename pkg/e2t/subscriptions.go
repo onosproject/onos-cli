@@ -43,7 +43,7 @@ func getGetSubscriptionsCommand() *cobra.Command {
 	return cmd
 }
 
-func runGetSubscriptionsCommand(cmd *cobra.Command, args []string) error {
+func runGetSubscriptionsCommand(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -129,7 +129,7 @@ func getWatchSubscriptionsCommand() *cobra.Command {
 	return cmd
 }
 
-func runWatchSubscriptionsCommand(cmd *cobra.Command, args []string) error {
+func runWatchSubscriptionsCommand(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	noReplay, _ := cmd.Flags().GetBool("no-replay")
 	conn, err := cli.GetConnection(cmd)

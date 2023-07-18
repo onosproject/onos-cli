@@ -33,7 +33,7 @@ func getGetCellsCommand() *cobra.Command {
 	return cmd
 }
 
-func runGetUesCommand(cmd *cobra.Command, args []string) error {
+func runGetUesCommand(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func runGetUesCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetCellsCommand(cmd *cobra.Command, args []string) error {
+func runGetCellsCommand(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

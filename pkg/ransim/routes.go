@@ -82,7 +82,7 @@ func waypointsToString(points []*types.Point) string {
 	return s
 }
 
-func runGetRoutesCommand(cmd *cobra.Command, args []string) error {
+func runGetRoutesCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getRouteClient(cmd)
 	if err != nil {
 		return err

@@ -60,7 +60,7 @@ func getClientCredentials() (*tls.Config, error) {
 	}, nil
 }
 
-func runSetReportIntervalCommand(cmd *cobra.Command, args []string) error {
+func runSetReportIntervalCommand(_ *cobra.Command, args []string) error {
 	creds, err := getClientCredentials()
 	if err != nil {
 		return err

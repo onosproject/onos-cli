@@ -129,7 +129,7 @@ func getGetPolicyStatus() *cobra.Command {
 	return cmd
 }
 
-func runGetPolicyType(cmd *cobra.Command, args []string) error {
+func runGetPolicyType(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -191,7 +191,7 @@ func runGetPolicyType(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetPolicyObject(cmd *cobra.Command, args []string) error {
+func runGetPolicyObject(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -267,7 +267,7 @@ func runGetPolicyObject(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetPolicyStatus(cmd *cobra.Command, args []string) error {
+func runGetPolicyStatus(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {

@@ -103,7 +103,7 @@ func getCellClient(cmd *cobra.Command) (modelapi.CellModelClient, *grpc.ClientCo
 	return modelapi.NewCellModelClient(conn), conn, nil
 }
 
-func runGetCellsCommand(cmd *cobra.Command, args []string) error {
+func runGetCellsCommand(cmd *cobra.Command, _ []string) error {
 	if noHeaders, _ := cmd.Flags().GetBool("no-headers"); !noHeaders {
 		cli.Output("%-17s %7s %7s %7s %9s %9s %7s %7s %10s %7s %7s %10s %10s %8s %8s %4s %4s %s\n",
 			"NCGI", "#UEs", "Max UEs", "TxDB", "Lat", "Lng", "Azimuth", "Arc",

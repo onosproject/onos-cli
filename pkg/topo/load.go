@@ -64,7 +64,7 @@ func getExportCommand() *cobra.Command {
 	return cmd
 }
 
-func runExportCommand(cmd *cobra.Command, args []string) error {
+func runExportCommand(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

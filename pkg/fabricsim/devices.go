@@ -191,7 +191,7 @@ func runCreateDeviceCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetDevicesCommand(cmd *cobra.Command, args []string) error {
+func runGetDevicesCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getDeviceClient(cmd)
 	if err != nil {
 		return err
@@ -444,7 +444,7 @@ func printEntitiesInfo(kind string, infos []*simapi.EntitiesInfo, noEmptyInfo bo
 	}
 }
 
-func runGetStatsCommand(cmd *cobra.Command, args []string) error {
+func runGetStatsCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getFabricSimClient(cmd)
 	if err != nil {
 		return err

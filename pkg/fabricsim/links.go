@@ -106,7 +106,7 @@ func createLink(client simapi.LinkServiceClient, id simapi.LinkID, srcPortID sim
 	return nil
 }
 
-func runGetLinksCommand(cmd *cobra.Command, args []string) error {
+func runGetLinksCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getLinkClient(cmd)
 	if err != nil {
 		return err

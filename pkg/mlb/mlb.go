@@ -194,7 +194,7 @@ func getSetParameters() *cobra.Command {
 	return cmd
 }
 
-func runListParameters(cmd *cobra.Command, args []string) error {
+func runListParameters(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -228,7 +228,7 @@ func runListParameters(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runListOcns(cmd *cobra.Command, args []string) error {
+func runListOcns(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -289,7 +289,7 @@ func runListOcns(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runSetParameters(cmd *cobra.Command, args []string) error {
+func runSetParameters(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

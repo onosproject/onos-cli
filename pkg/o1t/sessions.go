@@ -38,7 +38,7 @@ func getWatchSessionsCommand() *cobra.Command {
 	return cmd
 }
 
-func runListSessionsCommand(cmd *cobra.Command, args []string) error {
+func runListSessionsCommand(cmd *cobra.Command, _ []string) error {
 	results := make(map[string]string)
 
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
@@ -110,7 +110,7 @@ func runListSessionsCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runWatchSessionsCommand(cmd *cobra.Command, args []string) error {
+func runWatchSessionsCommand(cmd *cobra.Command, _ []string) error {
 	var results map[string]string
 
 	headerPrinted := false
