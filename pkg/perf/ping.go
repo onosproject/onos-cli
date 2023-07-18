@@ -42,7 +42,7 @@ func getStreamCommand() *cobra.Command {
 	return cmd
 }
 
-func runPingCommand(cmd *cobra.Command, args []string) error {
+func runPingCommand(cmd *cobra.Command, _ []string) error {
 	count, _ := cmd.Flags().GetInt("count")
 	size, _ := cmd.Flags().GetUint32("size")
 
@@ -71,7 +71,7 @@ func runPingCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runPingStreamCommand(cmd *cobra.Command, args []string) error {
+func runPingStreamCommand(cmd *cobra.Command, _ []string) error {
 	count, _ := cmd.Flags().GetInt("count")
 	size, _ := cmd.Flags().GetUint32("size")
 	responses, _ := cmd.Flags().GetUint32("responses")

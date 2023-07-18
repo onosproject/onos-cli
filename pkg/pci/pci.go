@@ -98,7 +98,7 @@ func runGetConflicts(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetResolvedConflicts(cmd *cobra.Command, args []string) error {
+func runGetResolvedConflicts(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
@@ -162,7 +162,7 @@ func runGetCell(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetCells(cmd *cobra.Command, args []string) error {
+func runGetCells(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {

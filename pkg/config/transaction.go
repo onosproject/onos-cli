@@ -128,11 +128,7 @@ func getTransaction(ctx context.Context, client admin.TransactionServiceClient,
 	if verbose {
 		f = format.Format(transactionListTemplateVerbose)
 	}
-
-	if e := f.Execute(cli.GetOutput(), !noHeaders, 0, prepareTransactionOutput(resp.Transaction, v2.TransactionEvent_UNKNOWN)); e != nil {
-		return e
-	}
-	return nil
+	return f.Execute(cli.GetOutput(), !noHeaders, 0, prepareTransactionOutput(resp.Transaction, v2.TransactionEvent_UNKNOWN))
 }
 
 func listTransactions(ctx context.Context, client admin.TransactionServiceClient, noHeaders bool, verbose bool) error {
@@ -152,10 +148,7 @@ func listTransactions(ctx context.Context, client admin.TransactionServiceClient
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
-			if e := f.Execute(cli.GetOutput(), !noHeaders, 0, allTx); e != nil {
-				return e
-			}
-			return nil
+			return f.Execute(cli.GetOutput(), !noHeaders, 0, allTx)
 		} else if err != nil {
 			cli.Output("Unable to read transaction: %s", err)
 			return err

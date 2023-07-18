@@ -73,7 +73,7 @@ func getDeleteSlice() *cobra.Command {
 	return cmd
 }
 
-func runSetAssociation(cmd *cobra.Command, args []string) error {
+func runSetAssociation(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -178,7 +178,7 @@ func runSetAssociation(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetCreateSlice(cmd *cobra.Command, args []string) error {
+func runGetCreateSlice(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -264,7 +264,7 @@ func runGetCreateSlice(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetUpdateSlice(cmd *cobra.Command, args []string) error {
+func runGetUpdateSlice(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -350,7 +350,7 @@ func runGetUpdateSlice(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetDeleteSlice(cmd *cobra.Command, args []string) error {
+func runGetDeleteSlice(cmd *cobra.Command, _ []string) error {
 	conn, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err

@@ -29,7 +29,7 @@ func getListPluginsCommand() *cobra.Command {
 	return cmd
 }
 
-func runListPluginsCommand(cmd *cobra.Command, args []string) error {
+func runListPluginsCommand(cmd *cobra.Command, _ []string) error {
 	connection, err := cli.GetConnection(cmd)
 	if err != nil {
 		return err
@@ -60,10 +60,7 @@ func runListPluginsCommand(cmd *cobra.Command, args []string) error {
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
-			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allPlugins); e != nil {
-				return e
-			}
-			return nil
+			return tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allPlugins)
 		}
 		if err != nil {
 			return err

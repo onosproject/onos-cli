@@ -114,10 +114,7 @@ func getConfigurations(ctx context.Context, client admin.ConfigurationServiceCli
 		tableFormat = format.Format(configurationListTemplate)
 	}
 
-	if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, resp.Configuration); e != nil {
-		return e
-	}
-	return nil
+	return tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, resp.Configuration)
 
 }
 
@@ -140,10 +137,7 @@ func listConfigurations(ctx context.Context, client admin.ConfigurationServiceCl
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
-			if e := tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allConfigurations); e != nil {
-				return e
-			}
-			return nil
+			return tableFormat.Execute(cli.GetOutput(), !noHeaders, 0, allConfigurations)
 		} else if err != nil {
 			cli.Output("Unable to read configuration: %s", err)
 			return err

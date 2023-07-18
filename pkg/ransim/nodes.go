@@ -111,7 +111,7 @@ func getNodeClient(cmd *cobra.Command) (modelapi.NodeModelClient, *grpc.ClientCo
 	return modelapi.NewNodeModelClient(conn), conn, nil
 }
 
-func runGetPlmnIDCommand(cmd *cobra.Command, args []string) error {
+func runGetPlmnIDCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getNodeClient(cmd)
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func runGetPlmnIDCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetNodesCommand(cmd *cobra.Command, args []string) error {
+func runGetNodesCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getNodeClient(cmd)
 	if err != nil {
 		return err

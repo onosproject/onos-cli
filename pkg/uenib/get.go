@@ -87,7 +87,7 @@ func runGetUECommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetUEsCommand(cmd *cobra.Command, args []string) error {
+func runGetUEsCommand(cmd *cobra.Command, _ []string) error {
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	aspectTypes, _ := cmd.Flags().GetStringSlice("aspect")
 	verbose, _ := cmd.Flags().GetBool("verbose")

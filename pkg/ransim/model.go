@@ -92,7 +92,7 @@ func runLoadCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runClearCommand(cmd *cobra.Command, args []string) error {
+func runClearCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getModelClient(cmd)
 	if err != nil {
 		return err

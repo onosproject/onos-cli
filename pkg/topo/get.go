@@ -110,7 +110,7 @@ func runGetEntityCommand(cmd *cobra.Command, args []string) error {
 	return runGetCommand(cmd, args, topoapi.Object_ENTITY)
 }
 
-func runGetEntityRelationCommand(cmd *cobra.Command, args []string, to string, toTgt, via string, tgt string) error {
+func runGetEntityRelationCommand(cmd *cobra.Command, _ []string, to string, toTgt, via string, tgt string) error {
 	verbose, _ := cmd.Flags().GetBool("verbose")
 	noHeaders, _ := cmd.Flags().GetBool("no-headers")
 	scopeString, _ := cmd.Flags().GetString("scope")

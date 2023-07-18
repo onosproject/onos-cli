@@ -78,7 +78,7 @@ func getHostClient(cmd *cobra.Command) (simapi.HostServiceClient, *grpc.ClientCo
 	return simapi.NewHostServiceClient(conn), conn, nil
 }
 
-func runCreateHostCommand(cmd *cobra.Command, args []string) error {
+func runCreateHostCommand(_ *cobra.Command, _ []string) error {
 	//client, conn, err := getHostClient(cmd)
 	//if err != nil {
 	//	return err
@@ -89,7 +89,7 @@ func runCreateHostCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runGetHostsCommand(cmd *cobra.Command, args []string) error {
+func runGetHostsCommand(cmd *cobra.Command, _ []string) error {
 	client, conn, err := getHostClient(cmd)
 	if err != nil {
 		return err

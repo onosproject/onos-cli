@@ -48,7 +48,7 @@ func getWatchMetricsCommand() *cobra.Command {
 	return cmd
 }
 
-func runListMetricsCommand(cmd *cobra.Command, args []string) error {
+func runListMetricsCommand(cmd *cobra.Command, _ []string) error {
 	var types []string
 	results := make(map[string]map[uint64]map[string]string)
 
@@ -182,7 +182,7 @@ func runListMetricsCommand(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runWatchMetricsCommand(cmd *cobra.Command, args []string) error {
+func runWatchMetricsCommand(cmd *cobra.Command, _ []string) error {
 	var types []string
 	var results map[string]map[uint64]map[string]string
 
