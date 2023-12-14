@@ -39,7 +39,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Jenkins tests
-        run: make jenkins-test
+        run: |
+          make jenkins-test
+          golangci-lint --version | grep 1.52.2 || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b `go env GOPATH`/bin v1.52.2
 
 
   docker-build:
