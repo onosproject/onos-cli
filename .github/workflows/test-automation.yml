@@ -6,16 +6,71 @@ on:
   pull_request:
 
 jobs:
-  test-integration:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: test-automation
-        run: |
-    	  make build
-    	  make mod-update
-    	  make mod-lint
-          make test
-	  make jenkins-test
-    
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+
+      - name: Build
+      - run: make build
+  
+  mod-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+      - name: mod update
+      - run: make mod-update
+  
+  mod-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+      - name: mod lint
+      - run: make mod-lint
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+
+      - name: Unit tests
+      - run: make test
+
+  Jenkins-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+
+      - name: Jenkins tests
+      - run: make jenkins-test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: make onos-cli-docker
+      
+
+ 
+ 
 	  
