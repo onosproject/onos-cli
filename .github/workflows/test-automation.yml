@@ -62,13 +62,6 @@ jobs:
       - name: Jenkins tests
       - run: make jenkins-test
 
-  docker-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-      - run: make onos-cli-docker
       
 
  
