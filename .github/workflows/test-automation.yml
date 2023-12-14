@@ -16,7 +16,7 @@ jobs:
           go-version: 1.21
 
       - name: Build
-      - run: make build
+        run: make build
   
   mod-update:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
         with:
           go-version: 1.21
       - name: mod update
-      - run: make mod-update
+        run: make mod-update
   
   mod-lint:
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
         with:
           go-version: 1.21
       - name: mod lint
-      - run: make mod-lint
+        run: make mod-lint
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
           go-version: 1.21
 
       - name: Unit tests
-      - run: make test
+        run: make test
 
   Jenkins-tests:
     runs-on: ubuntu-latest
@@ -60,10 +60,13 @@ jobs:
           go-version: 1.21
 
       - name: Jenkins tests
-      - run: make jenkins-test
+        run: make jenkins-test
 
-      
 
- 
- 
-	  
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: make onos-cli-docker
