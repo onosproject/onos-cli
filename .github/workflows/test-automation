@@ -1,0 +1,21 @@
+name: Test automation
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test dependabot PR
+	run: |
+    make build
+    make mod-update
+    make mod-lint
+    make test
+    make jenkins-test
+    
+	  
