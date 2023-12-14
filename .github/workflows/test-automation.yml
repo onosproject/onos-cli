@@ -68,7 +68,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: make onos-cli-docker
+      - run: make onos-cli-docker
       
 
  
