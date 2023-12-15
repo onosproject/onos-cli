@@ -49,8 +49,7 @@ jobs:
           version: v1.54
       - name: Jenkins tests
         run: |
-          which bash 
-          golangci-lint --version | grep 1.52.2 || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b `go env GOPATH`/bin v1.52.2
+          go get github.com/jstemmer/go-junit-report
           make jenkins-test
 
   docker-build:
