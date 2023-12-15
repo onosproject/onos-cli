@@ -38,7 +38,9 @@ jobs:
         with:
           version: v1.54
       - name: Unit tests
-        run: make test
+        run: |
+          go test github.com/onosproject/onos-cli/pkg/...
+          go test github.com/onosproject/onos-cli/cmd/...
 
   Jenkins-tests:
     runs-on: ubuntu-latest
