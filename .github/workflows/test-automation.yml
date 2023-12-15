@@ -49,7 +49,7 @@ jobs:
           version: v1.54
       - name: Jenkins tests
         run: |
-          go get github.com/jstemmer/go-junit-report
+          go install github.com/jstemmer/go-junit-report@latest
           make jenkins-test
 
   docker-build:
