@@ -53,6 +53,7 @@ jobs:
           export PATH=$PATH:$GOPATH/bin
           go install github.com/golang/mock/mockgen@v1.6.0
           go install github.com/jstemmer/go-junit-report@latest
+          go install github.com/boumenot/gocover-cobertura@latest
           make jenkins-test
 
   docker-build:
