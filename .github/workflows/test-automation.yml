@@ -49,6 +49,9 @@ jobs:
           version: v1.54
       - name: Jenkins tests
         run: |
+          export GOPATH="$HOME/go/"
+          export PATH=$PATH:$GOPATH/bin
+          go install github.com/golang/mock/mockgen@v1.6.0
           go install github.com/jstemmer/go-junit-report@latest
           make jenkins-test
 
