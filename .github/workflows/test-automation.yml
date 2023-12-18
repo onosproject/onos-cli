@@ -66,3 +66,7 @@ jobs:
         run: |
           docker images
           make onos-cli-docker
+      - name: Cleanup Docker images
+        run: |
+          docker image prune -f
+          docker images
