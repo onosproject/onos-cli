@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2023 Canonical Ltd.
+# Copyright 2023 Intel Corporation
 
 name: Test integration
 on:
@@ -63,4 +63,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker image
-        run: make onos-cli-docker
+        run: |
+          docker images
+          make onos-cli-docker
