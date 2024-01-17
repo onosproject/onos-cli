@@ -42,21 +42,21 @@ jobs:
           go test github.com/onosproject/onos-cli/pkg/...
           go test github.com/onosproject/onos-cli/cmd/...
 
-  # docker-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Build Docker image
-  #       run: |
-  #         @go mod vendor
-  #         docker build . -f build/onos/Dockerfile \
-  #                 -t onosproject/onos-cli:latest
-  #         @rm -rf vendor
-  
   docker-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker image
         run: |
-          make onos-cli-docker
+          go mod vendor
+          docker build . -f build/onos/Dockerfile \
+                  -t onosproject/onos-cli:latest
+          rm -rf vendor
+  
+  # docker-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build Docker image
+  #       run: |
+  #         make onos-cli-docker
