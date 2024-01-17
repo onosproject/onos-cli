@@ -175,6 +175,10 @@ func optionsToCell(cmd *cobra.Command, cell *types.Cell, update bool) (*types.Ce
 	if !update || cmd.Flags().Changed("pci") {
 		cell.Pci = pci
 	}
+	txPower, _ := cmd.Flags().GetFloat64("tx-power")
+	if !update || cmd.Flags().Changed("tx-power") {
+		cell.TxPowerdB = txPower
+	}
 	return cell, nil
 }
 
