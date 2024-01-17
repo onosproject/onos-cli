@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2023 Canonical Ltd.
+# Copyright 2024 Intel Corporation
 
 version: 2
 updates:
@@ -7,14 +7,14 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/build/onos/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
