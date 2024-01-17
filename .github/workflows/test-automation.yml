@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2023 Intel Corporation
+# Copyright 2024 Intel Corporation
 
 name: Test integration
 on:
   push:
     branches:
       - master
+      - GHA-integration
   pull_request:
 
 jobs:
@@ -14,21 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: make build
-  
-  mod-update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: mod update
-        run: make mod-update
-  
+        run: |
+          go build -o build/_output/onos ./cmd/onos
+          go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
+          go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
+
   mod-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: mod lint
-        run: make mod-lint
+        run: |
+          go mod tidy
+	        go mod vendor
+          bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -42,31 +42,11 @@ jobs:
           go test github.com/onosproject/onos-cli/pkg/...
           go test github.com/onosproject/onos-cli/cmd/...
 
-  Jenkins-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.54
-      - name: Jenkins tests
-        run: |
-          export GOPATH="$HOME/go/"
-          export PATH=$PATH:$GOPATH/bin
-          go install github.com/golang/mock/mockgen@v1.6.0
-          go install github.com/jstemmer/go-junit-report@latest
-          go install github.com/boumenot/gocover-cobertura@latest
-          make jenkins-test
-
   docker-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker image
         run: |
-          docker images
-          make onos-cli-docker
-      - name: Cleanup Docker images
-        run: |
-          docker image prune -f
-          docker images
+          docker build . -f build/onos/Dockerfile \
+                  -t onosproject/onos-cli:latest
