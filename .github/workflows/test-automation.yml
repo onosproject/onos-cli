@@ -48,5 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Docker image
         run: |
+          @go mod vendor
           docker build . -f build/onos/Dockerfile \
                   -t onosproject/onos-cli:latest
+          @rm -rf vendor        
