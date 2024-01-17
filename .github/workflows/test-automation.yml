@@ -27,7 +27,7 @@ jobs:
   #     - name: mod lint
   #       run: |
   #         go mod tidy
-	 #  go mod vendor
+  #	    go mod vendor
   #         bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
   unit-tests:
