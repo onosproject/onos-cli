@@ -19,7 +19,7 @@ jobs:
           go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
           go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
 
-  mod-lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
