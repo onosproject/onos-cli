@@ -124,9 +124,8 @@ func runGetUEsCommand(cmd *cobra.Command, _ []string) error {
 		} else if err != nil {
 			cli.Output("Unable to read UE: %s", err)
 			return err
-		} else {
-			printUE(writer, resp.UE, verbose)
 		}
+		printUE(writer, resp.UE, verbose)
 	}
 
 	return nil
