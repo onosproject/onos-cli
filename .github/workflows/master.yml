@@ -21,7 +21,6 @@ jobs:
           go build -o build/_output/onos ./cmd/onos
           go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
           go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
-
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +44,6 @@ jobs:
         run: |
           go test github.com/onosproject/onos-cli/pkg/...
           go test github.com/onosproject/onos-cli/cmd/...
-
   docker-build:
     runs-on: ubuntu-latest
     steps:
@@ -59,7 +57,6 @@ jobs:
           docker build . -f build/onos/Dockerfile \
                   -t onosproject/onos-cli:latest
           rm -rf vendor
-
   license-check:
     runs-on: ubuntu-latest
     steps:
