@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Intel Corporation
 
-name: Test integration
+name: Master workflow
 on:
   push:
     branches:
@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
       - name: Build
         run: |
           go build -o build/_output/onos ./cmd/onos
@@ -23,19 +26,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: mod lint
-        run: |
-          go mod tidy
-          go mod vendor
-          bash -c "diff -u <(echo -n) <(git diff go.sum)"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - uses: golangci/golangci-lint-action@v3.7.0
+        with:
+          version: latest
+          args: -v --config ./.golangci.yml
 
   unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.54      
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
@@ -48,12 +50,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
       - name: Build Docker image
         run: |
           go mod vendor
           docker build . -f build/onos/Dockerfile \
                   -t onosproject/onos-cli:latest
           rm -rf vendor
+
   license-check:
     runs-on: ubuntu-latest
     steps:
