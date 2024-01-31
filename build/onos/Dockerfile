@@ -19,7 +19,7 @@ RUN go build -mod=vendor -o build/_output/onos ./cmd/onos
 RUN	go build -mod=vendor -o build/_output/gnmi_cli ./cmd/gnmi_cli
 RUN go install github.com/atomix/cli/cmd/atomix@latest
 
-FROM alpine:3.14
+FROM alpine:3.19
 RUN apk add bash bash-completion curl libc6-compat gettext jq
 
 RUN addgroup -S onos && adduser -S -G onos onos --home /home/onos
