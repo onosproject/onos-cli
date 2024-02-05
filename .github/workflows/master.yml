@@ -71,7 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+ 
       - name: FOSSA scan
-        uses: fossa-contrib/fossa-action@v3
+        uses: fossas/fossa-action@main
         with:
-          fossa-api-key: ba71392b9c3bf6d4ba4e64edeae7f293
+          api-key: ${{secrets.fossaApiKey}}
