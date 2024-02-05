@@ -75,4 +75,4 @@ jobs:
       - name: FOSSA scan
         uses: fossas/fossa-action@main
         with:
-          api-key: ${{secrets.fossaApiKey}}
+          api-key: ${{ secrets.FOSSA_ONOSPROJECT_ORG_PO }}
