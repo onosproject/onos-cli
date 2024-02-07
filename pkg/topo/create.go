@@ -57,7 +57,7 @@ func runCreateEntityCommand(cmd *cobra.Command, args []string) error {
 
 func runCreateRelationCommand(cmd *cobra.Command, args []string) error {
 	kindID, _ := cmd.Flags().GetString("kind")
-	return createObject(topoapi.NewRelation(topoapi.ID(args[0]), topoapi.ID(args[2]), topoapi.ID(kindID)), cmd)
+	return createObject(topoapi.NewRelation(topoapi.ID(args[0]), topoapi.ID(args[1]), topoapi.ID(kindID)), cmd)
 }
 
 func runCreateKindCommand(cmd *cobra.Command, args []string) error {
