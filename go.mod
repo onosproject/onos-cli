@@ -80,7 +80,7 @@ require (
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/square/go-jose.v1 v1.1.2 // indirect
