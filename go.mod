@@ -13,7 +13,7 @@ require (
 	github.com/openconfig/gnmi v0.9.1
 	github.com/prometheus/common v0.26.0
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.17.0
 	google.golang.org/grpc v1.56.3
 )
