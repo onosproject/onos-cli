@@ -13,3 +13,4 @@ coverage.txt
 *-output.out
 .idea
 build/build-tools
+venv

@@ -1,13 +1,17 @@
-# SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
-#
 # SPDX-License-Identifier: Apache-2.0
+# Copyright 2019 Open Networking Foundation
+# Copyright 2024 Intel Corporation
 
 export CGO_ENABLED=1
 export GO111MODULE=on
 
-.PHONY: build docs
+.PHONY: build license
 
-ONOS_CLI_VERSION := latest
+ONOS_CLI_VERSION ?= latest
+
+GOLANG_CI_VERSION := v1.52.2
+
+all: build docker-build
 
 build: # @HELP build the Go binaries and run all validations (default)
 build:
@@ -15,18 +19,8 @@ build:
 	go build -o build/_output/onos-cli-docs-gen ./cmd/onos-cli-docs-gen
 	go build -o build/_output/gnmi_cli ./cmd/gnmi_cli
 
-build-tools:=$(shell if [ ! -d "./build/build-tools" ]; then cd build && git clone https://github.com/onosproject/build-tools.git; fi)
-include ./build/build-tools/make/onf-common.mk
-
-mod-update: # @HELP Download the dependencies to the vendor folder
-	go mod tidy
-	go mod vendor
-mod-lint: mod-update # @HELP ensure that the required dependencies are in place
-	# dependencies are vendored, but not committed, go.sum is the only thing we need to check
-	bash -c "diff -u <(echo -n) <(git diff go.sum)"
-
 test: # @HELP run the unit tests and source code validation
-test: mod-lint build linters license
+test: build lint license
 	go test github.com/onosproject/onos-cli/pkg/...
 	go test github.com/onosproject/onos-cli/cmd/...
 
@@ -34,33 +28,43 @@ docs: # @HELP generate CLI docs
 docs:
 	go run cmd/onos-cli-docs-gen/main.go
 
-jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
-jenkins-test: mod-lint build linters license
-	TEST_PACKAGES=github.com/onosproject/onos-cli/... ./build/build-tools/build/jenkins/make-unit
-
-onos-cli-docker: # @HELP build onos CLI Docker image
-onos-cli-docker:
+docker-build-onos-cli: # @HELP build onos CLI Docker image
 	@go mod vendor
 	docker build . -f build/onos/Dockerfile \
 		-t onosproject/onos-cli:${ONOS_CLI_VERSION}
 	@rm -rf vendor
 
-images: # @HELP build all Docker images
-images: build onos-cli-docker
+docker-build: # @HELP build all Docker images
+docker-build: build docker-build-onos-cli
 
-kind: images
-	@if [ "`kind get clusters`" = '' ]; then echo "no kind cluster found" && exit 1; fi
-	kind load docker-image onosproject/onos-cli:${ONOS_CLI_VERSION}
+docker-push-onos-cli: # @HELP push onos-cli Docker image
+	docker push onosproject/onos-cli:${ONOS_CLI_VERSION}
 
-all: build images
+docker-push: # @HELP push docker images
+docker-push: docker-push-onos-cli
 
-publish: # @HELP publish version on github and dockerhub
-	./build/build-tools/publish-version ${VERSION} onosproject/onos-cli
+lint: # @HELP examines Go source code and reports coding problems
+	golangci-lint --version | grep $(GOLANG_CI_VERSION) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b `go env GOPATH`/bin $(GOLANG_CI_VERSION)
+	golangci-lint run --timeout 15m
 
-jenkins-publish: # @HELP Jenkins calls this to publish artifacts
-	./build/bin/push-images
-	./build/build-tools/release-merge-commit
-	./build/build-tools/build/docs/push-docs
+license: # @HELP run license checks
+	rm -rf venv
+	python3 -m venv venv
+	. ./venv/bin/activate;\
+	python3 -m pip install --upgrade pip;\
+	python3 -m pip install reuse;\
+	reuse lint
 
-clean:: # @HELP remove all the build artifacts
+check-version: # @HELP check version is duplicated
+	./build/bin/version_check.sh all
+
+clean: # @HELP remove all the build artifacts
 	rm -rf ./build/_output ./vendor ./cmd/onos/onos ./cmd/dummy/dummy
+
+help:
+	@grep -E '^.*: *# *@HELP' $(MAKEFILE_LIST) \
+    | sort \
+    | awk ' \
+        BEGIN {FS = ": *# *@HELP"}; \
+        {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}; \
+    '
