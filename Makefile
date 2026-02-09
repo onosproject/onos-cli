@@ -7,7 +7,11 @@ export GO111MODULE=on
 
 .PHONY: build license
 
-ONOS_CLI_VERSION ?= latest
+ONOS_CLI_VERSION  ?= latest
+DOCKER_TAG        ?= ${ONOS_CLI_VERSION}
+DOCKER_REPOSITORY ?= onosproject/
+DOCKER_REGISTRY   ?= ""
+DOCKER_IMAGENAME  := ${DOCKER_REGISTRY}${DOCKER_REPOSITORY}onos-cli:${DOCKER_TAG}
 
 GOLANG_CI_VERSION := v1.52.2
 
@@ -31,14 +35,14 @@ docs:
 docker-build-onos-cli: # @HELP build onos CLI Docker image
 	@go mod vendor
 	docker build . -f build/onos/Dockerfile \
-		-t onosproject/onos-cli:${ONOS_CLI_VERSION}
+		-t ${DOCKER_IMAGENAME}
 	@rm -rf vendor
 
 docker-build: # @HELP build all Docker images
 docker-build: build docker-build-onos-cli
 
 docker-push-onos-cli: # @HELP push onos-cli Docker image
-	docker push onosproject/onos-cli:${ONOS_CLI_VERSION}
+	docker push ${DOCKER_IMAGENAME}
 
 docker-push: # @HELP push docker images
 docker-push: docker-push-onos-cli
